@@ -228,14 +228,14 @@ const Signup = () => {
           <GoogleAuthButton onGoogleLogin={() => {}} />
         </div>
 
-        {/* Sign up link */}
+        {/* Sign in link */}
         <p className="text-center text-sm text-gray-400 mt-6">
           Have an account already ?{" "}
           <Link
             to={"/signin"}
             className="text-primary font-semibold hover:underline"
           >
-            Sign up
+            Sign in
           </Link>
         </p>
       </div>
