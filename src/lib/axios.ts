@@ -2,6 +2,7 @@ import axios, { type AxiosError, type AxiosInstance } from "axios";
 import { KEYS } from "../utils/keys";
 import { EnumStatusCode } from "chopme-frontend-common";
 import { TokensService } from "../services/tokens.service";
+import { AuthService } from "../services/auth.service";
 
 export const createApiClient = (baseURL: string): AxiosInstance => {
   const client = axios.create({
@@ -34,15 +35,19 @@ export const createApiClient = (baseURL: string): AxiosInstance => {
         try {
           const refreshToken = TokensService.getToken(KEYS.REFRESH_TOKEN_KEY);
 
-          const response = await axios.post(`${baseURL}/auth/refresh`, {
-            refreshToken,
-          });
+          const response = await AuthService.refreshToken(refreshToken);
 
-          const newAccessToken = response.data.accessToken;
+          const newAccessToken = response.data.data.accessToken;
+          const newRefreshToken = response.data.data.refreshToken;
 
           TokensService.setToken({
             property: KEYS.ACCESS_TOKEN_KEY,
             value: newAccessToken,
+          });
+
+          TokensService.setToken({
+            property: KEYS.REFRESH_TOKEN_KEY,
+            value: newRefreshToken,
           });
 
           originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;

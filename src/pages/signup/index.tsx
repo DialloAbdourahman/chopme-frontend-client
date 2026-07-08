@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { CreateClientDto } from "chopme-frontend-common";
 import { Eye, EyeOff, Mail, Lock, ChefHat } from "lucide-react";
-import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { AxiosError } from "axios";
 import type { IOrchestrationResult, IAuthEntity } from "chopme-frontend-common";
@@ -17,11 +16,14 @@ import { TokensService } from "../../services/tokens.service";
 import { setUser } from "../../store/user.slice";
 import { KEYS } from "../../utils/keys";
 import GoogleAuthButton from "../../components/GoogleAuthButton";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { showErrorToast, showSuccessToast } from "../../utils/toasts";
 
 const Signup = () => {
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const {
     register,
@@ -39,7 +41,7 @@ const Signup = () => {
         data.code === EnumStatusResponse.SUCCESS &&
         data.statusCode === EnumStatusCode.CLIENT_CREATED_SUCCESSFULLY
       ) {
-        toast.success("Welcome! You'll soon be redirected...");
+        showSuccessToast("Welcome! You'll soon be redirected...");
 
         const { data: signinData } = await AuthService.emailPasswordLogin({
           email: values.email,
@@ -60,11 +62,15 @@ const Signup = () => {
             value: refreshToken,
           });
           dispatch(setUser(user));
+
+          const encoded = searchParams.get("redirect_url");
+          const redirectTo = encoded ? decodeURIComponent(encoded) : "/";
+          navigate(redirectTo, { replace: true });
         }
       }
     } catch (error) {
       const err = error as AxiosError<IOrchestrationResult<string>>;
-      toast.error(
+      showErrorToast(
         err.response?.data?.message || "Login failed. Please try again.",
       );
     }

@@ -7,6 +7,7 @@ import type {
 } from "chopme-frontend-common";
 import { axiosBaseClient } from "../lib/axios";
 import axios from "axios";
+import { KEYS } from "../utils/keys";
 
 export const AuthService = {
   createAccount: (dto: CreateClientDto) => {
@@ -33,9 +34,8 @@ export const AuthService = {
   },
 
   refreshToken: (token: string) => {
-    return axios.post<IOrchestrationResult<IAuthEntity>>(
-      "/users/token",
-      {},
+    return axios.get<IOrchestrationResult<IAuthEntity>>(
+      `${KEYS.BASE_URL}/users/token`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
