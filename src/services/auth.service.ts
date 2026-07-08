@@ -3,10 +3,12 @@ import type {
   EmailPasswordLoginDto,
   IAuthEntity,
   IOrchestrationResult,
+  IUserEntity,
 } from "chopme-frontend-common";
 import { axiosBaseClient } from "../lib/axios";
+import axios from "axios";
 
-const AuthService = {
+export const AuthService = {
   createAccount: (dto: CreateClientDto) => {
     return axiosBaseClient.post<IOrchestrationResult<string>>("/users", dto);
   },
@@ -28,7 +30,7 @@ const AuthService = {
   },
 
   refreshToken: (token: string) => {
-    return axiosBaseClient.post<IOrchestrationResult<IAuthEntity>>(
+    return axios.post<IOrchestrationResult<IAuthEntity>>(
       "/users/token",
       {},
       {
@@ -38,6 +40,8 @@ const AuthService = {
       },
     );
   },
-};
 
-export default AuthService;
+  getMyProfile: () => {
+    return axiosBaseClient.get<IOrchestrationResult<IUserEntity>>("/users/me");
+  },
+};

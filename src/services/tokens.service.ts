@@ -1,4 +1,4 @@
-const TokensService = {
+export const TokensService = {
   setToken: ({ property, value }: { property: string; value: string }) => {
     localStorage.setItem(property, value);
   },
@@ -11,5 +11,3 @@ const TokensService = {
     localStorage.removeItem(property);
   },
 };
-
-export default TokensService;

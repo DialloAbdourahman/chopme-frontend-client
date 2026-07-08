@@ -1,7 +1,7 @@
 import axios, { type AxiosError, type AxiosInstance } from "axios";
 import { KEYS } from "../utils/keys";
 import { EnumStatusCode } from "chopme-frontend-common";
-import TokensService from "../services/tokens.service";
+import { TokensService } from "../services/tokens.service";
 
 export const createApiClient = (baseURL: string): AxiosInstance => {
   const client = axios.create({

@@ -1,10 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
+import type { IUserEntity } from "chopme-frontend-common";
 
 export interface UserState {
-  user: {
-    id: string;
-  } | null;
+  user: IUserEntity | null;
 }
 
 const initialState: UserState = {
@@ -15,7 +14,7 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<{ id: string }>) => {
+    setUser: (state, action: PayloadAction<IUserEntity>) => {
       state.user = action.payload;
     },
     clearUser: (state) => {
