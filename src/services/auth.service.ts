@@ -10,7 +10,10 @@ import axios from "axios";
 
 export const AuthService = {
   createAccount: (dto: CreateClientDto) => {
-    return axiosBaseClient.post<IOrchestrationResult<string>>("/users", dto);
+    return axiosBaseClient.post<IOrchestrationResult<string>>("/users", {
+      ...dto,
+      confirmPassword: undefined,
+    });
   },
 
   emailPasswordLogin: (dto: EmailPasswordLoginDto) => {
