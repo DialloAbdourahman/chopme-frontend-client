@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { EmailPasswordLoginDto } from "chopme-frontend-common";
 import { Eye, EyeOff, Mail, Lock, ChefHat } from "lucide-react";
-import { useDispatch } from "react-redux";
 import { AxiosError } from "axios";
 import type { IOrchestrationResult, IAuthEntity } from "chopme-frontend-common";
 import {
@@ -13,17 +12,20 @@ import {
 } from "chopme-frontend-common";
 import { AuthService } from "../../services/auth.service";
 import { TokensService } from "../../services/tokens.service";
-import { setUser } from "../../store/user.slice";
 import { KEYS } from "../../utils/keys";
 import GoogleAuthButton from "../../components/GoogleAuthButton";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { showErrorToast, showSuccessToast } from "../../utils/toasts";
+import useInitializeAfterAuth from "../../hooks/useInitializeAfterAuth";
 
 const Signin = () => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
+
+  const { initialize, loading: loadingInitialize } = useInitializeAfterAuth({
+    initialLoadingState: false,
+  });
 
   const {
     register,
@@ -41,7 +43,7 @@ const Signin = () => {
         data.code === EnumStatusResponse.SUCCESS &&
         data.statusCode === EnumStatusCode.LOGGED_IN_SUCCESSFULLY
       ) {
-        const { accessToken, refreshToken, user } = data.data as IAuthEntity;
+        const { accessToken, refreshToken } = data.data as IAuthEntity;
         TokensService.setToken({
           property: KEYS.ACCESS_TOKEN_KEY,
           value: accessToken,
@@ -50,7 +52,7 @@ const Signin = () => {
           property: KEYS.REFRESH_TOKEN_KEY,
           value: refreshToken,
         });
-        dispatch(setUser(user));
+        await initialize();
         showSuccessToast("Welcome back!");
         const encoded = searchParams.get("redirect_url");
         const redirectTo = encoded ? decodeURIComponent(encoded) : "/";
@@ -157,10 +159,10 @@ const Signin = () => {
             {/* Submit */}
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || loadingInitialize}
               className="w-full bg-primary text-white font-semibold rounded-xl py-3.5 text-sm shadow-sm hover:opacity-90 active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed mt-1"
             >
-              {isSubmitting ? "Signing in..." : "Sign in"}
+              {isSubmitting || loadingInitialize ? "Signing in..." : "Sign in"}
             </button>
           </form>
 
