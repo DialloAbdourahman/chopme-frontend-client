@@ -1,27 +1,31 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { CreateClientDto } from "chopme-frontend-common";
+import type { EmailPasswordLoginDto } from "chopme-frontend-common";
 import { Eye, EyeOff, Mail, Lock, ChefHat } from "lucide-react";
 import { AxiosError } from "axios";
 import type { IOrchestrationResult, IAuthEntity } from "chopme-frontend-common";
 import {
-  createClientSchema,
+  emailPasswordLoginSchema,
   EnumStatusCode,
   EnumStatusResponse,
 } from "chopme-frontend-common";
-import { AuthService } from "../../services/auth.service";
-import { TokensService } from "../../services/tokens.service";
-import { KEYS } from "../../utils/keys";
-import GoogleAuthButton from "../../components/GoogleAuthButton";
+import { AuthService } from "../services/auth.service";
+import { TokensService } from "../services/tokens.service";
+import { KEYS } from "../utils/keys";
+import GoogleAuthButton from "../components/GoogleAuthButton";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { showErrorToast, showSuccessToast } from "../../utils/toasts";
-import useInitializeAfterAuth from "../../hooks/useInitializeAfterAuth";
+import {
+  showErrorToast,
+  showSuccessToast,
+  showWarningToast,
+} from "../utils/toasts";
+import useInitializeAfterAuth from "../hooks/useInitializeAfterAuth";
 
-const Signup = () => {
-  const [showPassword, setShowPassword] = useState(false);
+const Signin = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const [showPassword, setShowPassword] = useState(false);
 
   const { initialize, loading: loadingInitialize } = useInitializeAfterAuth({
     initialLoadingState: false,
@@ -31,50 +35,51 @@ const Signup = () => {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<CreateClientDto>({
-    resolver: zodResolver(createClientSchema),
-    defaultValues: { fullName: "", email: "", password: "" },
+  } = useForm<EmailPasswordLoginDto>({
+    resolver: zodResolver(emailPasswordLoginSchema),
+    defaultValues: { email: "", password: "" },
   });
 
-  const onSubmit = async (values: CreateClientDto) => {
+  const onSubmit = async (values: EmailPasswordLoginDto) => {
     try {
-      const { data } = await AuthService.createAccount(values);
+      const { data } = await AuthService.emailPasswordLogin(values);
       if (
         data.code === EnumStatusResponse.SUCCESS &&
-        data.statusCode === EnumStatusCode.CLIENT_CREATED_SUCCESSFULLY
+        data.statusCode === EnumStatusCode.LOGGED_IN_SUCCESSFULLY
       ) {
-        showSuccessToast("Welcome! You'll soon be redirected...");
-
-        const { data: signinData } = await AuthService.emailPasswordLogin({
-          email: values.email,
-          password: values.password,
+        const { accessToken, refreshToken } = data.data as IAuthEntity;
+        TokensService.setToken({
+          property: KEYS.ACCESS_TOKEN_KEY,
+          value: accessToken,
         });
-        if (
-          signinData.code === EnumStatusResponse.SUCCESS &&
-          signinData.statusCode === EnumStatusCode.LOGGED_IN_SUCCESSFULLY
-        ) {
-          const { accessToken, refreshToken } = signinData.data as IAuthEntity;
-          TokensService.setToken({
-            property: KEYS.ACCESS_TOKEN_KEY,
-            value: accessToken,
-          });
-          TokensService.setToken({
-            property: KEYS.REFRESH_TOKEN_KEY,
-            value: refreshToken,
-          });
-
-          await initialize();
-
-          const encoded = searchParams.get("redirect_url");
-          const redirectTo = encoded ? decodeURIComponent(encoded) : "/";
-          navigate(redirectTo, { replace: true });
-        }
+        TokensService.setToken({
+          property: KEYS.REFRESH_TOKEN_KEY,
+          value: refreshToken,
+        });
+        await initialize();
+        showSuccessToast("Welcome back!");
+        const encoded = searchParams.get("redirect_url");
+        const redirectTo = encoded ? decodeURIComponent(encoded) : "/";
+        navigate(redirectTo, { replace: true });
       }
     } catch (error) {
       const err = error as AxiosError<IOrchestrationResult<string>>;
-      showErrorToast(
-        err.response?.data?.message || "Login failed. Please try again.",
-      );
+      switch (err.response.data.statusCode) {
+        case EnumStatusCode.INVALID_CREDENTIALS:
+          showWarningToast("Invalid credentials. Please try again.");
+          break;
+        case EnumStatusCode.LOGIN_METHOD_NOT_ALLOWED:
+          showWarningToast("Login method not allowed. Please try again.");
+          break;
+        case EnumStatusCode.VALIDATION_ERROR:
+          showWarningToast("Please check your input and try again.");
+          break;
+        case EnumStatusCode.INTERNAL_SERVER_ERROR:
+          showErrorToast("Something went wrong. Please try again.");
+          break;
+        default:
+          showErrorToast("Something went wrong. Please try again.");
+      }
     }
   };
 
@@ -89,7 +94,7 @@ const Signup = () => {
           <h1 className="text-3xl font-bold text-text tracking-tight">
             ChopMe
           </h1>
-          <p className="text-sm text-gray-400 mt-1">Sign up to Chopme</p>
+          <p className="text-sm text-gray-400 mt-1">Sign in to your account</p>
         </div>
 
         {/* Card */}
@@ -98,33 +103,6 @@ const Signup = () => {
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-4"
           >
-            {/* Full name */}
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold text-text uppercase tracking-wide">
-                Full name
-              </label>
-              <div
-                className={`flex items-center border rounded-xl px-4 py-3 gap-3 bg-background transition-colors ${
-                  errors.fullName
-                    ? "border-red-400"
-                    : "border-gray-200 focus-within:border-primary"
-                }`}
-              >
-                <Mail size={18} className="text-gray-400 shrink-0" />
-                <input
-                  type="fullName"
-                  placeholder="Eren Yager"
-                  {...register("fullName")}
-                  className="flex-1 bg-transparent outline-none text-text text-sm placeholder-gray-400"
-                />
-              </div>
-              {errors.fullName && (
-                <p className="text-xs text-red-500 mt-0.5">
-                  {errors.fullName.message}
-                </p>
-              )}
-            </div>
-
             {/* Email */}
             <div className="flex flex-col gap-1">
               <label className="text-xs font-semibold text-text uppercase tracking-wide">
@@ -186,31 +164,13 @@ const Signup = () => {
               )}
             </div>
 
-            {/* Confirm Password */}
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-semibold text-text uppercase tracking-wide">
-                Confirm Password
-              </label>
-              <div
-                className={`flex items-center border rounded-xl px-4 py-3 gap-3 bg-background transition-colors ${
-                  errors.confirmPassword
-                    ? "border-red-400"
-                    : "border-gray-200 focus-within:border-primary"
-                }`}
+            <div className="flex justify-end">
+              <button
+                type="button"
+                className="text-xs text-primary font-medium hover:underline"
               >
-                <Lock size={18} className="text-gray-400 shrink-0" />
-                <input
-                  type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
-                  {...register("confirmPassword")}
-                  className="flex-1 bg-transparent outline-none text-text text-sm placeholder-gray-400"
-                />
-              </div>
-              {errors.confirmPassword && (
-                <p className="text-xs text-red-500 mt-0.5">
-                  {errors.confirmPassword.message}
-                </p>
-              )}
+                Forgot password?
+              </button>
             </div>
 
             {/* Submit */}
@@ -219,7 +179,7 @@ const Signup = () => {
               disabled={isSubmitting || loadingInitialize}
               className="w-full bg-primary text-white font-semibold rounded-xl py-3.5 text-sm shadow-sm hover:opacity-90 active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed mt-1"
             >
-              {isSubmitting || loadingInitialize ? "Signing up..." : "Sign up"}
+              {isSubmitting || loadingInitialize ? "Signing in..." : "Sign in"}
             </button>
           </form>
 
@@ -233,17 +193,17 @@ const Signup = () => {
           </div>
 
           {/* Google */}
-          <GoogleAuthButton onGoogleLogin={() => {}} />
+          <GoogleAuthButton />
         </div>
 
-        {/* Sign in link */}
+        {/* Sign up link */}
         <p className="text-center text-sm text-gray-400 mt-6">
-          Have an account already ?{" "}
+          Don't have an account?{" "}
           <Link
-            to={"/signin"}
+            to={"/signup"}
             className="text-primary font-semibold hover:underline"
           >
-            Sign in
+            Sign up
           </Link>
         </p>
       </div>
@@ -251,4 +211,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Signin;

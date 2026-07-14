@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import Router from "./router";
-
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useInitializeAfterAuth from "./hooks/useInitializeAfterAuth";
+import WebSocket from "./components/WebSocket";
 
 function App() {
   const { initialize, loading } = useInitializeAfterAuth({
@@ -32,6 +32,7 @@ function App() {
         pauseOnHover
         theme="light"
       />
+      <WebSocket />
       <Router />
     </>
   );

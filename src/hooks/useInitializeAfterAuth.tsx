@@ -22,23 +22,29 @@ const useInitializeAfterAuth = ({
     if (!initialLoadingState) {
       setLoading(true);
     }
+
     try {
-      const { data } = await AuthService.getMyProfile();
+      const [userResponse, clientResponse] = await Promise.all([
+        AuthService.getMyProfile(),
+        ClientService.getMyProfile(),
+      ]);
+
+      const userData = userResponse.data;
       if (
-        data.code === EnumStatusResponse.SUCCESS &&
-        data.statusCode === EnumStatusCode.RECOVERED_SUCCESSFULLY &&
-        data.data
+        userData.code === EnumStatusResponse.SUCCESS &&
+        userData.statusCode === EnumStatusCode.RECOVERED_SUCCESSFULLY &&
+        userData.data
       ) {
-        dispatch(setUser(data.data));
+        dispatch(setUser(userData.data));
+      }
 
-        const { data: clientData } = await ClientService.getMyProfile();
-
-        if (
-          clientData.code === EnumStatusResponse.SUCCESS &&
-          clientData.statusCode === EnumStatusCode.RECOVERED_SUCCESSFULLY &&
-          clientData.data
-        )
-          dispatch(setClient(clientData.data));
+      const clientData = clientResponse.data;
+      if (
+        clientData.code === EnumStatusResponse.SUCCESS &&
+        clientData.statusCode === EnumStatusCode.RECOVERED_SUCCESSFULLY &&
+        clientData.data
+      ) {
+        dispatch(setClient(clientData.data));
       }
     } catch (error) {
       const err = error as AxiosError<IOrchestrationResult<string>>;
