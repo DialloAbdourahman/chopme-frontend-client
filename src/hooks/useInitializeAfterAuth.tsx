@@ -8,7 +8,12 @@ import { AxiosError } from "axios";
 import { useState } from "react";
 import { AuthService } from "../services/auth.service";
 import { ClientService } from "../services/client.service";
-import { setClient, setUser } from "../store/user.slice";
+import {
+  setClient,
+  setUser,
+  setUserAddressLocalStorage,
+} from "../store/user.slice";
+import useSetupLocation from "./useSetupLocation";
 
 const useInitializeAfterAuth = ({
   initialLoadingState,
@@ -17,10 +22,16 @@ const useInitializeAfterAuth = ({
 }) => {
   const [loading, setLoading] = useState(initialLoadingState);
   const dispatch = useDispatch();
+  const { getLocalStorageLocation } = useSetupLocation();
 
   const initialize = async () => {
     if (!initialLoadingState) {
       setLoading(true);
+    }
+
+    const localLocation = getLocalStorageLocation();
+    if (localLocation) {
+      dispatch(setUserAddressLocalStorage(localLocation));
     }
 
     try {

@@ -1,23 +1,34 @@
 import { ChefHat, MapPin, Menu, X } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import type { RootState } from "../store";
 import useSetupLocation from "../hooks/useSetupLocation";
 import { useSelector } from "react-redux";
 import Modal from "./Modal";
+import type { FindRestaurantDto } from "chopme-frontend-common";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { setupLocation, getLocalStorageLocation, loadingSetupLocation } =
-    useSetupLocation();
-  const { client } = useSelector((state: RootState) => state.user);
+  const { setupLocation, loadingSetupLocation } = useSetupLocation();
+  const { client, userAddressLocalStorage } = useSelector(
+    (state: RootState) => state.user,
+  );
   const [showModal, setShowModal] = useState(false);
 
-  const location = client?.address ?? getLocalStorageLocation();
+  const location = client?.address ?? userAddressLocalStorage;
+  const filters: FindRestaurantDto = {};
+  if (location) {
+    filters.latitude = location.latitude;
+    filters.longitude = location.longitude;
+    filters.radiusKm = 100;
+  }
 
   const navLinks = [
     { label: "Home", href: "/" },
-    { label: "Restaurants", href: "/restaurants" },
+    {
+      label: "Restaurants",
+      href: `/restaurants?page=1&filter=${JSON.stringify(filters)}`,
+    },
     { label: "Orders", href: "/orders" },
     { label: "Profile", href: "/profile" },
   ];
@@ -56,13 +67,19 @@ const Navbar = () => {
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
-              <Link
+              <NavLink
                 key={link.label}
                 to={link.href}
-                className="text-sm font-medium text-gray-500 hover:text-primary transition-colors"
+                className={({ isActive }) =>
+                  `text-sm font-medium transition-colors ${
+                    isActive
+                      ? "text-primary"
+                      : "text-gray-500 hover:text-primary"
+                  }`
+                }
               >
                 {link.label}
-              </Link>
+              </NavLink>
             ))}
             <Link
               to={"/signin"}
@@ -86,18 +103,24 @@ const Navbar = () => {
           <div className="md:hidden border-t border-gray-100 px-4 pb-4 bg-card">
             <div className="flex flex-col gap-3 pt-4">
               {navLinks.map((link) => (
-                <Link
+                <NavLink
                   key={link.label}
                   to={link.href}
                   onClick={() => setIsOpen(false)}
-                  className="text-sm font-medium text-gray-500 hover:text-primary transition-colors"
+                  className={({ isActive }) =>
+                    `text-sm font-medium transition-colors ${
+                      isActive
+                        ? "text-primary"
+                        : "text-gray-500 hover:text-primary"
+                    }`
+                  }
                 >
                   {link.label}
-                </Link>
+                </NavLink>
               ))}
               <Link
                 to={"/signin"}
-                className="w-full bg-primary text-white rounded-xl py-3 text-sm font-semibold mt-2"
+                className="w-full bg-primary text-white rounded-xl px-4 py-3 text-sm font-semibold mt-2 text-center"
               >
                 Sign in
               </Link>

@@ -1,15 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { IClientEntity, IUserEntity } from "chopme-frontend-common";
+import type {
+  IAddressEntity,
+  IClientEntity,
+  IUserEntity,
+} from "chopme-frontend-common";
 
 export interface UserState {
   user: IUserEntity | null;
   client: IClientEntity | null;
+  userAddressLocalStorage: IAddressEntity | null;
 }
 
 const initialState: UserState = {
   user: null,
   client: null,
+  userAddressLocalStorage: null,
 };
 
 export const userSlice = createSlice({
@@ -31,9 +37,27 @@ export const userSlice = createSlice({
     clearClient: (state) => {
       state.client = null;
     },
+
+    setUserAddressLocalStorage: (
+      state,
+      action: PayloadAction<IAddressEntity>,
+    ) => {
+      state.userAddressLocalStorage = action.payload;
+    },
+
+    clearUserAddressLocalStorage: (state) => {
+      state.userAddressLocalStorage = null;
+    },
   },
 });
 
-export const { setUser, clearUser, setClient, clearClient } = userSlice.actions;
+export const {
+  setUser,
+  clearUser,
+  setClient,
+  clearClient,
+  setUserAddressLocalStorage,
+  clearUserAddressLocalStorage,
+} = userSlice.actions;
 
 export default userSlice.reducer;

@@ -5,7 +5,7 @@ import {
   type IAddressEntity,
 } from "chopme-frontend-common";
 import { ClientService } from "../services/client.service";
-import { setClient } from "../store/user.slice";
+import { setClient, setUserAddressLocalStorage } from "../store/user.slice";
 import { geocodeService } from "../utils/geocode";
 import { KEYS } from "../utils/keys";
 import type { RootState } from "../store";
@@ -80,6 +80,8 @@ const useSetupLocation = () => {
       KEYS.LOCATION_IN_LOCAL_STORAGE_KEY,
       JSON.stringify(location),
     );
+
+    dispatch(setUserAddressLocalStorage(location));
 
     if (user && client) {
       const { data } = await ClientService.updateMyAddress({

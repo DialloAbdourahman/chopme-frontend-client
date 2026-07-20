@@ -1,75 +1,37 @@
-import {
-  Search,
-  ChefHat,
-  ArrowRight,
-  Store,
-  Phone,
-  MapPin,
-} from "lucide-react";
+import { Search, ChefHat, Store, Phone, MapPin } from "lucide-react";
 import Navbar from "../components/Navbar";
-import RestaurantCard from "../components/RestaurantCard";
+import RestaurantsInHomepage from "../components/RestaurantsInHomepage";
 import useSetupLocation from "../hooks/useSetupLocation";
 import { useEffect, useState } from "react";
 import type { RootState } from "../store";
 import { useSelector } from "react-redux";
 import Modal from "../components/Modal";
-
-const nearbyRestaurants = [
-  {
-    id: "1",
-    name: "Bon Appétit",
-    cuisine: "African • Grill",
-    rating: 4.7,
-    time: "25-40 min",
-    deliveryFee: "1,500 FCFA",
-    image:
-      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=400&q=80",
-    isOpen: true,
-  },
-  {
-    id: "2",
-    name: "Le Saporie",
-    cuisine: "Pizza • Italian",
-    rating: 4.5,
-    time: "30-45 min",
-    deliveryFee: "1,000 FCFA",
-    image:
-      "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=400&q=80",
-    isOpen: true,
-  },
-  {
-    id: "3",
-    name: "Chez Mama",
-    cuisine: "Local • Traditional",
-    rating: 4.9,
-    time: "20-35 min",
-    deliveryFee: "1,200 FCFA",
-    image:
-      "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=400&q=80",
-    isOpen: true,
-  },
-  {
-    id: "4",
-    name: "Urban Burger",
-    cuisine: "Burgers • Fast food",
-    rating: 4.3,
-    time: "15-25 min",
-    deliveryFee: "1,000 FCFA",
-    image:
-      "https://images.unsplash.com/photo-1571091718767-18b5b8097d?auto=format&fit=crop&w=400&q=80",
-    isOpen: false,
-  },
-];
+import { Link } from "react-router-dom";
+import type { FindRestaurantDto } from "chopme-frontend-common";
 
 const Home = () => {
-  const { setupLocation, getLocalStorageLocation, loadingSetupLocation } =
-    useSetupLocation();
-  const { client } = useSelector((state: RootState) => state.user);
+  const [search, setSearch] = useState("");
+  const { setupLocation, loadingSetupLocation } = useSetupLocation();
+  const { client, userAddressLocalStorage } = useSelector(
+    (state: RootState) => state.user,
+  );
   const [showModal, setShowModal] = useState(false);
+
+  const location = client?.address ?? userAddressLocalStorage;
+
+  const filters: FindRestaurantDto = {};
+  if (location) {
+    filters.latitude = location.latitude;
+    filters.longitude = location.longitude;
+    filters.radiusKm = 100;
+  }
+  if (search) {
+    filters.search = search;
+  }
 
   useEffect(() => {
     const initializeLocation = async () => {
-      if (!client?.address && !getLocalStorageLocation()) {
+      if (!location) {
         setShowModal(true);
       }
     };
@@ -79,6 +41,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+
       {showModal && (
         <Modal
           open={showModal}
@@ -131,61 +94,43 @@ const Home = () => {
 
               {/* Search bar */}
               <div className="bg-white rounded-2xl p-2 flex items-center gap-2 max-w-md shadow-md">
-                <div className="bg-background p-2 rounded-xl">
+                <div className="bg-background p-2 rounded-xl flex-shrink-0">
                   <Search size={18} className="text-primary" />
                 </div>
+
                 <input
                   type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                   placeholder="Search dishes, restaurants..."
-                  className="flex-1 bg-transparent outline-none text-text text-sm placeholder-gray-400"
+                  className="flex-1 min-w-0 bg-transparent outline-none text-text text-sm placeholder-gray-400"
                 />
-                <button className="bg-primary text-white rounded-xl px-5 py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity">
+
+                <Link
+                  to={`/restaurants?page=1&filter=${JSON.stringify(filters)}`}
+                  className="flex-shrink-0 bg-primary text-white rounded-xl px-5 py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity"
+                >
                   Find
-                </button>
+                </Link>
               </div>
 
               {/* Quick tags */}
               <div className="flex flex-wrap gap-2 mt-5">
-                {["Burgers", "Pizza", "Local", "Sushi", "Desserts"].map(
-                  (tag) => (
-                    <span
-                      key={tag}
-                      className="bg-white/20 hover:bg-white/30 transition-colors text-xs font-medium px-3 py-1.5 rounded-full cursor-pointer"
-                    >
-                      {tag}
-                    </span>
-                  ),
-                )}
+                {["Pizza", "Local", "Sushi", "Desserts"].map((tag) => (
+                  <span
+                    key={tag}
+                    className="bg-white/20 hover:bg-white/30 transition-colors text-xs font-medium px-3 py-1.5 rounded-full cursor-pointer"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Nearby restaurants */}
-      <section className="px-4 pb-16">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-xl font-bold text-text">
-                Restaurants near you
-              </h2>
-              <p className="text-sm text-gray-500 mt-0.5">
-                Tasty options close to your location
-              </p>
-            </div>
-            <button className="text-primary text-sm font-semibold flex items-center gap-1 hover:underline">
-              See all <ArrowRight size={16} />
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {nearbyRestaurants.map((restaurant) => (
-              <RestaurantCard key={restaurant.id} {...restaurant} />
-            ))}
-          </div>
-        </div>
-      </section>
+      <RestaurantsInHomepage location={location} />
 
       {/* How it works */}
       <section className="px-4 pb-16">

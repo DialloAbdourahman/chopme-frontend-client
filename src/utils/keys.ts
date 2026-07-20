@@ -7,4 +7,5 @@ export const KEYS = {
   GOOGLE_PLACE_API_KEY: import.meta.env.VITE_GOOGLE_PLACE_API_KEY,
   LOCATION_IN_LOCAL_STORAGE_KEY: import.meta.env
     .VITE_LOCATION_IN_LOCAL_STORAGE_KEY,
+  PUBLIC_S3_PREFIX: import.meta.env.VITE_PUBLIC_S3_PREFIX,
 } as const;
