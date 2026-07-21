@@ -1,6 +1,26 @@
-import type { IRestaurantEntity } from "chopme-frontend-common";
+import type {
+  IRestaurantDeliveryPricingKm,
+  IRestaurantEntity,
+} from "chopme-frontend-common";
 
 export class ComputeUtils {
+  /**
+   * Returns the delivery pricing object matching the given distance,
+   * or undefined if the distance is not covered (delivery not possible).
+   */
+  static getDeliveryPricing(
+    deliveryPricingKm: IRestaurantDeliveryPricingKm[],
+    distanceKm?: number,
+  ): IRestaurantDeliveryPricingKm | undefined {
+    if (distanceKm === undefined || !deliveryPricingKm) {
+      return undefined;
+    }
+
+    return deliveryPricingKm.find(
+      (p) => distanceKm >= p.from && distanceKm < p.to,
+    );
+  }
+
   /**
    * Estimates the delivery time based on the distance in kilometers.
    * Examples:

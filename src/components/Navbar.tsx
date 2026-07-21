@@ -1,19 +1,23 @@
-import { ChefHat, MapPin, Menu, X } from "lucide-react";
+import { ChefHat, MapPin, Menu, ShoppingCart, X } from "lucide-react";
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import type { RootState } from "../store";
-import useSetupLocation from "../hooks/useSetupLocation";
 import { useSelector } from "react-redux";
-import Modal from "./Modal";
 import type { FindRestaurantDto } from "chopme-frontend-common";
+import AddUserLocation from "./AddUserLocation";
+import CartDrawer from "./CartDrawer";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { setupLocation, loadingSetupLocation } = useSetupLocation();
   const { client, userAddressLocalStorage } = useSelector(
     (state: RootState) => state.user,
   );
+  const { cart } = useSelector((state: RootState) => state.cart);
   const [showModal, setShowModal] = useState(false);
+  const [showCart, setShowCart] = useState(false);
+
+  const totalCartItems =
+    cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
 
   const location = client?.address ?? userAddressLocalStorage;
   const filters: FindRestaurantDto = {};
@@ -51,7 +55,8 @@ const Navbar = () => {
             <div className="flex items-center gap-1.5 bg-background px-3 py-1.5 rounded-full text-xs font-medium text-text">
               <MapPin size={14} className="text-primary" />
               <span>
-                {location.city}, {location.country}
+                {/* {location.city}, {location.country} */}
+                {location.city}
               </span>
             </div>
           ) : (
@@ -66,6 +71,18 @@ const Navbar = () => {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-6">
+            <button
+              onClick={() => setShowCart(true)}
+              className="relative p-2 text-text hover:text-primary transition-colors"
+              aria-label="Open cart"
+            >
+              <ShoppingCart size={22} />
+              {totalCartItems > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                  {totalCartItems > 9 ? "9+" : totalCartItems}
+                </span>
+              )}
+            </button>
             {navLinks.map((link) => (
               <NavLink
                 key={link.label}
@@ -89,13 +106,27 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Mobile menu toggle */}
-          <button
-            onClick={() => setIsOpen((v) => !v)}
-            className="md:hidden p-2 text-text"
-          >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile actions */}
+          <div className="flex items-center gap-1 md:hidden">
+            <button
+              onClick={() => setShowCart(true)}
+              className="relative p-2 text-text hover:text-primary transition-colors"
+              aria-label="Open cart"
+            >
+              <ShoppingCart size={22} />
+              {totalCartItems > 0 && (
+                <span className="absolute -top-1 -right-1 bg-primary text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                  {totalCartItems > 9 ? "9+" : totalCartItems}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setIsOpen((v) => !v)}
+              className="p-2 text-text"
+            >
+              {isOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile menu */}
@@ -128,33 +159,8 @@ const Navbar = () => {
           </div>
         )}
       </nav>
-      {showModal && (
-        <Modal
-          open={showModal}
-          setOpen={setShowModal}
-          title="Share your location"
-          clickOutside={false}
-          loading={loadingSetupLocation}
-          xlSize="1"
-          textButton="Use my location"
-          onValidate={async () => {
-            await setupLocation();
-            setShowModal(false);
-          }}
-        >
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-primary">
-              <MapPin className="h-5 w-5" />
-              <span className="font-medium">Find nearby restaurants</span>
-            </div>
-            <p>
-              Share your location to see{" "}
-              <span className="text-accent font-medium">restaurants</span> and{" "}
-              <span className="text-accent font-medium">dishes</span> near you.
-            </p>
-          </div>
-        </Modal>
-      )}
+      <AddUserLocation setShowModal={setShowModal} showModal={showModal} />
+      <CartDrawer open={showCart} onClose={() => setShowCart(false)} />
     </>
   );
 };

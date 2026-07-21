@@ -1,17 +1,15 @@
-import { Search, ChefHat, Store, Phone, MapPin } from "lucide-react";
+import { Search, ChefHat, Store, Phone } from "lucide-react";
 import Navbar from "../components/Navbar";
 import RestaurantsInHomepage from "../components/RestaurantsInHomepage";
-import useSetupLocation from "../hooks/useSetupLocation";
 import { useEffect, useState } from "react";
 import type { RootState } from "../store";
 import { useSelector } from "react-redux";
-import Modal from "../components/Modal";
 import { Link } from "react-router-dom";
 import type { FindRestaurantDto } from "chopme-frontend-common";
+import AddUserLocation from "../components/AddUserLocation";
 
 const Home = () => {
   const [search, setSearch] = useState("");
-  const { setupLocation, loadingSetupLocation } = useSetupLocation();
   const { client, userAddressLocalStorage } = useSelector(
     (state: RootState) => state.user,
   );
@@ -42,33 +40,7 @@ const Home = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {showModal && (
-        <Modal
-          open={showModal}
-          setOpen={setShowModal}
-          title="Share your location"
-          clickOutside={false}
-          loading={loadingSetupLocation}
-          xlSize="1"
-          textButton="Use my location"
-          onValidate={async () => {
-            await setupLocation();
-            setShowModal(false);
-          }}
-        >
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-primary">
-              <MapPin className="h-5 w-5" />
-              <span className="font-medium">Find nearby restaurants</span>
-            </div>
-            <p>
-              Share your location to see{" "}
-              <span className="text-accent font-medium">restaurants</span> and{" "}
-              <span className="text-accent font-medium">dishes</span> near you.
-            </p>
-          </div>
-        </Modal>
-      )}
+      <AddUserLocation setShowModal={setShowModal} showModal={showModal} />
 
       {/* Hero */}
       <section className="px-4 pt-8 pb-12 md:pt-14 md:pb-16">

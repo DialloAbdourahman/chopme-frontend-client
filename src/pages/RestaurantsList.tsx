@@ -1,6 +1,6 @@
-import { MapPin, Search, Store } from "lucide-react";
+import { ArrowLeft, Search, Store } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   EnumStatusCode,
   EnumStatusResponse,
@@ -10,11 +10,11 @@ import {
 import Navbar from "../components/Navbar";
 import RestaurantCard from "../components/RestaurantCard";
 import { RestaurantService } from "../services/restaurant.service";
-import useSetupLocation from "../hooks/useSetupLocation";
 import { useSelector } from "react-redux";
 import type { RootState } from "../store";
-import Modal from "../components/Modal";
 import RestaurantFilters from "../components/RestaurantFilters";
+import AddUserLocation from "../components/AddUserLocation";
+import Pagination from "../components/Pagination";
 
 const parseFilters = (value: string | null): FindRestaurantDto => {
   if (!value) return {};
@@ -29,6 +29,7 @@ const RestaurantsList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [restaurants, setRestaurants] = useState<IRestaurantEntity[]>([]);
+  const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
 
   const limit = 10;
@@ -44,7 +45,6 @@ const RestaurantsList = () => {
 
   const [search, setSearch] = useState(filters?.search ?? "");
 
-  const { setupLocation, loadingSetupLocation } = useSetupLocation();
   const { client, userAddressLocalStorage } = useSelector(
     (state: RootState) => state.user,
   );
@@ -119,6 +119,7 @@ const RestaurantsList = () => {
           result.data.data
         ) {
           setRestaurants(result.data.data.items);
+          setTotalPages(result.data.data.totalPages);
         }
       } catch (error) {
         console.error("Failed to fetch restaurants:", error);
@@ -134,33 +135,7 @@ const RestaurantsList = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {showModal && (
-        <Modal
-          open={showModal}
-          setOpen={setShowModal}
-          title="Share your location"
-          clickOutside={false}
-          loading={loadingSetupLocation}
-          xlSize="1"
-          textButton="Use my location"
-          onValidate={async () => {
-            await setupLocation();
-            setShowModal(false);
-          }}
-        >
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-primary">
-              <MapPin className="h-5 w-5" />
-              <span className="font-medium">Find nearby restaurants</span>
-            </div>
-            <p>
-              Share your location to see{" "}
-              <span className="text-accent font-medium">restaurants</span> and{" "}
-              <span className="text-accent font-medium">dishes</span> near you.
-            </p>
-          </div>
-        </Modal>
-      )}
+      <AddUserLocation setShowModal={setShowModal} showModal={showModal} />
 
       {/* {JSON.stringify(filters)} */}
 
@@ -168,6 +143,13 @@ const RestaurantsList = () => {
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="mb-6">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-primary transition-colors mb-2"
+            >
+              <ArrowLeft size={16} />
+              Back to home
+            </Link>
             <h1 className="text-2xl font-bold text-text">Restaurants</h1>
             <p className="text-sm text-gray-500 mt-0.5">
               Search and discover the best places to eat
@@ -216,11 +198,18 @@ const RestaurantsList = () => {
               ))}
             </div>
           ) : restaurants.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {restaurants.map((restaurant) => (
-                <RestaurantCard key={restaurant.id} restaurant={restaurant} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {restaurants.map((restaurant) => (
+                  <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+                ))}
+              </div>
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+              />
+            </>
           ) : (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <div className="bg-card rounded-full p-4 mb-4">

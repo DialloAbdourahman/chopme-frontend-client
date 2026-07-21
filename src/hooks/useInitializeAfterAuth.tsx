@@ -14,6 +14,9 @@ import {
   setUserAddressLocalStorage,
 } from "../store/user.slice";
 import useSetupLocation from "./useSetupLocation";
+import { KEYS } from "../utils/keys";
+import { setCart } from "../store/cart";
+import type { ICart } from "../interfaces/cart-item";
 
 const useInitializeAfterAuth = ({
   initialLoadingState,
@@ -29,9 +32,18 @@ const useInitializeAfterAuth = ({
       setLoading(true);
     }
 
-    const localLocation = getLocalStorageLocation();
-    if (localLocation) {
-      dispatch(setUserAddressLocalStorage(localLocation));
+    // Get the local storage location.
+    const locationInLocalStorage = getLocalStorageLocation();
+    if (locationInLocalStorage) {
+      dispatch(setUserAddressLocalStorage(locationInLocalStorage));
+    }
+
+    // Get cart in local storage
+    const cartInLocalStorage = JSON.parse(
+      localStorage.getItem(KEYS.CART_IN_LOCAL_STORAGE) ?? "null",
+    );
+    if (cartInLocalStorage) {
+      dispatch(setCart(cartInLocalStorage as ICart));
     }
 
     try {
@@ -55,7 +67,25 @@ const useInitializeAfterAuth = ({
         clientData.statusCode === EnumStatusCode.RECOVERED_SUCCESSFULLY &&
         clientData.data
       ) {
-        dispatch(setClient(clientData.data));
+        if (!clientData.data.address && locationInLocalStorage) {
+          try {
+            const { data } = await ClientService.updateMyAddress({
+              longitude: locationInLocalStorage.longitude,
+              latitude: locationInLocalStorage.latitude,
+              country: locationInLocalStorage.country,
+              city: locationInLocalStorage.city,
+            });
+
+            dispatch(setClient(data.data));
+          } catch (error) {
+            console.error("Failed to update client address", error);
+
+            // Continue using the original client data
+            dispatch(setClient(clientData.data));
+          }
+        } else {
+          dispatch(setClient(clientData.data));
+        }
       }
     } catch (error) {
       const err = error as AxiosError<IOrchestrationResult<string>>;

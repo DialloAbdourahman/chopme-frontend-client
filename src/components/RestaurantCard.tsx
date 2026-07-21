@@ -1,4 +1,5 @@
 import { Star, Clock, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
 import type { IAddressEntity, IRestaurantEntity } from "chopme-frontend-common";
 import { KEYS } from "../utils/keys";
 import { ComputeUtils } from "../utils/compute-utils";
@@ -10,7 +11,7 @@ type Props = {
 };
 
 const RestaurantCard = ({ restaurant }: Props) => {
-  const { name, type, coverImage, pictures, distanceKm } = restaurant;
+  const { name, slug, type, coverImage, pictures, distanceKm } = restaurant;
 
   const imageUrl = coverImage
     ? `${KEYS.PUBLIC_S3_PREFIX}/${coverImage}`
@@ -23,7 +24,10 @@ const RestaurantCard = ({ restaurant }: Props) => {
   const isClosed = ComputeUtils.isRestaurantClosed(restaurant);
 
   return (
-    <div className="bg-card rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow group">
+    <Link
+      to={`/restaurants/${slug}`}
+      className="block bg-card rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow group"
+    >
       <div className="relative h-40">
         {imageUrl ? (
           <img
@@ -72,7 +76,7 @@ const RestaurantCard = ({ restaurant }: Props) => {
           Order now
         </button>
       </div>
-    </div>
+    </Link>
   );
 };
 

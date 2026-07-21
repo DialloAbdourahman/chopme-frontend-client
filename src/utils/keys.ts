@@ -8,4 +8,5 @@ export const KEYS = {
   LOCATION_IN_LOCAL_STORAGE_KEY: import.meta.env
     .VITE_LOCATION_IN_LOCAL_STORAGE_KEY,
   PUBLIC_S3_PREFIX: import.meta.env.VITE_PUBLIC_S3_PREFIX,
+  CART_IN_LOCAL_STORAGE: import.meta.env.VITE_CART_IN_LOCAL_STORAGE,
 } as const;

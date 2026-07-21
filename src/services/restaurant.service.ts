@@ -22,4 +22,16 @@ export const RestaurantService = {
       params: { page, limit },
     });
   },
+
+  findOne: (
+    idOrSlug: string,
+    coordinates?: { longitude: number; latitude: number },
+  ) => {
+    return axiosBaseClient.get<IOrchestrationResult<IRestaurantEntity>>(
+      `/restaurants/${idOrSlug}`,
+      {
+        params: coordinates,
+      },
+    );
+  },
 };
