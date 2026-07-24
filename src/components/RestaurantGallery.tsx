@@ -8,10 +8,9 @@ type Props = {
 };
 
 const RestaurantGallery = ({ name, coverImage, pictures }: Props) => {
-  const images = [
-    ...(coverImage ? [coverImage] : []),
-    ...(pictures ?? []),
-  ].map((img) => `${KEYS.PUBLIC_S3_PREFIX}/${img}`);
+  const images = [...(coverImage ? [coverImage] : []), ...(pictures ?? [])].map(
+    (img) => `${KEYS.PUBLIC_S3_PREFIX}/${img}`,
+  );
 
   const [selected, setSelected] = useState(0);
 
@@ -29,12 +28,12 @@ const RestaurantGallery = ({ name, coverImage, pictures }: Props) => {
         <img
           src={images[selected]}
           alt={name}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover rounded-2xl"
         />
       </div>
 
       {images.length > 1 && (
-        <div className="flex gap-2 px-4 mt-3 overflow-x-auto pb-1">
+        <div className="flex gap-2  mt-3 overflow-x-auto pb-1">
           {images.map((img, i) => (
             <button
               key={img}

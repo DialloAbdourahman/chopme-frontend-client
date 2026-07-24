@@ -4,6 +4,7 @@ import Signup from "./pages/Signup";
 import Home from "./pages/Home";
 import RestaurantsList from "./pages/RestaurantsList";
 import RestaurantDetails from "./pages/RestaurantDetails";
+import MenuDetails from "./pages/MenuDetails";
 
 const Router = () => {
   // const {user} = useSelector((state: RootState) => state.user);
@@ -15,6 +16,10 @@ const Router = () => {
         <Route path="/" element={<Home />} />
         <Route path="/restaurants" element={<RestaurantsList />} />
         <Route path="/restaurants/:slug" element={<RestaurantDetails />} />
+        <Route
+          path="/restaurants/:slug/menu/:menuId"
+          element={<MenuDetails />}
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

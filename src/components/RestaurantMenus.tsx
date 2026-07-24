@@ -42,7 +42,10 @@ const RestaurantMenus = ({ restaurantId, restaurantName }: Props) => {
 
   return (
     <div className="bg-card rounded-2xl p-4 shadow-sm">
-      <h2 className="font-semibold text-text mb-4">Menu</h2>
+      <div className="flex items-center gap-2 mb-4">
+        <UtensilsCrossed size={18} className="text-primary" />
+        <h2 className="font-semibold text-text">Menu</h2>
+      </div>
 
       {loading ? (
         <div className="space-y-3">

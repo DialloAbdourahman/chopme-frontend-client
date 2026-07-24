@@ -59,6 +59,9 @@ const RestaurantDetails = () => {
           result.data.data
         ) {
           setRestaurant(result.data.data);
+          RestaurantService.incrementTotalViews(result.data.data.id).catch(
+            (error) => console.error("Failed to increment views:", error),
+          );
         }
       } catch (error) {
         console.error("Failed to fetch restaurant:", error);
@@ -111,11 +114,13 @@ const RestaurantDetails = () => {
       <div className="max-w-3xl mx-auto">
         <button
           onClick={handleBack}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-primary transition-colors px-4 pt-4"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-primary transition-colors  pt-4"
         >
           <ArrowLeft size={16} />
           Back
         </button>
+
+        <div className="mt-4"></div>
 
         {/* Gallery */}
         <RestaurantGallery
@@ -124,7 +129,7 @@ const RestaurantDetails = () => {
           pictures={restaurant.pictures}
         />
 
-        <div className="px-4 mt-4 space-y-4">
+        <div className="mt-4 space-y-4">
           {/* Header */}
           <RestaurantHeader restaurant={restaurant} />
 

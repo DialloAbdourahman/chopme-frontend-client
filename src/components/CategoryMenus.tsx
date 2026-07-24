@@ -5,7 +5,7 @@ import {
   EnumStatusCode,
   EnumStatusResponse,
   type ICategoryEntity,
-  type Menu,
+  type IMenu,
 } from "chopme-frontend-common";
 import { MenuService } from "../services/menu.service";
 import MenuCard from "./MenuCard";
@@ -26,7 +26,7 @@ type Props = {
 const LIMIT = 10;
 
 const CategoryMenus = ({ restaurantId, restaurantName, category }: Props) => {
-  const [menus, setMenus] = useState<Menu[]>([]);
+  const [menus, setMenus] = useState<IMenu[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -35,15 +35,15 @@ const CategoryMenus = ({ restaurantId, restaurantName, category }: Props) => {
   const { cart } = useSelector((state: RootState) => state.cart);
 
   // Menu waiting to be added while the cart belongs to another restaurant
-  const [pendingMenu, setPendingMenu] = useState<Menu | null>(null);
+  const [pendingMenu, setPendingMenu] = useState<IMenu | null>(null);
   const [showCartWarning, setShowCartWarning] = useState(false);
 
-  const getQuantityInCart = (menu: Menu): number => {
+  const getQuantityInCart = (menu: IMenu): number => {
     if (!cart || cart.restaurantId !== restaurantId) return 0;
     return cart.items.find((item) => item.menuId === menu.id)?.quantity ?? 0;
   };
 
-  const handleAdd = (menu: Menu) => {
+  const handleAdd = (menu: IMenu) => {
     // Cart exists for another restaurant: warn first
     if (cart && cart.restaurantId !== restaurantId) {
       setPendingMenu(menu);
@@ -69,11 +69,11 @@ const CategoryMenus = ({ restaurantId, restaurantName, category }: Props) => {
     setShowCartWarning(false);
   };
 
-  const handleIncrement = (menu: Menu) => {
+  const handleIncrement = (menu: IMenu) => {
     dispatch(incrementCartItemQuantity({ menuId: menu.id }));
   };
 
-  const handleDecrement = (menu: Menu) => {
+  const handleDecrement = (menu: IMenu) => {
     dispatch(decrementCartItemQuantity({ menuId: menu.id }));
   };
 

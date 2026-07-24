@@ -1,4 +1,4 @@
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Contact, Mail, MapPin, Phone } from "lucide-react";
 import type { IRestaurantAddress } from "chopme-frontend-common";
 
 type Props = {
@@ -14,7 +14,10 @@ const RestaurantContactInfo = ({ phone, email, address }: Props) => {
 
   return (
     <div className="bg-card rounded-2xl p-4 shadow-sm">
-      <h2 className="font-semibold text-text mb-3">Contact & address</h2>
+      <div className="flex items-center gap-2 mb-3">
+        <Contact size={18} className="text-primary" />
+        <h2 className="font-semibold text-text">Contact & address</h2>
+      </div>
       <ul className="space-y-3">
         <li className="flex items-start gap-3 text-sm text-gray-600">
           <MapPin size={16} className="text-primary shrink-0 mt-0.5" />

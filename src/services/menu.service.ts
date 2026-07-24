@@ -1,6 +1,6 @@
 import type {
   IOrchestrationResult,
-  Menu,
+  IMenu,
   Pagination,
 } from "chopme-frontend-common";
 import { axiosBaseClient } from "../lib/axios";
@@ -19,7 +19,7 @@ export const MenuService = {
     categoryId?: string;
     search?: string;
   }) => {
-    return axiosBaseClient.get<IOrchestrationResult<Pagination<Menu>>>(
+    return axiosBaseClient.get<IOrchestrationResult<Pagination<IMenu>>>(
       "/menus/search",
       {
         params: { page, limit, restaurantId, categoryId, search },
@@ -28,6 +28,6 @@ export const MenuService = {
   },
 
   findOne: (id: string) => {
-    return axiosBaseClient.get<IOrchestrationResult<Menu>>(`/menus/${id}`);
+    return axiosBaseClient.get<IOrchestrationResult<IMenu>>(`/menus/${id}`);
   },
 };

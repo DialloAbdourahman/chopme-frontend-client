@@ -1,13 +1,15 @@
-import { Minus, Plus, Star } from "lucide-react";
-import type { Menu } from "chopme-frontend-common";
+import { Minus, Plus, ShoppingBag } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import type { IMenu } from "chopme-frontend-common";
 import { KEYS } from "../utils/keys";
+import { ComputeUtils } from "../utils/compute-utils";
 
 type Props = {
-  menu: Menu;
+  menu: IMenu;
   quantityInCart: number;
-  onAdd: (menu: Menu) => void;
-  onIncrement: (menu: Menu) => void;
-  onDecrement: (menu: Menu) => void;
+  onAdd: (menu: IMenu) => void;
+  onIncrement: (menu: IMenu) => void;
+  onDecrement: (menu: IMenu) => void;
 };
 
 const MenuCard = ({
@@ -17,6 +19,7 @@ const MenuCard = ({
   onIncrement,
   onDecrement,
 }: Props) => {
+  const navigate = useNavigate();
   const { name, description, coverImage, pictures, available } = menu;
 
   const imageUrl = coverImage
@@ -25,10 +28,18 @@ const MenuCard = ({
       ? `${KEYS.PUBLIC_S3_PREFIX}/${pictures[0]}`
       : null;
 
-  const rating = 4.5;
+  const totalOrders = ComputeUtils.getMenuTotalOrders(menu.ordersCount);
+
+  const handleOpenDetails = () => {
+    if (!menu.restaurant?.slug) return;
+    navigate(`/restaurants/${menu.restaurant.slug}/menu/${menu.id}`);
+  };
 
   return (
-    <div className="flex gap-3 bg-background rounded-2xl p-3 hover:shadow-sm transition-shadow">
+    <div
+      onClick={handleOpenDetails}
+      className="flex gap-3 bg-background rounded-2xl p-3 hover:shadow-sm transition-shadow cursor-pointer"
+    >
       {/* Image */}
       <div className="relative shrink-0 w-24 h-24 rounded-xl overflow-hidden">
         {imageUrl ? (
@@ -58,8 +69,8 @@ const MenuCard = ({
         <div className="flex items-start justify-between gap-2">
           <h4 className="font-semibold text-text text-sm truncate">{name}</h4>
           <div className="flex items-center gap-1 shrink-0 text-xs font-semibold text-text">
-            <Star size={12} className="text-accent fill-accent" />
-            {rating}
+            <ShoppingBag size={12} className="text-primary" />
+            {totalOrders}
           </div>
         </div>
 
@@ -76,7 +87,10 @@ const MenuCard = ({
           {quantityInCart > 0 ? (
             <div className="flex items-center gap-2">
               <button
-                onClick={() => onDecrement(menu)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDecrement(menu);
+                }}
                 aria-label="Decrease quantity"
                 className="w-7 h-7 flex items-center justify-center bg-primary/10 text-primary rounded-lg hover:bg-primary/20 active:scale-95 transition-all"
               >
@@ -86,7 +100,10 @@ const MenuCard = ({
                 {quantityInCart}
               </span>
               <button
-                onClick={() => onIncrement(menu)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onIncrement(menu);
+                }}
                 aria-label="Increase quantity"
                 className="w-7 h-7 flex items-center justify-center bg-primary text-white rounded-lg hover:opacity-90 active:scale-95 transition-all"
               >
@@ -96,7 +113,10 @@ const MenuCard = ({
           ) : (
             <button
               disabled={!available}
-              onClick={() => onAdd(menu)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onAdd(menu);
+              }}
               className="bg-primary text-white rounded-xl px-3 py-1.5 text-xs font-semibold hover:opacity-90 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Add

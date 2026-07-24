@@ -12,8 +12,7 @@ const RestaurantHeader = ({ restaurant }: Props) => {
     (t) => t.type === restaurant.type,
   )?.title;
 
-  const rating = 4.5;
-
+  const rating = ComputeUtils.computeRestaurantRating(restaurant.rating);
   const isClosed = ComputeUtils.isRestaurantClosed(restaurant);
 
   return (
@@ -50,10 +49,12 @@ const RestaurantHeader = ({ restaurant }: Props) => {
             <span>{typeTitle}</span>
           </div>
         )}
-        <div className="flex items-center gap-1">
-          <Eye size={13} className="text-primary" />
-          <span>{restaurant.totalViews} views</span>
-        </div>
+        {restaurant.totalViews > 0 && (
+          <div className="flex items-center gap-1">
+            <Eye size={13} className="text-primary" />
+            <span>{restaurant.totalViews} views</span>
+          </div>
+        )}
         {restaurant.distanceKm !== undefined && (
           <>
             <div className="flex items-center gap-1">

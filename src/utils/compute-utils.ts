@@ -1,6 +1,7 @@
 import type {
   IRestaurantDeliveryPricingKm,
   IRestaurantEntity,
+  IRestaurantRating,
 } from "chopme-frontend-common";
 
 export class ComputeUtils {
@@ -79,6 +80,14 @@ export class ComputeUtils {
     const closeMinutes = closeHour * 60 + closeMinute;
 
     return currentMinutes < openMinutes || currentMinutes >= closeMinutes;
+  }
+
+  static computeRestaurantRating(rating: IRestaurantRating): number {
+    return rating.total > 3 ? rating.average : 4.5;
+  }
+
+  static getMenuTotalOrders(ordersCount: number): number {
+    return ordersCount > 0 ? ordersCount : 5;
   }
 
   private static formatDuration(minutes: number): string {

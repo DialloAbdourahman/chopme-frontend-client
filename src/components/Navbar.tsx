@@ -9,7 +9,7 @@ import CartDrawer from "./CartDrawer";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { client, userAddressLocalStorage } = useSelector(
+  const { client, userAddressLocalStorage, user } = useSelector(
     (state: RootState) => state.user,
   );
   const { cart } = useSelector((state: RootState) => state.cart);
@@ -98,12 +98,14 @@ const Navbar = () => {
                 {link.label}
               </NavLink>
             ))}
-            <Link
-              to={"/signin"}
-              className="bg-primary text-white rounded-xl px-4 py-2 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
-            >
-              Sign in
-            </Link>
+            {!user && (
+              <Link
+                to={"/signin"}
+                className="bg-primary text-white rounded-xl px-4 py-2 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
+              >
+                Sign in
+              </Link>
+            )}
           </div>
 
           {/* Mobile actions */}
@@ -149,12 +151,14 @@ const Navbar = () => {
                   {link.label}
                 </NavLink>
               ))}
-              <Link
-                to={"/signin"}
-                className="w-full bg-primary text-white rounded-xl px-4 py-3 text-sm font-semibold mt-2 text-center"
-              >
-                Sign in
-              </Link>
+              {!user && (
+                <Link
+                  to={"/signin"}
+                  className="w-full bg-primary text-white rounded-xl px-4 py-3 text-sm font-semibold mt-2 text-center"
+                >
+                  Sign in
+                </Link>
+              )}
             </div>
           </div>
         )}

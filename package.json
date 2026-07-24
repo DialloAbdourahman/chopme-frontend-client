@@ -11,10 +11,20 @@
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^2.1.1",
+    "@headlessui/react": "^2.2.10",
+    "@hookform/resolvers": "^5.4.0",
     "@react-oauth/google": "^0.13.5",
-    "chopme-frontend-common": "^1.0.29",
+    "@reduxjs/toolkit": "^2.12.0",
+    "axios": "^1.18.1",
+    "chopme-frontend-common": "^1.0.35",
+    "lucide-react": "^1.26.0",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "react-dom": "^19.2.7",
+    "react-hook-form": "^7.82.0",
+    "react-redux": "^9.3.0",
+    "react-router-dom": "^7.18.1",
+    "react-toastify": "^11.1.0",
+    "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",

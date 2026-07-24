@@ -84,19 +84,23 @@ const useSetupLocation = () => {
     dispatch(setUserAddressLocalStorage(location));
 
     if (user && client) {
-      const { data } = await ClientService.updateMyAddress({
-        longitude: location.longitude,
-        latitude: location.latitude,
-        country: location.country,
-        city: location.city,
-      });
+      try {
+        const { data } = await ClientService.updateMyAddress({
+          longitude: location.longitude,
+          latitude: location.latitude,
+          country: location.country,
+          city: location.city,
+        });
 
-      if (
-        data.code === EnumStatusResponse.SUCCESS &&
-        data.statusCode === EnumStatusCode.UPDATED_SUCCESSFULLY &&
-        data.data
-      ) {
-        dispatch(setClient(data.data));
+        if (
+          data.code === EnumStatusResponse.SUCCESS &&
+          data.statusCode === EnumStatusCode.UPDATED_SUCCESSFULLY &&
+          data.data
+        ) {
+          dispatch(setClient(data.data));
+        }
+      } catch (error) {
+        console.error("Failed to update client address", error);
       }
     }
 

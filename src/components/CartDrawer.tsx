@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   EnumStatusCode,
   EnumStatusResponse,
-  type Menu,
+  type IMenu,
 } from "chopme-frontend-common";
 import type { RootState } from "../store";
 import { MenuService } from "../services/menu.service";
@@ -24,7 +24,7 @@ const CartDrawer = ({ open, onClose }: Props) => {
   const dispatch = useDispatch();
   const { cart } = useSelector((state: RootState) => state.cart);
 
-  const [menuDetails, setMenuDetails] = useState<Record<string, Menu>>({});
+  const [menuDetails, setMenuDetails] = useState<Record<string, IMenu>>({});
   const [loading, setLoading] = useState(false);
 
   const totalItems =
@@ -35,7 +35,7 @@ const CartDrawer = ({ open, onClose }: Props) => {
     return sum + price * item.quantity;
   }, 0);
 
-  const getImageUrl = (menu: Menu | undefined) => {
+  const getImageUrl = (menu: IMenu | undefined) => {
     if (!menu) return null;
     const img = menu.coverImage ?? menu.pictures?.[0];
     return img ? `${KEYS.PUBLIC_S3_PREFIX}/${img}` : null;
@@ -50,7 +50,7 @@ const CartDrawer = ({ open, onClose }: Props) => {
     const fetchMenuDetails = async () => {
       setLoading(true);
       try {
-        const details: Record<string, Menu> = {};
+        const details: Record<string, IMenu> = {};
         await Promise.all(
           cart.items.map(async (item) => {
             if (menuDetails[item.menuId]) {

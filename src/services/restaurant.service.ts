@@ -34,4 +34,8 @@ export const RestaurantService = {
       },
     );
   },
+
+  incrementTotalViews: (id: string) => {
+    return axiosBaseClient.patch(`/restaurants/${id}/increment-views`);
+  },
 };
