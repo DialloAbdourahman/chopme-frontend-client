@@ -16,6 +16,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../store";
 import RestaurantHeader from "../components/RestaurantHeader";
 import RestaurantMenus from "../components/RestaurantMenus";
+import RestaurantRatings from "../components/RestaurantRatings";
 
 const RestaurantDetails = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -154,6 +155,12 @@ const RestaurantDetails = () => {
 
           {/* Opening hours */}
           <RestaurantAvailability availability={restaurant.availability} />
+
+          {/* Ratings  */}
+          <RestaurantRatings
+            restaurant={restaurant}
+            setRestaurant={setRestaurant}
+          />
         </div>
       </div>
     </div>

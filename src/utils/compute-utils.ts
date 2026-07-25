@@ -3,6 +3,7 @@ import type {
   IRestaurantEntity,
   IRestaurantRating,
 } from "chopme-frontend-common";
+import { KEYS } from "./keys";
 
 export class ComputeUtils {
   /**
@@ -83,7 +84,7 @@ export class ComputeUtils {
   }
 
   static computeRestaurantRating(rating: IRestaurantRating): number {
-    return rating.total > 3 ? rating.average : 4.5;
+    return rating.total > 3 ? rating.average : Number(KEYS.FAKE_AVERAGE_RATING);
   }
 
   static getMenuTotalOrders(ordersCount: number): number {
