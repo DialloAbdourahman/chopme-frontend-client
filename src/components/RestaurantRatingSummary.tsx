@@ -27,11 +27,11 @@ const RestaurantRatingSummary = ({ restaurant }: Props) => {
   const total = restaurant.rating?.total ?? 0;
 
   const displayAverage =
-    total > Number(KEYS.TOTAL_NUMBER_OF_REAL_RATING_BEFORE_REAL)
+    total > Number(KEYS.MIN_RATINGS_BEFORE_SHOWING_REAL_RATINGS)
       ? average
       : Number(KEYS.FAKE_AVERAGE_RATING);
   const displayTotal =
-    total > Number(KEYS.TOTAL_NUMBER_OF_REAL_RATING_BEFORE_REAL)
+    total > Number(KEYS.MIN_RATINGS_BEFORE_SHOWING_REAL_RATINGS)
       ? total
       : Number(KEYS.FAKE_TOTAL_NUMBER_OF_RATINGS);
 
@@ -41,7 +41,7 @@ const RestaurantRatingSummary = ({ restaurant }: Props) => {
   };
 
   useEffect(() => {
-    if (total < Number(KEYS.TOTAL_NUMBER_OF_REAL_RATING_BEFORE_REAL)) {
+    if (total < Number(KEYS.MIN_RATINGS_BEFORE_SHOWING_REAL_RATINGS)) {
       setStarCounts(FAKE_COUNTS);
       setLoading(false);
       return;
@@ -83,7 +83,7 @@ const RestaurantRatingSummary = ({ restaurant }: Props) => {
     };
 
     fetchCounts();
-  }, [restaurant.id, total]);
+  }, [restaurant.id, total, restaurant.rating]);
 
   return (
     <div className="bg-card rounded-2xl p-4 shadow-sm space-y-4">

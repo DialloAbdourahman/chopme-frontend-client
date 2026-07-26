@@ -26,6 +26,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const redirectUrl = searchParams.get("redirect_url");
 
   const { initialize, loading: loadingInitialize } = useInitializeAfterAuth({
     initialLoadingState: false,
@@ -257,7 +258,11 @@ const Signup = () => {
         <p className="text-center text-sm text-gray-400 mt-6">
           Have an account already ?{" "}
           <Link
-            to={"/signin"}
+            to={
+              redirectUrl
+                ? `/signin?redirect_url=${encodeURIComponent(redirectUrl)}`
+                : "/signin"
+            }
             className="text-primary font-semibold hover:underline"
           >
             Sign in

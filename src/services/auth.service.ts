@@ -47,4 +47,8 @@ export const AuthService = {
   getMyProfile: () => {
     return axiosBaseClient.get<IOrchestrationResult<IUserEntity>>("/users/me");
   },
+
+  logout: () => {
+    return axiosBaseClient.post<IOrchestrationResult<string>>("/users/logout");
+  },
 };

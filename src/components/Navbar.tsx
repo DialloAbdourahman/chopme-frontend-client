@@ -1,13 +1,24 @@
-import { ChefHat, MapPin, Menu, ShoppingCart, X } from "lucide-react";
+import { ChefHat, LogOut, MapPin, Menu, ShoppingCart, X } from "lucide-react";
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import type { RootState } from "../store";
-import { useSelector } from "react-redux";
-import type { FindRestaurantDto } from "chopme-frontend-common";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  EnumStatusCode,
+  EnumStatusResponse,
+  type FindRestaurantDto,
+} from "chopme-frontend-common";
 import AddUserLocation from "./AddUserLocation";
 import CartDrawer from "./CartDrawer";
+import { AuthService } from "../services/auth.service";
+import { TokensService } from "../services/tokens.service";
+import { clearClient, clearUser } from "../store/user.slice";
+import { KEYS } from "../utils/keys";
+import { showErrorToast, showSuccessToast } from "../utils/toasts";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const { client, userAddressLocalStorage, user } = useSelector(
     (state: RootState) => state.user,
@@ -18,6 +29,32 @@ const Navbar = () => {
 
   const totalCartItems =
     cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
+
+  const handleLogout = async () => {
+    try {
+      const response = await AuthService.logout();
+      if (
+        response.data.code !== EnumStatusResponse.SUCCESS ||
+        response.data.statusCode !== EnumStatusCode.LOGGED_OUT_SUCCESSFULLY
+      ) {
+        showErrorToast(
+          response.data.message ?? "Unable to log out. Please try again.",
+        );
+        return;
+      }
+
+      TokensService.removeToken(KEYS.ACCESS_TOKEN_KEY);
+      TokensService.removeToken(KEYS.REFRESH_TOKEN_KEY);
+      dispatch(clearUser());
+      dispatch(clearClient());
+      setIsOpen(false);
+      showSuccessToast("You have been logged out.");
+      navigate("/");
+    } catch (error) {
+      console.error("Failed to log out:", error);
+      showErrorToast("Unable to log out. Please try again.");
+    }
+  };
 
   const location = client?.address ?? userAddressLocalStorage;
   const filters: FindRestaurantDto = {};
@@ -98,7 +135,16 @@ const Navbar = () => {
                 {link.label}
               </NavLink>
             ))}
-            {!user && (
+            {user ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-red-600"
+              >
+                <LogOut size={16} />
+                Log out
+              </button>
+            ) : (
               <Link
                 to={"/signin"}
                 className="bg-primary text-white rounded-xl px-4 py-2 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
@@ -151,7 +197,16 @@ const Navbar = () => {
                   {link.label}
                 </NavLink>
               ))}
-              {!user && (
+              {user ? (
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100"
+                >
+                  <LogOut size={17} />
+                  Log out
+                </button>
+              ) : (
                 <Link
                   to={"/signin"}
                   className="w-full bg-primary text-white rounded-xl px-4 py-3 text-sm font-semibold mt-2 text-center"

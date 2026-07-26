@@ -112,7 +112,7 @@ const RestaurantDetails = () => {
     <div className="min-h-screen bg-background pb-16">
       <Navbar />
 
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl mx-auto px-4 sm:px-0">
         <button
           onClick={handleBack}
           className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-primary transition-colors  pt-4"

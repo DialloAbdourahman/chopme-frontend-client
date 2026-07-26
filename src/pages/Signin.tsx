@@ -25,6 +25,7 @@ import useInitializeAfterAuth from "../hooks/useInitializeAfterAuth";
 const Signin = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const redirectUrl = searchParams.get("redirect_url");
   const [showPassword, setShowPassword] = useState(false);
 
   const { initialize, loading: loadingInitialize } = useInitializeAfterAuth({
@@ -200,7 +201,11 @@ const Signin = () => {
         <p className="text-center text-sm text-gray-400 mt-6">
           Don't have an account?{" "}
           <Link
-            to={"/signup"}
+            to={
+              redirectUrl
+                ? `/signup?redirect_url=${encodeURIComponent(redirectUrl)}`
+                : "/signup"
+            }
             className="text-primary font-semibold hover:underline"
           >
             Sign up

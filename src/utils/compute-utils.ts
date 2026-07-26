@@ -84,7 +84,9 @@ export class ComputeUtils {
   }
 
   static computeRestaurantRating(rating: IRestaurantRating): number {
-    return rating.total > 3 ? rating.average : Number(KEYS.FAKE_AVERAGE_RATING);
+    return rating.total > Number(KEYS.MIN_RATINGS_BEFORE_SHOWING_REAL_RATINGS)
+      ? rating.average
+      : Number(KEYS.FAKE_AVERAGE_RATING);
   }
 
   static getMenuTotalOrders(ordersCount: number): number {
