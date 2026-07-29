@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useInitializeAfterAuth from "./hooks/useInitializeAfterAuth";
 import WebSocket from "./components/WebSocket";
+import AddUserLocation from "./components/AddUserLocation";
 
 function App() {
   const { initialize, loading } = useInitializeAfterAuth({
@@ -33,6 +34,7 @@ function App() {
         theme="light"
       />
       <WebSocket />
+      <AddUserLocation />
       <Router />
     </>
   );

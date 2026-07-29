@@ -8,11 +8,14 @@ import {
   EnumStatusResponse,
   type FindRestaurantDto,
 } from "chopme-frontend-common";
-import AddUserLocation from "./AddUserLocation";
 import CartDrawer from "./CartDrawer";
 import { AuthService } from "../services/auth.service";
 import { TokensService } from "../services/tokens.service";
-import { clearClient, clearUser } from "../store/user.slice";
+import {
+  clearClient,
+  clearUser,
+  setOpenAddUserLocationModal,
+} from "../store/user.slice";
 import { KEYS } from "../utils/keys";
 import { showErrorToast, showSuccessToast } from "../utils/toasts";
 
@@ -24,7 +27,6 @@ const Navbar = () => {
     (state: RootState) => state.user,
   );
   const { cart } = useSelector((state: RootState) => state.cart);
-  const [showModal, setShowModal] = useState(false);
   const [showCart, setShowCart] = useState(false);
 
   const totalCartItems =
@@ -98,7 +100,9 @@ const Navbar = () => {
             </div>
           ) : (
             <button
-              onClick={() => setShowModal(true)}
+              onClick={() => {
+                dispatch(setOpenAddUserLocationModal(true));
+              }}
               className="flex items-center gap-1.5 bg-background px-3 py-1.5 rounded-full text-xs font-medium text-text hover:scale-105 transition-transform"
             >
               <MapPin size={14} className="text-primary" />
@@ -218,7 +222,6 @@ const Navbar = () => {
           </div>
         )}
       </nav>
-      <AddUserLocation setShowModal={setShowModal} showModal={showModal} />
       <CartDrawer open={showCart} onClose={() => setShowCart(false)} />
     </>
   );

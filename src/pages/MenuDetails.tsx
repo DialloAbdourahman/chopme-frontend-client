@@ -11,12 +11,15 @@ import {
 import {
   EnumStatusCode,
   EnumStatusResponse,
-  type IMenu,
+  type IMenuEntity,
+  type IRestaurantEntity,
 } from "chopme-frontend-common";
 import Navbar from "../components/Navbar";
 import { MenuService } from "../services/menu.service";
+import { RestaurantService } from "../services/restaurant.service";
 import { KEYS } from "../utils/keys";
 import { ComputeUtils } from "../utils/compute-utils";
+import { EnumCanOrderMenu } from "../enums/can-order-menu";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store";
 import { addItemToCart, decrementCartItemQuantity } from "../store/cart";
@@ -27,8 +30,14 @@ const MenuDetails = () => {
   const dispatch = useDispatch();
 
   const { cart } = useSelector((state: RootState) => state.cart);
+  const { client, userAddressLocalStorage } = useSelector(
+    (state: RootState) => state.user,
+  );
+  const location = client?.address ?? userAddressLocalStorage;
 
-  const [menu, setMenu] = useState<IMenu | null>(null);
+  const [menu, setMenu] = useState<IMenuEntity | null>(null);
+  const [restaurantWithLocation, setRestaurantWithLocation] =
+    useState<IRestaurantEntity | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -44,7 +53,31 @@ const MenuDetails = () => {
           result.data.statusCode === EnumStatusCode.RECOVERED_SUCCESSFULLY &&
           result.data.data
         ) {
-          setMenu(result.data.data);
+          const fetchedMenu = result.data.data;
+          setMenu(fetchedMenu);
+
+          if (location && fetchedMenu.restaurant?.slug) {
+            try {
+              const restaurantResult = await RestaurantService.findOne(
+                fetchedMenu.restaurant.slug,
+                {
+                  longitude: location.longitude,
+                  latitude: location.latitude,
+                },
+              );
+
+              if (
+                restaurantResult.data.code === EnumStatusResponse.SUCCESS &&
+                restaurantResult.data.statusCode ===
+                  EnumStatusCode.RECOVERED_SUCCESSFULLY &&
+                restaurantResult.data.data
+              ) {
+                setRestaurantWithLocation(restaurantResult.data.data);
+              }
+            } catch (error) {
+              console.error("Failed to fetch restaurant with distance:", error);
+            }
+          }
         }
       } catch (error) {
         console.error("Failed to fetch menu:", error);
@@ -54,7 +87,7 @@ const MenuDetails = () => {
     };
 
     fetchMenu();
-  }, [menuId]);
+  }, [menuId, location]);
 
   const handleBack = () => {
     if (window.history.length > 1) {
@@ -66,8 +99,16 @@ const MenuDetails = () => {
     }
   };
 
+  const canAddToCart = menu
+    ? ComputeUtils.canOrderMenu({
+        restaurant: restaurantWithLocation ?? menu.restaurant,
+        menu,
+        considerDistance: !!restaurantWithLocation,
+      })
+    : EnumCanOrderMenu.CAN_ORDER;
+
   const handleAdd = () => {
-    if (!menu) return;
+    if (!menu || canAddToCart !== EnumCanOrderMenu.CAN_ORDER) return;
     dispatch(
       addItemToCart({
         restaurantId: menu.restaurant.id,
@@ -234,8 +275,9 @@ const MenuDetails = () => {
                   {quantityInCart}
                 </span>
                 <button
+                  disabled={canAddToCart !== EnumCanOrderMenu.CAN_ORDER}
                   onClick={handleAdd}
-                  className="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-lg"
+                  className="w-8 h-8 flex items-center justify-center bg-primary text-white rounded-lg disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <Plus size={14} />
                 </button>
@@ -243,12 +285,24 @@ const MenuDetails = () => {
             </div>
           ) : (
             <button
-              disabled={!menu.available}
+              disabled={canAddToCart !== EnumCanOrderMenu.CAN_ORDER}
               onClick={handleAdd}
               className="w-full bg-primary text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Add to cart
             </button>
+          )}
+          {canAddToCart !== EnumCanOrderMenu.CAN_ORDER && (
+            <p className="text-xs text-red-500 text-center leading-tight">
+              {canAddToCart === EnumCanOrderMenu.RESTAURANT_CLOSED &&
+                "Restaurant is currently closed."}
+              {canAddToCart === EnumCanOrderMenu.MENU_NOT_AVAILABLE &&
+                "This item is unavailable."}
+              {canAddToCart === EnumCanOrderMenu.RESTAURANT_TOO_FAR &&
+                "Delivery is not available for your location."}
+              {canAddToCart === EnumCanOrderMenu.USER_DID_NOT_ADD_LOCATION &&
+                "Please add a delivery location."}
+            </p>
           )}
 
           {/* Restaurant link */}

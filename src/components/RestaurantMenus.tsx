@@ -4,16 +4,16 @@ import {
   EnumStatusCode,
   EnumStatusResponse,
   type ICategoryEntity,
+  type IRestaurantEntity,
 } from "chopme-frontend-common";
 import { CategoryService } from "../services/category.service";
 import CategoryMenus from "./CategoryMenus";
 
 type Props = {
-  restaurantId: string;
-  restaurantName: string;
+  restaurant: IRestaurantEntity;
 };
 
-const RestaurantMenus = ({ restaurantId, restaurantName }: Props) => {
+const RestaurantMenus = ({ restaurant }: Props) => {
   const [categories, setCategories] = useState<ICategoryEntity[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -21,7 +21,7 @@ const RestaurantMenus = ({ restaurantId, restaurantName }: Props) => {
     const fetchCategories = async () => {
       setLoading(true);
       try {
-        const result = await CategoryService.findAllByRestaurant(restaurantId);
+        const result = await CategoryService.findAllByRestaurant(restaurant.id);
 
         if (
           result.data.code === EnumStatusResponse.SUCCESS &&
@@ -38,7 +38,7 @@ const RestaurantMenus = ({ restaurantId, restaurantName }: Props) => {
     };
 
     fetchCategories();
-  }, [restaurantId]);
+  }, [restaurant.id]);
 
   return (
     <div className="bg-card rounded-2xl p-4 shadow-sm">
@@ -61,8 +61,7 @@ const RestaurantMenus = ({ restaurantId, restaurantName }: Props) => {
           {categories.map((category) => (
             <CategoryMenus
               key={category.id}
-              restaurantId={restaurantId}
-              restaurantName={restaurantName}
+              restaurant={restaurant}
               category={category}
             />
           ))}

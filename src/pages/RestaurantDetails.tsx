@@ -142,10 +142,7 @@ const RestaurantDetails = () => {
           />
 
           {/* Menus placeholder */}
-          <RestaurantMenus
-            restaurantId={restaurant.id}
-            restaurantName={restaurant.name}
-          />
+          <RestaurantMenus restaurant={restaurant} />
 
           {/* Delivery pricing */}
           <RestaurantDeliveryPricing

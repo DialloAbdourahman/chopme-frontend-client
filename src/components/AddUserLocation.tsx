@@ -1,21 +1,31 @@
+import { useDispatch, useSelector } from "react-redux";
 import useSetupLocation from "../hooks/useSetupLocation";
 import Modal from "./Modal";
 import { MapPin } from "lucide-react";
+import type { RootState } from "../store";
+import { setOpenAddUserLocationModal } from "../store/user.slice";
 
-type Props = {
-  showModal: boolean;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-const AddUserLocation = ({ setShowModal, showModal }: Props) => {
+const AddUserLocation = () => {
   const { setupLocation, loadingSetupLocation } = useSetupLocation();
+  const { openAddUserLocationModal } = useSelector(
+    (state: RootState) => state.user,
+  );
+  const dispatch = useDispatch();
 
   return (
     <>
-      {showModal && (
+      {openAddUserLocationModal && (
         <Modal
-          open={showModal}
-          setOpen={setShowModal}
+          open={openAddUserLocationModal}
+          setOpen={(value) =>
+            dispatch(
+              setOpenAddUserLocationModal(
+                typeof value === "function"
+                  ? value(openAddUserLocationModal)
+                  : value,
+              ),
+            )
+          }
           title="Share your location"
           clickOutside={false}
           loading={loadingSetupLocation}
@@ -23,7 +33,7 @@ const AddUserLocation = ({ setShowModal, showModal }: Props) => {
           textButton="Use my location"
           onValidate={async () => {
             await setupLocation();
-            setShowModal(false);
+            dispatch(setOpenAddUserLocationModal(false));
           }}
         >
           <div className="space-y-3">

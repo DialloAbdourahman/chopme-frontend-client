@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
-import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Trash2, Utensils, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   EnumStatusCode,
   EnumStatusResponse,
-  type IMenu,
+  type IMenuEntity,
 } from "chopme-frontend-common";
 import type { RootState } from "../store";
 import { MenuService } from "../services/menu.service";
-import { KEYS } from "../utils/keys";
 import {
   clearCart,
   decrementCartItemQuantity,
   incrementCartItemQuantity,
 } from "../store/cart";
+import { ComputeUtils } from "../utils/compute-utils";
 
 type Props = {
   open: boolean;
@@ -22,9 +23,12 @@ type Props = {
 
 const CartDrawer = ({ open, onClose }: Props) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { cart } = useSelector((state: RootState) => state.cart);
 
-  const [menuDetails, setMenuDetails] = useState<Record<string, IMenu>>({});
+  const [menuDetails, setMenuDetails] = useState<Record<string, IMenuEntity>>(
+    {},
+  );
   const [loading, setLoading] = useState(false);
 
   const totalItems =
@@ -35,12 +39,6 @@ const CartDrawer = ({ open, onClose }: Props) => {
     return sum + price * item.quantity;
   }, 0);
 
-  const getImageUrl = (menu: IMenu | undefined) => {
-    if (!menu) return null;
-    const img = menu.coverImage ?? menu.pictures?.[0];
-    return img ? `${KEYS.PUBLIC_S3_PREFIX}/${img}` : null;
-  };
-
   useEffect(() => {
     if (!open || !cart || cart.items.length === 0) {
       setMenuDetails({});
@@ -50,7 +48,7 @@ const CartDrawer = ({ open, onClose }: Props) => {
     const fetchMenuDetails = async () => {
       setLoading(true);
       try {
-        const details: Record<string, IMenu> = {};
+        const details: Record<string, IMenuEntity> = {};
         await Promise.all(
           cart.items.map(async (item) => {
             if (menuDetails[item.menuId]) {
@@ -128,7 +126,7 @@ const CartDrawer = ({ open, onClose }: Props) => {
               )}
               {cart.items.map((item) => {
                 const menu = menuDetails[item.menuId];
-                const imageUrl = getImageUrl(menu);
+                const imageUrl = ComputeUtils.getMenuImageUrl(menu);
 
                 return (
                   <div
@@ -143,8 +141,8 @@ const CartDrawer = ({ open, onClose }: Props) => {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-[10px]">
-                          No image
+                        <div className="w-full h-full flex items-center justify-center bg-gray-200">
+                          <Utensils size={20} className="text-gray-400" />
                         </div>
                       )}
                     </div>
@@ -212,7 +210,13 @@ const CartDrawer = ({ open, onClose }: Props) => {
                 <Trash2 size={14} />
                 Clear
               </button>
-              <button className="flex-1 bg-primary text-white rounded-xl py-2.5 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all">
+              <button
+                onClick={() => {
+                  onClose();
+                  navigate("/checkout");
+                }}
+                className="flex-1 bg-primary text-white rounded-xl py-2.5 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
+              >
                 Checkout
               </button>
             </div>

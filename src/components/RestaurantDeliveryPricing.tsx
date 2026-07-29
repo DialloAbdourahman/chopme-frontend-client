@@ -63,7 +63,7 @@ const RestaurantDeliveryPricing = ({
                   isApplicable ? "text-primary" : "text-text"
                 }`}
               >
-                {p.price.toLocaleString()} FCFA
+                {p.priceWithPlatformPercentage.toLocaleString()} FCFA
               </span>
             </li>
           );

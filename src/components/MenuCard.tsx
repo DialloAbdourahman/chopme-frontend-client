@@ -1,15 +1,17 @@
-import { Minus, Plus, ShoppingBag } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Utensils } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import type { IMenu } from "chopme-frontend-common";
+import type { IMenuEntity, IRestaurantEntity } from "chopme-frontend-common";
 import { KEYS } from "../utils/keys";
 import { ComputeUtils } from "../utils/compute-utils";
+import { EnumCanOrderMenu } from "../enums/can-order-menu";
 
 type Props = {
-  menu: IMenu;
+  menu: IMenuEntity;
   quantityInCart: number;
-  onAdd: (menu: IMenu) => void;
-  onIncrement: (menu: IMenu) => void;
-  onDecrement: (menu: IMenu) => void;
+  restaurant: IRestaurantEntity;
+  onAdd: (menu: IMenuEntity) => void;
+  onIncrement: (menu: IMenuEntity) => void;
+  onDecrement: (menu: IMenuEntity) => void;
 };
 
 const MenuCard = ({
@@ -18,6 +20,7 @@ const MenuCard = ({
   onAdd,
   onIncrement,
   onDecrement,
+  restaurant,
 }: Props) => {
   const navigate = useNavigate();
   const { name, description, coverImage, pictures, available } = menu;
@@ -29,6 +32,12 @@ const MenuCard = ({
       : null;
 
   const totalOrders = ComputeUtils.getMenuTotalOrders(menu.ordersCount);
+
+  const canAddToCart = ComputeUtils.canOrderMenu({
+    restaurant,
+    menu,
+    considerDistance: !!restaurant.distanceKm,
+  });
 
   const handleOpenDetails = () => {
     if (!menu.restaurant?.slug) return;
@@ -50,9 +59,7 @@ const MenuCard = ({
           />
         ) : (
           <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-            <span className="text-gray-400 text-[10px] text-center px-1">
-              No image
-            </span>
+            <Utensils size={24} className="text-gray-400" />
           </div>
         )}
         {!available && (
@@ -68,9 +75,9 @@ const MenuCard = ({
       <div className="flex flex-col min-w-0 flex-1">
         <div className="flex items-start justify-between gap-2">
           <h4 className="font-semibold text-text text-sm truncate">{name}</h4>
-          <div className="flex items-center gap-1 shrink-0 text-xs font-semibold text-text">
+          <div className="flex items-center gap-1 shrink-0 text-[10px] font-medium text-gray-500">
             <ShoppingBag size={12} className="text-primary" />
-            {totalOrders}
+            <span>{totalOrders} sold</span>
           </div>
         </div>
 
@@ -112,10 +119,12 @@ const MenuCard = ({
             </div>
           ) : (
             <button
-              disabled={!available}
+              disabled={canAddToCart !== EnumCanOrderMenu.CAN_ORDER}
               onClick={(e) => {
                 e.stopPropagation();
-                onAdd(menu);
+                if (canAddToCart === EnumCanOrderMenu.CAN_ORDER) {
+                  onAdd(menu);
+                }
               }}
               className="bg-primary text-white rounded-xl px-3 py-1.5 text-xs font-semibold hover:opacity-90 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
@@ -123,6 +132,18 @@ const MenuCard = ({
             </button>
           )}
         </div>
+        {canAddToCart !== EnumCanOrderMenu.CAN_ORDER && (
+          <p className="text-[10px] text-red-500 mt-1 text-right leading-tight">
+            {canAddToCart === EnumCanOrderMenu.RESTAURANT_CLOSED &&
+              "Restaurant is currently closed."}
+            {canAddToCart === EnumCanOrderMenu.MENU_NOT_AVAILABLE &&
+              "This item is unavailable."}
+            {canAddToCart === EnumCanOrderMenu.RESTAURANT_TOO_FAR &&
+              "Delivery is not available for your location."}
+            {canAddToCart === EnumCanOrderMenu.USER_DID_NOT_ADD_LOCATION &&
+              "Please add a delivery location."}
+          </p>
+        )}
       </div>
     </div>
   );

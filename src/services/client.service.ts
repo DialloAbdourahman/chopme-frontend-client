@@ -18,4 +18,11 @@ export const ClientService = {
       dto,
     );
   },
+
+  updateMyInformation: (dto: { phoneNumber: string }) => {
+    return axiosBaseClient.patch<IOrchestrationResult<IClientEntity>>(
+      "/clients/me",
+      dto,
+    );
+  },
 };

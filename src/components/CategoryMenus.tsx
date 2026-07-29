@@ -5,7 +5,8 @@ import {
   EnumStatusCode,
   EnumStatusResponse,
   type ICategoryEntity,
-  type IMenu,
+  type IMenuEntity,
+  type IRestaurantEntity,
 } from "chopme-frontend-common";
 import { MenuService } from "../services/menu.service";
 import MenuCard from "./MenuCard";
@@ -18,15 +19,14 @@ import {
 } from "../store/cart";
 
 type Props = {
-  restaurantId: string;
-  restaurantName: string;
+  restaurant: IRestaurantEntity;
   category: ICategoryEntity;
 };
 
 const LIMIT = 10;
 
-const CategoryMenus = ({ restaurantId, restaurantName, category }: Props) => {
-  const [menus, setMenus] = useState<IMenu[]>([]);
+const CategoryMenus = ({ restaurant, category }: Props) => {
+  const [menus, setMenus] = useState<IMenuEntity[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -35,23 +35,29 @@ const CategoryMenus = ({ restaurantId, restaurantName, category }: Props) => {
   const { cart } = useSelector((state: RootState) => state.cart);
 
   // Menu waiting to be added while the cart belongs to another restaurant
-  const [pendingMenu, setPendingMenu] = useState<IMenu | null>(null);
+  const [pendingMenu, setPendingMenu] = useState<IMenuEntity | null>(null);
   const [showCartWarning, setShowCartWarning] = useState(false);
 
-  const getQuantityInCart = (menu: IMenu): number => {
-    if (!cart || cart.restaurantId !== restaurantId) return 0;
+  const getQuantityInCart = (menu: IMenuEntity): number => {
+    if (!cart || cart.restaurantId !== restaurant.id) return 0;
     return cart.items.find((item) => item.menuId === menu.id)?.quantity ?? 0;
   };
 
-  const handleAdd = (menu: IMenu) => {
+  const handleAdd = (menu: IMenuEntity) => {
     // Cart exists for another restaurant: warn first
-    if (cart && cart.restaurantId !== restaurantId) {
+    if (cart && cart.restaurantId !== restaurant.id) {
       setPendingMenu(menu);
       setShowCartWarning(true);
       return;
     }
 
-    dispatch(addItemToCart({ restaurantId, restaurantName, menuId: menu.id }));
+    dispatch(
+      addItemToCart({
+        restaurantId: restaurant.id,
+        restaurantName: restaurant.name,
+        menuId: menu.id,
+      }),
+    );
   };
 
   const handleConfirmNewCart = () => {
@@ -59,8 +65,8 @@ const CategoryMenus = ({ restaurantId, restaurantName, category }: Props) => {
       // addItemToCart starts a fresh cart when the restaurant changes
       dispatch(
         addItemToCart({
-          restaurantId,
-          restaurantName,
+          restaurantId: restaurant.id,
+          restaurantName: restaurant.name,
           menuId: pendingMenu.id,
         }),
       );
@@ -69,11 +75,11 @@ const CategoryMenus = ({ restaurantId, restaurantName, category }: Props) => {
     setShowCartWarning(false);
   };
 
-  const handleIncrement = (menu: IMenu) => {
+  const handleIncrement = (menu: IMenuEntity) => {
     dispatch(incrementCartItemQuantity({ menuId: menu.id }));
   };
 
-  const handleDecrement = (menu: IMenu) => {
+  const handleDecrement = (menu: IMenuEntity) => {
     dispatch(decrementCartItemQuantity({ menuId: menu.id }));
   };
 
@@ -84,7 +90,7 @@ const CategoryMenus = ({ restaurantId, restaurantName, category }: Props) => {
         const result = await MenuService.search({
           page,
           limit: LIMIT,
-          restaurantId,
+          restaurantId: restaurant.id,
           categoryId: category.id,
         });
 
@@ -105,7 +111,7 @@ const CategoryMenus = ({ restaurantId, restaurantName, category }: Props) => {
     };
 
     fetchMenus();
-  }, [restaurantId, category.id, page]);
+  }, [restaurant.id, category.id, page]);
 
   // Hide empty categories
   if (!loading && menus.length === 0) return null;
@@ -124,6 +130,7 @@ const CategoryMenus = ({ restaurantId, restaurantName, category }: Props) => {
           <MenuCard
             key={menu.id}
             menu={menu}
+            restaurant={restaurant}
             quantityInCart={getQuantityInCart(menu)}
             onAdd={handleAdd}
             onIncrement={handleIncrement}
@@ -177,7 +184,7 @@ const CategoryMenus = ({ restaurantId, restaurantName, category }: Props) => {
             <p>
               You can only order from one restaurant at a time. Starting a new
               cart at{" "}
-              <span className="text-accent font-medium">{restaurantName}</span>{" "}
+              <span className="text-accent font-medium">{restaurant.name}</span>{" "}
               will remove all the items from your current cart.
             </p>
           </div>

@@ -3,17 +3,17 @@ import Navbar from "../components/Navbar";
 import RestaurantsInHomepage from "../components/RestaurantsInHomepage";
 import { useEffect, useState } from "react";
 import type { RootState } from "../store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import type { FindRestaurantDto } from "chopme-frontend-common";
-import AddUserLocation from "../components/AddUserLocation";
+import { setOpenAddUserLocationModal } from "../store/user.slice";
 
 const Home = () => {
   const [search, setSearch] = useState("");
   const { client, userAddressLocalStorage } = useSelector(
     (state: RootState) => state.user,
   );
-  const [showModal, setShowModal] = useState(false);
+  const dispatch = useDispatch();
 
   const location = client?.address ?? userAddressLocalStorage;
 
@@ -30,7 +30,7 @@ const Home = () => {
   useEffect(() => {
     const initializeLocation = async () => {
       if (!location) {
-        setShowModal(true);
+        dispatch(setOpenAddUserLocationModal(true));
       }
     };
     initializeLocation();
@@ -39,8 +39,6 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-
-      <AddUserLocation setShowModal={setShowModal} showModal={showModal} />
 
       {/* Hero */}
       <section className="px-4 pt-8 pb-12 md:pt-14 md:pb-16">

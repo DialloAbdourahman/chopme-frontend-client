@@ -10,11 +10,11 @@ import {
 import Navbar from "../components/Navbar";
 import RestaurantCard from "../components/RestaurantCard";
 import { RestaurantService } from "../services/restaurant.service";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store";
 import RestaurantFilters from "../components/RestaurantFilters";
-import AddUserLocation from "../components/AddUserLocation";
 import Pagination from "../components/Pagination";
+import { setOpenAddUserLocationModal } from "../store/user.slice";
 
 const parseFilters = (value: string | null): FindRestaurantDto => {
   if (!value) return {};
@@ -32,6 +32,8 @@ const RestaurantsList = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  const dispatch = useDispatch();
+
   const limit = 10;
 
   // Initialize state from search params
@@ -48,7 +50,6 @@ const RestaurantsList = () => {
   const { client, userAddressLocalStorage } = useSelector(
     (state: RootState) => state.user,
   );
-  const [showModal, setShowModal] = useState(false);
 
   const location = client?.address ?? userAddressLocalStorage;
 
@@ -89,7 +90,7 @@ const RestaurantsList = () => {
   useEffect(() => {
     const initializeLocation = async () => {
       if (!location) {
-        setShowModal(true);
+        dispatch(setOpenAddUserLocationModal(true));
       }
     };
     initializeLocation();
@@ -134,10 +135,6 @@ const RestaurantsList = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-
-      <AddUserLocation setShowModal={setShowModal} showModal={showModal} />
-
-      {/* {JSON.stringify(filters)} */}
 
       <section className="px-4 pt-8 pb-16">
         <div className="max-w-5xl mx-auto">

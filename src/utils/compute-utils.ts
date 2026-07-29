@@ -2,8 +2,10 @@ import type {
   IRestaurantDeliveryPricingKm,
   IRestaurantEntity,
   IRestaurantRating,
+  IMenuEntity,
 } from "chopme-frontend-common";
 import { KEYS } from "./keys";
+import { EnumCanOrderMenu } from "../enums/can-order-menu";
 
 export class ComputeUtils {
   /**
@@ -92,6 +94,47 @@ export class ComputeUtils {
   static getMenuTotalOrders(ordersCount: number): number {
     return ordersCount > 0 ? ordersCount : 5;
   }
+
+  static canOrderMenu({
+    menu,
+    restaurant,
+    considerDistance = true,
+  }: {
+    restaurant: IRestaurantEntity;
+    menu: IMenuEntity;
+    considerDistance: boolean;
+  }) {
+    if (this.isRestaurantClosed(restaurant)) {
+      return EnumCanOrderMenu.RESTAURANT_CLOSED;
+    }
+
+    if (!menu.available) {
+      return EnumCanOrderMenu.MENU_NOT_AVAILABLE;
+    }
+
+    if (considerDistance) {
+      if (!restaurant.distanceKm) {
+        return EnumCanOrderMenu.USER_DID_NOT_ADD_LOCATION;
+      }
+
+      if (
+        !this.getDeliveryPricing(
+          restaurant.deliveryPricingKm,
+          restaurant.distanceKm,
+        )
+      ) {
+        return EnumCanOrderMenu.RESTAURANT_TOO_FAR;
+      }
+    }
+
+    return EnumCanOrderMenu.CAN_ORDER;
+  }
+
+  static getMenuImageUrl = (menu: IMenuEntity | undefined) => {
+    if (!menu) return null;
+    const img = menu.coverImage ?? menu.pictures?.[0];
+    return img ? `${KEYS.PUBLIC_S3_PREFIX}/${img}` : null;
+  };
 
   private static formatDuration(minutes: number): string {
     if (minutes < 60) {
