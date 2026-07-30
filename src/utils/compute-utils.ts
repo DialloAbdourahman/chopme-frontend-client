@@ -3,9 +3,15 @@ import type {
   IRestaurantEntity,
   IRestaurantRating,
   IMenuEntity,
+  EnumOrderStatus,
+} from "chopme-frontend-common";
+import {
+  EnumOrderCancelledReason,
+  EnumRefundStatus,
 } from "chopme-frontend-common";
 import { KEYS } from "./keys";
 import { EnumCanOrderMenu } from "../enums/can-order-menu";
+import { statusLabels } from "./constants";
 
 export class ComputeUtils {
   /**
@@ -135,6 +141,41 @@ export class ComputeUtils {
     const img = menu.coverImage ?? menu.pictures?.[0];
     return img ? `${KEYS.PUBLIC_S3_PREFIX}/${img}` : null;
   };
+
+  static formatStatus(status: EnumOrderStatus) {
+    return statusLabels[status] ?? status;
+  }
+
+  static formatDate(date: Date | string | null | undefined) {
+    if (!date) return "N/A";
+    return new Date(date).toLocaleString();
+  }
+
+  static formatCancelledReason(reason: EnumOrderCancelledReason) {
+    switch (reason) {
+      case EnumOrderCancelledReason.TOO_LATE:
+        return "Order was too late";
+      case EnumOrderCancelledReason.OUT_OF_STOCK:
+        return "Item out of stock";
+      default:
+        return reason;
+    }
+  }
+
+  static formatRefundStatus(status: EnumRefundStatus) {
+    switch (status) {
+      case EnumRefundStatus.SUCCESSFUL:
+        return "Successful";
+      case EnumRefundStatus.INITIATED:
+        return "Initiated";
+      case EnumRefundStatus.FAILED:
+        return "Failed";
+      case EnumRefundStatus.FAILED_TO_INITIATE:
+        return "Failed to initiate";
+      default:
+        return status;
+    }
+  }
 
   private static formatDuration(minutes: number): string {
     if (minutes < 60) {

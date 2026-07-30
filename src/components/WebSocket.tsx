@@ -2,10 +2,13 @@ import { io, type Socket } from "socket.io-client";
 import { KEYS } from "../utils/keys";
 import { TokensService } from "../services/tokens.service";
 import type { RootState } from "../store";
-import { EnumWebSocketEventType } from "chopme-frontend-common";
+import {
+  EnumWebSocketEventType,
+  type IOrderEntity,
+} from "chopme-frontend-common";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { setNewOrder } from "../store/notification.slice";
+import { setOrderStatusUpdate } from "../store/notification.slice";
 import { useEffect } from "react";
 
 const WebSocket = () => {
@@ -37,10 +40,9 @@ const WebSocket = () => {
     });
 
     socket.on(
-      EnumWebSocketEventType.ORDER_CANCELLED,
-      (data: { id: string }) => {
-        alert(`Good news! ${data.id}`);
-        dispatch(setNewOrder({ id: data.id }));
+      EnumWebSocketEventType.ORDER_STATUS_CHANGED,
+      (data: IOrderEntity) => {
+        dispatch(setOrderStatusUpdate(data));
       },
     );
 

@@ -7,6 +7,8 @@ import {
   EnumStatusResponse,
   type IMenuEntity,
   type IRestaurantEntity,
+  type CreateOrderDto,
+  type IOrchestrationResult,
 } from "chopme-frontend-common";
 import type { RootState } from "../store";
 import type { ICartItem } from "../interfaces/cart-item";
@@ -21,7 +23,14 @@ import {
 import { setClient, setOpenAddUserLocationModal } from "../store/user.slice";
 import Navbar from "../components/Navbar";
 import { ClientService } from "../services/client.service";
+import { OrderService } from "../services/order.service";
 import { ComputeUtils } from "../utils/compute-utils";
+import { AxiosError } from "axios";
+import {
+  showErrorToast,
+  showSuccessToast,
+  showWarningToast,
+} from "../utils/toasts";
 
 type CartMenuItemProps = {
   item: ICartItem;
@@ -133,6 +142,8 @@ const Checkout = () => {
   const [phoneNumberInput, setPhoneNumberInput] = useState("");
   const [isSavingPhoneNumber, setIsSavingPhoneNumber] = useState(false);
   const [phoneNumberError, setPhoneNumberError] = useState<string | null>(null);
+  const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const totalItems =
     cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
@@ -308,6 +319,109 @@ const Checkout = () => {
       setIsSavingPhoneNumber(false);
     }
   };
+
+  const handlePlaceOrder = async () => {
+    if (!cart) return;
+
+    setIsPlacingOrder(true);
+    try {
+      const payload: CreateOrderDto = {
+        restaurantId: cart.restaurantId,
+        items: cart.items.map((item) => ({
+          productId: item.menuId,
+          quantity: item.quantity,
+        })),
+      };
+
+      const { data } = await OrderService.create(payload);
+      if (
+        data.code === EnumStatusResponse.SUCCESS &&
+        data.statusCode === EnumStatusCode.CREATED_SUCCESSFULLY &&
+        data.data
+      ) {
+        const orderId = data.data.id;
+
+        try {
+          const payRes = await OrderService.pay(orderId);
+          if (
+            payRes.data.code === EnumStatusResponse.SUCCESS &&
+            payRes.data.statusCode === EnumStatusCode.PAYMENT_INITIATED &&
+            payRes.data.data?.url
+          ) {
+            setIsRedirecting(true);
+            window.location.href = payRes.data.data.url;
+            dispatch(clearCart());
+            return;
+          }
+        } catch {
+          // Fall back to order details if payment URL cannot be retrieved.
+        }
+
+        showSuccessToast("Order placed successfully");
+        dispatch(clearCart());
+        navigate(`/orders/${orderId}`);
+      } else {
+        showErrorToast(data.message ?? "Could not place order.");
+      }
+    } catch (error) {
+      const err = error as AxiosError<IOrchestrationResult<string>>;
+      const statusCode = err.response?.data?.statusCode;
+
+      switch (statusCode) {
+        case EnumStatusCode.RESTAURANT_NOT_FOUND:
+          showWarningToast("Restaurant not found.");
+          break;
+        case EnumStatusCode.RESTAURANT_CLOSED:
+          showWarningToast("Restaurant is currently closed.");
+          break;
+        case EnumStatusCode.CLIENT_NOT_FOUND:
+          showWarningToast("Client not found. Please sign in again.");
+          break;
+        case EnumStatusCode.CLIENT_INFORMATION_INCOMPLETE:
+          showWarningToast("Please add your address and phone number.");
+          break;
+        case EnumStatusCode.TOO_FAR:
+          showWarningToast("This restaurant is too far for delivery.");
+          break;
+        case EnumStatusCode.ONE_OF_THE_MENUS_DOES_NOT_EXIST:
+          showWarningToast("One or more items were not found.");
+          break;
+        case EnumStatusCode.NOT_FROM_SAME_RESTAURANT:
+          showWarningToast("All items must be from the same restaurant.");
+          break;
+        case EnumStatusCode.ONE_OF_THE_MENUS_IS_NOT_AVAILABLE:
+          showWarningToast("One or more items are no longer available.");
+          break;
+        case EnumStatusCode.VALIDATION_ERROR:
+          showWarningToast("Please check your cart and try again.");
+          break;
+        case EnumStatusCode.INTERNAL_SERVER_ERROR:
+          showErrorToast("Something went wrong. Please try again.");
+          break;
+        default:
+          showErrorToast(
+            err.response?.data?.message ??
+              "Something went wrong. Please try again.",
+          );
+      }
+    } finally {
+      setIsPlacingOrder(false);
+    }
+  };
+
+  if (isRedirecting) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="flex flex-col items-center justify-center py-24">
+          <div className="h-12 w-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
+          <p className="text-sm font-semibold text-text">
+            Redirecting to payment...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!cart || cart.items.length === 0) {
     return (
@@ -515,13 +629,16 @@ const Checkout = () => {
                 </button>
               ) : (
                 <button
+                  onClick={handlePlaceOrder}
                   disabled={
+                    isPlacingOrder ||
                     isRestaurantClosed ||
                     !deliveryPricing ||
                     hasUnavailableItem ||
                     needsPhoneNumber
                   }
                   className={`flex-1 rounded-xl py-3 text-sm font-semibold transition-all ${
+                    isPlacingOrder ||
                     isRestaurantClosed ||
                     !deliveryPricing ||
                     hasUnavailableItem ||
@@ -530,7 +647,7 @@ const Checkout = () => {
                       : "bg-primary text-white hover:opacity-90 active:scale-95"
                   }`}
                 >
-                  Place order
+                  {isPlacingOrder ? "Processing..." : "Pay order"}
                 </button>
               )}
             </div>

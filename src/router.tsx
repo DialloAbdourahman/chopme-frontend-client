@@ -6,6 +6,8 @@ import RestaurantsList from "./pages/RestaurantsList";
 import RestaurantDetails from "./pages/RestaurantDetails";
 import MenuDetails from "./pages/MenuDetails";
 import Checkout from "./pages/Checkout";
+import OrderDetails from "./pages/OrderDetails";
+import MyOrders from "./pages/MyOrders";
 
 const Router = () => {
   // const {user} = useSelector((state: RootState) => state.user);
@@ -22,6 +24,8 @@ const Router = () => {
           element={<MenuDetails />}
         />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/orders" element={<MyOrders />} />
+        <Route path="/orders/:orderId" element={<OrderDetails />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
