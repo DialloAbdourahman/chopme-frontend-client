@@ -2,6 +2,7 @@ import type {
   IClientEntity,
   IOrchestrationResult,
   UpdateAddressDto,
+  UpdateClientInformationDto,
 } from "chopme-frontend-common";
 import { axiosBaseClient } from "../lib/axios";
 
@@ -19,7 +20,7 @@ export const ClientService = {
     );
   },
 
-  updateMyInformation: (dto: { phoneNumber: string }) => {
+  updateMyInformation: (dto: UpdateClientInformationDto) => {
     return axiosBaseClient.patch<IOrchestrationResult<IClientEntity>>(
       "/clients/me",
       dto,

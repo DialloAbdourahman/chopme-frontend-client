@@ -50,7 +50,7 @@ const GoogleAuthButton = () => {
         }
       } catch (error) {
         const err = error as AxiosError<IOrchestrationResult<string>>;
-        switch (err.response.data.statusCode) {
+        switch (err?.response?.data?.statusCode) {
           case EnumStatusCode.INVALID_CREDENTIALS:
             showWarningToast("Invalid credentials. Please try again.");
             break;

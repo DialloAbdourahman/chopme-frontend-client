@@ -3,17 +3,18 @@ import Navbar from "../components/Navbar";
 import RestaurantsInHomepage from "../components/RestaurantsInHomepage";
 import { useEffect, useState } from "react";
 import type { RootState } from "../store";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import type { FindRestaurantDto } from "chopme-frontend-common";
-import { setOpenAddUserLocationModal } from "../store/user.slice";
+
+import usePromptLocation from "../hooks/usePromptLocation";
 
 const Home = () => {
   const [search, setSearch] = useState("");
   const { client, userAddressLocalStorage } = useSelector(
     (state: RootState) => state.user,
   );
-  const dispatch = useDispatch();
+  const { promptLocation } = usePromptLocation();
 
   const location = client?.address ?? userAddressLocalStorage;
 
@@ -28,12 +29,7 @@ const Home = () => {
   }
 
   useEffect(() => {
-    const initializeLocation = async () => {
-      if (!location) {
-        dispatch(setOpenAddUserLocationModal(true));
-      }
-    };
-    initializeLocation();
+    promptLocation();
   }, []);
 
   return (
@@ -100,7 +96,7 @@ const Home = () => {
         </div>
       </section>
 
-      <RestaurantsInHomepage location={location} />
+      <RestaurantsInHomepage location={location ?? undefined} />
 
       {/* How it works */}
       <section className="px-4 pb-16">

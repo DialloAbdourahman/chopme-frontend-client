@@ -34,7 +34,7 @@ const useSetupLocation = () => {
               latitude,
             );
 
-            if (!geocoded.city || !geocoded.country) {
+            if (!geocoded?.city || !geocoded?.country) {
               reject(new Error("Could not determine city or country"));
               return;
             }
@@ -72,10 +72,7 @@ const useSetupLocation = () => {
     return undefined;
   };
 
-  const setupLocation = async (): Promise<IAddressEntity> => {
-    setLoadingSetupLocation(true);
-    const location = await getCurrentLocation();
-
+  const updateAddress = async (location: IAddressEntity) => {
     localStorage.setItem(
       KEYS.LOCATION_IN_LOCAL_STORAGE_KEY,
       JSON.stringify(location),
@@ -103,13 +100,58 @@ const useSetupLocation = () => {
         console.error("Failed to update client address", error);
       }
     }
+  };
+
+  const setupLocation = async (): Promise<IAddressEntity> => {
+    setLoadingSetupLocation(true);
+    const location = await getCurrentLocation();
+
+    await updateAddress(location);
 
     setLoadingSetupLocation(false);
 
     return location;
   };
 
-  return { getLocalStorageLocation, setupLocation, loadingSetupLocation };
+  const updateLocationFromCoordinates = async (
+    latitude: number,
+    longitude: number,
+  ): Promise<IAddressEntity | null> => {
+    setLoadingSetupLocation(true);
+
+    try {
+      const geocoded = await geocodeService.reverseGeocode(longitude, latitude);
+
+      if (!geocoded?.city || !geocoded?.country) {
+        setLoadingSetupLocation(false);
+        return null;
+      }
+
+      const location: IAddressEntity = {
+        longitude,
+        latitude,
+        city: geocoded.city,
+        country: geocoded.country,
+      };
+
+      await updateAddress(location);
+
+      setLoadingSetupLocation(false);
+
+      return location;
+    } catch (error) {
+      console.error("Failed to update location from coordinates", error);
+      setLoadingSetupLocation(false);
+      return null;
+    }
+  };
+
+  return {
+    getLocalStorageLocation,
+    setupLocation,
+    updateLocationFromCoordinates,
+    loadingSetupLocation,
+  };
 };
 
 export default useSetupLocation;

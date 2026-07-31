@@ -66,15 +66,22 @@ const Navbar = () => {
     filters.radiusKm = 100;
   }
 
-  const navLinks = [
+  const publicLinks = [
     { label: "Home", href: "/" },
     {
       label: "Restaurants",
       href: `/restaurants?page=1&filter=${JSON.stringify(filters)}`,
     },
-    { label: "Orders", href: "/orders" },
-    { label: "Profile", href: "/profile" },
   ];
+
+  const authLinks = user
+    ? [
+        { label: "Orders", href: "/orders" },
+        { label: "Profile", href: "/profile" },
+      ]
+    : [];
+
+  const navLinks = [...publicLinks, ...authLinks];
 
   return (
     <>

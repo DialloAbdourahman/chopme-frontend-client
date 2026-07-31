@@ -72,8 +72,8 @@ export const createApiClient = (baseURL: string): AxiosInstance => {
 
           return client(originalRequest);
         } catch {
-          TokensService.removeToken(KEYS.ACCESS_TOKEN_KEY);
-          TokensService.removeToken(KEYS.REFRESH_TOKEN_KEY);
+          // TokensService.removeToken(KEYS.ACCESS_TOKEN_KEY);
+          // TokensService.removeToken(KEYS.REFRESH_TOKEN_KEY);
           store.dispatch(clearUser());
           store.dispatch(clearClient());
 

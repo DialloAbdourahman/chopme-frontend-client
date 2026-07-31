@@ -15,9 +15,9 @@ import {
   type IRestaurantEntity,
 } from "chopme-frontend-common";
 import Navbar from "../components/Navbar";
+import RestaurantGallery from "../components/RestaurantGallery";
 import { MenuService } from "../services/menu.service";
 import { RestaurantService } from "../services/restaurant.service";
-import { KEYS } from "../utils/keys";
 import { ComputeUtils } from "../utils/compute-utils";
 import { EnumCanOrderMenu } from "../enums/can-order-menu";
 import { useDispatch, useSelector } from "react-redux";
@@ -156,10 +156,6 @@ const MenuDetails = () => {
   }
 
   const totalOrders = ComputeUtils.getMenuTotalOrders(menu.ordersCount);
-  const allImages = [menu.coverImage, ...(menu.pictures ?? [])].filter(
-    Boolean,
-  ) as string[];
-  const [coverImage, ...otherImages] = allImages;
 
   return (
     <div className="min-h-screen bg-background pb-16">
@@ -174,46 +170,13 @@ const MenuDetails = () => {
           Back
         </button>
 
-        {/* Cover image */}
+        {/* Gallery */}
         <div className="px-4 mt-4">
-          <div className="relative w-full h-64 sm:h-80 rounded-2xl overflow-hidden bg-gray-200">
-            {coverImage ? (
-              <img
-                src={`${KEYS.PUBLIC_S3_PREFIX}/${coverImage}`}
-                alt={menu.name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400">
-                No image
-              </div>
-            )}
-            {!menu.available && (
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                <span className="text-white text-sm font-semibold bg-gray-800 px-4 py-1 rounded-full">
-                  Currently unavailable
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* Thumbnails */}
-          {otherImages.length > 0 && (
-            <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
-              {otherImages.map((img, index) => (
-                <div
-                  key={index}
-                  className="shrink-0 w-20 h-20 rounded-xl overflow-hidden bg-gray-200"
-                >
-                  <img
-                    src={`${KEYS.PUBLIC_S3_PREFIX}/${img}`}
-                    alt={`${menu.name} ${index + 2}`}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
+          <RestaurantGallery
+            name={menu.name}
+            coverImage={menu.coverImage}
+            pictures={menu.pictures}
+          />
         </div>
 
         {/* Details */}

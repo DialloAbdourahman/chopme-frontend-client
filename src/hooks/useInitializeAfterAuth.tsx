@@ -67,7 +67,20 @@ const useInitializeAfterAuth = ({
         clientData.statusCode === EnumStatusCode.RECOVERED_SUCCESSFULLY &&
         clientData.data
       ) {
-        if (!clientData.data.address && locationInLocalStorage) {
+        const address = clientData.data.address;
+
+        const locationChanged =
+          address &&
+          locationInLocalStorage &&
+          (address.latitude !== locationInLocalStorage.latitude ||
+            address.longitude !== locationInLocalStorage.longitude ||
+            address.city !== locationInLocalStorage.city ||
+            address.country !== locationInLocalStorage.country);
+
+        const shouldUpdateLocation =
+          locationInLocalStorage && (!address || locationChanged);
+
+        if (shouldUpdateLocation) {
           try {
             const { data } = await ClientService.updateMyAddress({
               longitude: locationInLocalStorage.longitude,
@@ -76,7 +89,9 @@ const useInitializeAfterAuth = ({
               city: locationInLocalStorage.city,
             });
 
-            dispatch(setClient(data.data));
+            if (data?.data) {
+              dispatch(setClient(data.data));
+            }
           } catch (error) {
             console.error("Failed to update client address", error);
 

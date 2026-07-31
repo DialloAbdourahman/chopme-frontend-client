@@ -139,6 +139,7 @@ const RestaurantDetails = () => {
             phone={restaurant.phone}
             email={restaurant.email}
             address={restaurant.address}
+            location={restaurant.location}
           />
 
           {/* Menus placeholder */}

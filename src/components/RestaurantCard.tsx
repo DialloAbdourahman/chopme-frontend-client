@@ -26,7 +26,7 @@ const RestaurantCard = ({ restaurant }: Props) => {
   return (
     <Link
       to={`/restaurants/${slug}`}
-      className="block bg-card rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow group"
+      className="flex flex-col h-full bg-card rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow group"
     >
       <div className="relative h-40">
         {imageUrl ? (
@@ -53,26 +53,28 @@ const RestaurantCard = ({ restaurant }: Props) => {
         </div>
       </div>
 
-      <div className="p-4">
-        <h3 className="font-bold text-text">{name}</h3>
-        <p className="text-xs text-gray-500 mt-0.5">
-          {RESTAURANT_TYPES.find((t) => t.type === type)?.title}
-        </p>
+      <div className="flex flex-col flex-grow p-4 gap-2">
+        <div>
+          <h3 className="font-bold text-text">{name}</h3>
+          <p className="text-xs text-gray-500 mt-0.5">
+            {RESTAURANT_TYPES.find((t) => t.type === type)?.title}
+          </p>
 
-        {distanceKm && (
-          <div className="flex items-center gap-3 mt-3 text-xs text-gray-500">
-            <div className="flex items-center gap-1">
-              <Clock size={13} className="text-primary" />
-              <span>{time}</span>
+          {distanceKm && (
+            <div className="flex items-center gap-3 mt-3 text-xs text-gray-500">
+              <div className="flex items-center gap-1">
+                <Clock size={13} className="text-primary" />
+                <span>{time}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <MapPin size={13} className="text-primary" />
+                <span>{distanceKm.toFixed(1)} km</span>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <MapPin size={13} className="text-primary" />
-              <span>{distanceKm.toFixed(1)} km</span>
-            </div>
-          </div>
-        )}
+          )}
+        </div>
 
-        <button className="w-full mt-4 bg-primary text-white rounded-xl py-2.5 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all">
+        <button className="w-full mt-auto bg-primary text-white rounded-xl py-2.5 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all">
           Order now
         </button>
       </div>

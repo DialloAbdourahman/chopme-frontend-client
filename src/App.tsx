@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import useInitializeAfterAuth from "./hooks/useInitializeAfterAuth";
 import WebSocket from "./components/WebSocket";
 import AddUserLocation from "./components/AddUserLocation";
+import LoadingScreen from "./components/LoadingScreen";
 
 function App() {
   const { initialize, loading } = useInitializeAfterAuth({
@@ -16,7 +17,7 @@ function App() {
   }, []);
 
   if (loading) {
-    return <h1>Loading...</h1>;
+    return <LoadingScreen />;
   }
 
   return (

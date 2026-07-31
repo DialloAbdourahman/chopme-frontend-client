@@ -1,16 +1,38 @@
 import { Contact, Mail, MapPin, Phone } from "lucide-react";
-import type { IRestaurantAddress } from "chopme-frontend-common";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import type {
+  IRestaurantAddress,
+  IRestaurantLocation,
+} from "chopme-frontend-common";
+import { KEYS } from "../utils/keys";
 
 type Props = {
   phone?: string;
   email?: string;
   address: IRestaurantAddress;
+  location?: IRestaurantLocation;
 };
 
-const RestaurantContactInfo = ({ phone, email, address }: Props) => {
+const RestaurantContactInfo = ({ phone, email, address, location }: Props) => {
   const fullAddress =
     address.longName ??
     [address.city, address.state, address.country].filter(Boolean).join(", ");
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: KEYS.GOOGLE_PLACE_API_KEY,
+  });
+
+  const mapLocation = location
+    ? {
+        lat: location.coordinates[1],
+        lng: location.coordinates[0],
+      }
+    : null;
+
+  const containerStyle = {
+    width: "100%",
+    height: "100%",
+  };
 
   return (
     <div className="bg-card rounded-2xl p-4 shadow-sm">
@@ -40,6 +62,18 @@ const RestaurantContactInfo = ({ phone, email, address }: Props) => {
           </li>
         )}
       </ul>
+
+      {isLoaded && mapLocation && (
+        <div className="mt-4 h-64 sm:h-80 rounded-2xl overflow-hidden">
+          <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={mapLocation}
+            zoom={15}
+          >
+            <Marker position={mapLocation} />
+          </GoogleMap>
+        </div>
+      )}
     </div>
   );
 };

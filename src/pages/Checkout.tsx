@@ -31,6 +31,7 @@ import {
   showSuccessToast,
   showWarningToast,
 } from "../utils/toasts";
+import usePromptLocation from "../hooks/usePromptLocation";
 
 type CartMenuItemProps = {
   item: ICartItem;
@@ -131,6 +132,8 @@ const Checkout = () => {
   );
   const location = client?.address ?? userAddressLocalStorage;
   const isLoggedIn = !!user;
+
+  const { promptLocation } = usePromptLocation();
 
   const [menuDetails, setMenuDetails] = useState<Record<string, IMenuEntity>>(
     {},
@@ -256,20 +259,13 @@ const Checkout = () => {
           city: userAddressLocalStorage.city,
         });
 
-        dispatch(setClient(data.data));
+        if (data?.data) {
+          dispatch(setClient(data.data));
+        }
       };
       populateAddress();
     }
   }, [client, userAddressLocalStorage]);
-
-  useEffect(() => {
-    const initializeLocation = async () => {
-      if (!location) {
-        dispatch(setOpenAddUserLocationModal(true));
-      }
-    };
-    initializeLocation();
-  }, []);
 
   const handleIncrement = (menuId: string) => {
     dispatch(incrementCartItemQuantity({ menuId }));
@@ -291,7 +287,7 @@ const Checkout = () => {
     }
     if (!/^6\d{8}$/.test(phone)) {
       setPhoneNumberError(
-        "Phone number must be a valid number like 600000000.",
+        "Phone number must be a valid number like 677552485.",
       );
       return;
     }
@@ -408,6 +404,10 @@ const Checkout = () => {
       setIsPlacingOrder(false);
     }
   };
+
+  useEffect(() => {
+    promptLocation();
+  }, []);
 
   if (isRedirecting) {
     return (
@@ -526,7 +526,7 @@ const Checkout = () => {
                 key={item.menuId}
                 item={item}
                 menu={menuDetails[item.menuId]}
-                restaurant={restaurant}
+                restaurant={restaurant!}
                 onIncrement={handleIncrement}
                 onDecrement={handleDecrement}
                 onRemove={handleRemove}
@@ -661,7 +661,7 @@ const Checkout = () => {
                 This restaurant is currently closed.
               </p>
             )}
-            {restaurant.distanceKm && !deliveryPricing && (
+            {restaurant?.distanceKm && !deliveryPricing && (
               <p className="text-xs text-red-500 text-center leading-tight">
                 This restaurant is too far from your address for delivery.
               </p>

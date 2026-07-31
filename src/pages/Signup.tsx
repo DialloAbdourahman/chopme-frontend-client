@@ -77,7 +77,7 @@ const Signup = () => {
       }
     } catch (error) {
       const err = error as AxiosError<IOrchestrationResult<string>>;
-      switch (err.response.data.statusCode) {
+      switch (err?.response?.data?.statusCode) {
         case EnumStatusCode.EXISTS_ALREADY:
           showWarningToast("Account already exists. Please login.");
           break;

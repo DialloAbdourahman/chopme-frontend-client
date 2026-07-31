@@ -10,11 +10,11 @@ import {
 import Navbar from "../components/Navbar";
 import RestaurantCard from "../components/RestaurantCard";
 import { RestaurantService } from "../services/restaurant.service";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import type { RootState } from "../store";
 import RestaurantFilters from "../components/RestaurantFilters";
 import Pagination from "../components/Pagination";
-import { setOpenAddUserLocationModal } from "../store/user.slice";
+import usePromptLocation from "../hooks/usePromptLocation";
 
 const parseFilters = (value: string | null): FindRestaurantDto => {
   if (!value) return {};
@@ -32,7 +32,7 @@ const RestaurantsList = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const dispatch = useDispatch();
+  const { promptLocation } = usePromptLocation();
 
   const limit = 10;
 
@@ -88,12 +88,7 @@ const RestaurantsList = () => {
   }, [location]);
 
   useEffect(() => {
-    const initializeLocation = async () => {
-      if (!location) {
-        dispatch(setOpenAddUserLocationModal(true));
-      }
-    };
-    initializeLocation();
+    promptLocation();
   }, []);
 
   useEffect(() => {
@@ -179,7 +174,7 @@ const RestaurantsList = () => {
           {/* Filters */}
           <RestaurantFilters
             filters={filters}
-            location={location}
+            location={location ?? undefined}
             onApply={handleApplyFilters}
             onClear={handleClearFilters}
           />
