@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { store } from "./store";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { KEYS } from "./utils/keys.ts";
+import "./i18n";
 
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>

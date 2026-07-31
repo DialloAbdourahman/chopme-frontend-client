@@ -1,0 +1,41 @@
+{
+  "common": {
+    "search": "Search",
+    "login": "Login",
+    "logout": "Logout",
+    "save": "Save",
+    "cancel": "Cancel",
+    "language": "Language"
+  },
+
+  "restaurant": {
+    "open": "Open",
+    "closed": "Closed",
+    "deliveryFee": "Delivery fee",
+    "menu": "Menu"
+  },
+
+  "order": {
+    "placeOrder": "Place order",
+    "yourOrder": "Your order",
+    "total": "Total"
+  },
+
+  "navbar": {
+    "home": "Home",
+    "restaurants": "Restaurants",
+    "orders": "Orders",
+    "profile": "Profile",
+    "logout": "Log out",
+    "signin": "Sign in",
+    "setLocation": "Set your location",
+    "cart": "Open cart"
+  },
+
+  "addUserLocation": {
+    "title": "Share your location",
+    "useMyLocation": "Use my location",
+    "findNearby": "Find nearby restaurants",
+    "description": "Share your location to see <0>restaurants</0> and <1>dishes</1> near you."
+  }
+}

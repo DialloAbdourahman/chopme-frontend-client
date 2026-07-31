@@ -1,0 +1,41 @@
+{
+  "common": {
+    "search": "Rechercher",
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "language": "Langue"
+  },
+
+  "restaurant": {
+    "open": "Ouvert",
+    "closed": "Fermé",
+    "deliveryFee": "Frais de livraison",
+    "menu": "Menu"
+  },
+
+  "order": {
+    "placeOrder": "Commander",
+    "yourOrder": "Votre commande",
+    "total": "Total"
+  },
+
+  "navbar": {
+    "home": "Accueil",
+    "restaurants": "Restaurants",
+    "orders": "Commandes",
+    "profile": "Profil",
+    "logout": "Déconnexion",
+    "signin": "Connexion",
+    "setLocation": "Définir votre position",
+    "cart": "Ouvrir le panier"
+  },
+
+  "addUserLocation": {
+    "title": "Partager votre position",
+    "useMyLocation": "Utiliser ma position",
+    "findNearby": "Trouver des restaurants à proximité",
+    "description": "Partagez votre position pour voir les <0>restaurants</0> et les <1>plats</1> près de chez vous."
+  }
+}

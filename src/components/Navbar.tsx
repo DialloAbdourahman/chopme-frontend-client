@@ -18,10 +18,42 @@ import {
 } from "../store/user.slice";
 import { KEYS } from "../utils/keys";
 import { showErrorToast, showSuccessToast } from "../utils/toasts";
+import { useTranslation } from "react-i18next";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { t, i18n } = useTranslation();
+
+  const LanguageSwitcher = () => {
+    const active = i18n.language?.startsWith("fr") ? "fr" : "en";
+
+    return (
+      <div className="inline-flex items-center bg-background rounded-full p-1 border border-gray-100 shadow-sm">
+        <button
+          onClick={() => i18n.changeLanguage("fr")}
+          className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold transition-colors ${
+            active === "fr"
+              ? "bg-primary text-white"
+              : "text-gray-500 hover:text-primary"
+          }`}
+        >
+          FR
+        </button>
+        <button
+          onClick={() => i18n.changeLanguage("en")}
+          className={`px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold transition-colors ${
+            active === "en"
+              ? "bg-primary text-white"
+              : "text-gray-500 hover:text-primary"
+          }`}
+        >
+          EN
+        </button>
+      </div>
+    );
+  };
+
   const [isOpen, setIsOpen] = useState(false);
   const { client, userAddressLocalStorage, user } = useSelector(
     (state: RootState) => state.user,
@@ -67,17 +99,17 @@ const Navbar = () => {
   }
 
   const publicLinks = [
-    { label: "Home", href: "/" },
+    { label: t("navbar.home"), href: "/" },
     {
-      label: "Restaurants",
+      label: t("navbar.restaurants"),
       href: `/restaurants?page=1&filter=${JSON.stringify(filters)}`,
     },
   ];
 
   const authLinks = user
     ? [
-        { label: "Orders", href: "/orders" },
-        { label: "Profile", href: "/profile" },
+        { label: t("navbar.orders"), href: "/orders" },
+        { label: t("navbar.profile"), href: "/profile" },
       ]
     : [];
 
@@ -113,7 +145,7 @@ const Navbar = () => {
               className="flex items-center gap-1.5 bg-background px-3 py-1.5 rounded-full text-xs font-medium text-text hover:scale-105 transition-transform"
             >
               <MapPin size={14} className="text-primary" />
-              <span>Set your location</span>
+              <span>{t("navbar.setLocation")}</span>
             </button>
           )}
 
@@ -122,7 +154,7 @@ const Navbar = () => {
             <button
               onClick={() => setShowCart(true)}
               className="relative p-2 text-text hover:text-primary transition-colors"
-              aria-label="Open cart"
+              aria-label={t("navbar.cart")}
             >
               <ShoppingCart size={22} />
               {totalCartItems > 0 && (
@@ -131,6 +163,7 @@ const Navbar = () => {
                 </span>
               )}
             </button>
+            <LanguageSwitcher />
             {navLinks.map((link) => (
               <NavLink
                 key={link.label}
@@ -153,14 +186,14 @@ const Navbar = () => {
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-red-600"
               >
                 <LogOut size={16} />
-                Log out
+                {t("navbar.logout")}
               </button>
             ) : (
               <Link
                 to={"/signin"}
                 className="bg-primary text-white rounded-xl px-4 py-2 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
               >
-                Sign in
+                {t("navbar.signin")}
               </Link>
             )}
           </div>
@@ -170,7 +203,7 @@ const Navbar = () => {
             <button
               onClick={() => setShowCart(true)}
               className="relative p-2 text-text hover:text-primary transition-colors"
-              aria-label="Open cart"
+              aria-label={t("navbar.cart")}
             >
               <ShoppingCart size={22} />
               {totalCartItems > 0 && (
@@ -192,6 +225,12 @@ const Navbar = () => {
         {isOpen && (
           <div className="md:hidden border-t border-gray-100 px-4 pb-4 bg-card">
             <div className="flex flex-col gap-3 pt-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-text">
+                  {t("common.language")}
+                </span>
+                <LanguageSwitcher />
+              </div>
               {navLinks.map((link) => (
                 <NavLink
                   key={link.label}
@@ -215,14 +254,14 @@ const Navbar = () => {
                   className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100"
                 >
                   <LogOut size={17} />
-                  Log out
+                  {t("navbar.logout")}
                 </button>
               ) : (
                 <Link
                   to={"/signin"}
                   className="w-full bg-primary text-white rounded-xl px-4 py-3 text-sm font-semibold mt-2 text-center"
                 >
-                  Sign in
+                  {t("navbar.signin")}
                 </Link>
               )}
             </div>
