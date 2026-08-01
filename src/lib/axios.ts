@@ -4,7 +4,7 @@ import { EnumStatusCode } from "chopme-frontend-common";
 import { TokensService } from "../services/tokens.service";
 import { AuthService } from "../services/auth.service";
 import { store } from "../store";
-import { clearClient, clearUser } from "../store/user.slice";
+import { setClient, setUser } from "../store/user.slice";
 
 export const createApiClient = (baseURL: string): AxiosInstance => {
   const client = axios.create({
@@ -74,8 +74,8 @@ export const createApiClient = (baseURL: string): AxiosInstance => {
         } catch {
           // TokensService.removeToken(KEYS.ACCESS_TOKEN_KEY);
           // TokensService.removeToken(KEYS.REFRESH_TOKEN_KEY);
-          store.dispatch(clearUser());
-          store.dispatch(clearClient());
+          store.dispatch(setUser(null));
+          store.dispatch(setClient(null));
 
           return Promise.reject(error);
         }

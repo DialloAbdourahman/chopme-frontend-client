@@ -12,9 +12,9 @@ import CartDrawer from "./CartDrawer";
 import { AuthService } from "../services/auth.service";
 import { TokensService } from "../services/tokens.service";
 import {
-  clearClient,
-  clearUser,
+  setClient,
   setOpenAddUserLocationModal,
+  setUser,
 } from "../store/user.slice";
 import { KEYS } from "../utils/keys";
 import { showErrorToast, showSuccessToast } from "../utils/toasts";
@@ -51,8 +51,8 @@ const Navbar = () => {
 
       TokensService.removeToken(KEYS.ACCESS_TOKEN_KEY);
       TokensService.removeToken(KEYS.REFRESH_TOKEN_KEY);
-      dispatch(clearUser());
-      dispatch(clearClient());
+      dispatch(setUser(null));
+      dispatch(setClient(null));
       setIsOpen(false);
       showSuccessToast("You have been logged out.");
       navigate("/");

@@ -24,31 +24,19 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<IUserEntity>) => {
+    setUser: (state, action: PayloadAction<IUserEntity | null>) => {
       state.user = action.payload;
     },
 
-    clearUser: (state) => {
-      state.user = null;
-    },
-
-    setClient: (state, action: PayloadAction<IClientEntity>) => {
+    setClient: (state, action: PayloadAction<IClientEntity | null>) => {
       state.client = action.payload;
-    },
-
-    clearClient: (state) => {
-      state.client = null;
     },
 
     setUserAddressLocalStorage: (
       state,
-      action: PayloadAction<IAddressEntity>,
+      action: PayloadAction<IAddressEntity | null>,
     ) => {
       state.userAddressLocalStorage = action.payload;
-    },
-
-    clearUserAddressLocalStorage: (state) => {
-      state.userAddressLocalStorage = null;
     },
 
     setOpenAddUserLocationModal: (state, action: PayloadAction<boolean>) => {
@@ -59,11 +47,8 @@ export const userSlice = createSlice({
 
 export const {
   setUser,
-  clearUser,
   setClient,
-  clearClient,
   setUserAddressLocalStorage,
-  clearUserAddressLocalStorage,
   setOpenAddUserLocationModal,
 } = userSlice.actions;
 
