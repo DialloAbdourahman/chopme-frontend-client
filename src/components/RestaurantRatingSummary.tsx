@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import type { IRestaurantEntity } from "chopme-frontend-common";
 import { EnumStatusCode, EnumStatusResponse } from "chopme-frontend-common";
 import { RestaurantRatingService } from "../services/restaurant-rating.service";
@@ -20,6 +21,7 @@ const FAKE_COUNTS: Record<number, number> = {
 };
 
 const RestaurantRatingSummary = ({ restaurant }: Props) => {
+  const { t } = useTranslation();
   const [starCounts, setStarCounts] = useState<Record<number, number>>({});
   const [loading, setLoading] = useState(true);
 
@@ -89,7 +91,7 @@ const RestaurantRatingSummary = ({ restaurant }: Props) => {
     <div className="bg-card rounded-2xl p-4 shadow-sm space-y-4">
       <div className="flex items-center gap-2 mb-2">
         <Star size={18} className="text-accent fill-accent" />
-        <h2 className="font-semibold text-text">Ratings</h2>
+        <h2 className="font-semibold text-text">{t("rating.ratings")}</h2>
       </div>
 
       <div className="flex items-center gap-4">
@@ -106,7 +108,7 @@ const RestaurantRatingSummary = ({ restaurant }: Props) => {
           </div>
 
           <span className="text-xs text-gray-500 mt-1">
-            {displayTotal} rating{displayTotal !== 1 ? "s" : ""}
+            {t("rating.ratingCount", { count: displayTotal })}
           </span>
         </div>
 

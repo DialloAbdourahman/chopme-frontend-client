@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { UtensilsCrossed } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import {
   EnumStatusCode,
   EnumStatusResponse,
@@ -14,6 +15,7 @@ type Props = {
 };
 
 const RestaurantMenus = ({ restaurant }: Props) => {
+  const { t } = useTranslation();
   const [categories, setCategories] = useState<ICategoryEntity[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -44,7 +46,7 @@ const RestaurantMenus = ({ restaurant }: Props) => {
     <div className="bg-card rounded-2xl p-4 shadow-sm">
       <div className="flex items-center gap-2 mb-4">
         <UtensilsCrossed size={18} className="text-primary" />
-        <h2 className="font-semibold text-text">Menu</h2>
+        <h2 className="font-semibold text-text">{t("restaurant.menu")}</h2>
       </div>
 
       {loading ? (
@@ -71,7 +73,7 @@ const RestaurantMenus = ({ restaurant }: Props) => {
           <div className="bg-background rounded-full p-3 mb-3">
             <UtensilsCrossed size={22} className="text-primary" />
           </div>
-          <p className="text-sm text-gray-500">No menus available yet</p>
+          <p className="text-sm text-gray-500">{t("restaurant.noMenusYet")}</p>
         </div>
       )}
     </div>

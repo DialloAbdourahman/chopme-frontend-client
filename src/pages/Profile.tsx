@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import {
   EnumAuthType,
@@ -34,6 +35,7 @@ const phoneFormSchema = z.object({
 type PhoneFormValues = z.infer<typeof phoneFormSchema>;
 
 const Profile = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user, client } = useSelector((state: RootState) => state.user);
@@ -100,12 +102,14 @@ const Profile = () => {
       ) {
         dispatch(setUser(result.data.data));
         resetFullName({ fullName: result.data.data.fullName });
-        showSuccessToast("Full name updated successfully.");
+        showSuccessToast(t("profile.fullNameUpdated"));
       } else {
-        showErrorToast(result.data.message ?? "Failed to update full name.");
+        showErrorToast(
+          result.data.message ?? t("profile.fullNameUpdateFailed"),
+        );
       }
     } catch {
-      showErrorToast("Failed to update full name. Please try again.");
+      showErrorToast(t("profile.fullNameUpdateError"));
     }
   };
 
@@ -134,12 +138,12 @@ const Profile = () => {
           ? result.data.data.phoneNumber.slice(4)
           : (result.data.data.phoneNumber ?? "");
         resetPhone({ phoneNumber: next });
-        showSuccessToast("Phone number updated successfully.");
+        showSuccessToast(t("profile.phoneUpdated"));
       } else {
-        showErrorToast(result.data.message ?? "Failed to update phone number.");
+        showErrorToast(result.data.message ?? t("profile.phoneUpdateFailed"));
       }
     } catch {
-      showErrorToast("Failed to update phone number. Please try again.");
+      showErrorToast(t("profile.phoneUpdateError"));
     }
   };
 
@@ -151,12 +155,14 @@ const Profile = () => {
         result.data.statusCode === EnumStatusCode.UPDATED_SUCCESSFULLY
       ) {
         resetPassword();
-        showSuccessToast("Password updated successfully.");
+        showSuccessToast(t("profile.passwordUpdated"));
       } else {
-        showErrorToast(result.data.message ?? "Failed to update password.");
+        showErrorToast(
+          result.data.message ?? t("profile.passwordUpdateFailed"),
+        );
       }
     } catch {
-      showErrorToast("Failed to update password. Please try again.");
+      showErrorToast(t("profile.passwordUpdateError"));
     }
   };
 
@@ -170,7 +176,7 @@ const Profile = () => {
           className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-primary transition-colors mb-4"
         >
           <ArrowLeft size={16} />
-          Back
+          {t("common.back")}
         </button>
 
         <div className="flex items-center gap-3 mb-6">
@@ -178,10 +184,10 @@ const Profile = () => {
             <User size={22} className="text-primary" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-text">My profile</h1>
-            <p className="text-xs text-gray-500">
-              Manage your account information
-            </p>
+            <h1 className="text-xl font-bold text-text">
+              {t("profile.title")}
+            </h1>
+            <p className="text-xs text-gray-500">{t("profile.subtitle")}</p>
           </div>
         </div>
 
@@ -192,13 +198,13 @@ const Profile = () => {
             className="bg-card rounded-2xl p-4 shadow-sm space-y-4"
           >
             <h2 className="text-sm font-semibold text-text">
-              Personal information
+              {t("profile.personalInformation")}
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-1">
-                  Full name
+                  {t("profile.fullName")}
                 </label>
                 <input
                   type="text"
@@ -215,7 +221,7 @@ const Profile = () => {
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-1">
-                  Email
+                  {t("profile.email")}
                 </label>
                 <input
                   type="email"
@@ -227,9 +233,9 @@ const Profile = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
+              {/* <div>
                 <label className="block text-xs font-medium text-gray-500 mb-1">
-                  Account type
+                  {t("profile.accountType")}
                 </label>
                 <input
                   type="text"
@@ -237,10 +243,10 @@ const Profile = () => {
                   disabled
                   className="w-full bg-gray-100 border border-border text-gray-500 text-sm rounded-xl px-3 py-2 cursor-not-allowed"
                 />
-              </div>
+              </div> */}
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-1">
-                  Member since
+                  {t("profile.memberSince")}
                 </label>
                 <input
                   type="text"
@@ -260,7 +266,9 @@ const Profile = () => {
               disabled={isSubmittingFullName || !isFullNameDirty}
               className="bg-primary text-white text-sm font-semibold rounded-xl px-4 py-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
             >
-              {isSubmittingFullName ? "Saving..." : "Save full name"}
+              {isSubmittingFullName
+                ? t("profile.saving")
+                : t("profile.saveFullName")}
             </button>
           </form>
 
@@ -269,11 +277,13 @@ const Profile = () => {
             onSubmit={handleSubmitPhone(onSubmitPhone)}
             className="bg-card rounded-2xl p-4 shadow-sm space-y-4"
           >
-            <h2 className="text-sm font-semibold text-text">Contact</h2>
+            <h2 className="text-sm font-semibold text-text">
+              {t("profile.contact")}
+            </h2>
 
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1">
-                Phone number
+                {t("profile.phoneNumber")}
               </label>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-text bg-background border border-border rounded-xl px-3 py-2">
@@ -282,7 +292,7 @@ const Profile = () => {
                 <input
                   type="tel"
                   {...registerPhone("phoneNumber")}
-                  placeholder="677552485"
+                  placeholder={t("profile.phonePlaceholder")}
                   className={`flex-1 bg-background border text-text text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary ${
                     phoneErrors.phoneNumber ? "border-red-400" : "border-border"
                   }`}
@@ -300,7 +310,9 @@ const Profile = () => {
               disabled={isSubmittingPhone || !isPhoneDirty}
               className="bg-primary text-white text-sm font-semibold rounded-xl px-4 py-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
             >
-              {isSubmittingPhone ? "Saving..." : "Save phone number"}
+              {isSubmittingPhone
+                ? t("profile.saving")
+                : t("profile.savePhoneNumber")}
             </button>
           </form>
 
@@ -311,19 +323,19 @@ const Profile = () => {
               className="bg-card rounded-2xl p-4 shadow-sm space-y-4"
             >
               <h2 className="text-sm font-semibold text-text">
-                Update password
+                {t("profile.updatePassword")}
               </h2>
 
               <div className="space-y-3">
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-medium text-gray-500">
-                    Current password
+                    {t("profile.currentPassword")}
                   </label>
                   <div className="relative">
                     <input
                       type={showOldPassword ? "text" : "password"}
                       {...registerPassword("oldPassword")}
-                      placeholder="Current password"
+                      placeholder={t("profile.currentPassword")}
                       className={`w-full bg-background border text-text text-sm rounded-xl px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-primary ${
                         passwordErrors.oldPassword
                           ? "border-red-400"
@@ -334,7 +346,7 @@ const Profile = () => {
                       type="button"
                       onClick={() => setShowOldPassword((v) => !v)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-                      aria-label="Toggle current password visibility"
+                      aria-label={t("profile.toggleCurrentPassword")}
                     >
                       {showOldPassword ? (
                         <EyeOff size={16} />
@@ -352,13 +364,13 @@ const Profile = () => {
 
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-medium text-gray-500">
-                    New password
+                    {t("profile.newPassword")}
                   </label>
                   <div className="relative">
                     <input
                       type={showNewPassword ? "text" : "password"}
                       {...registerPassword("newPassword")}
-                      placeholder="New password"
+                      placeholder={t("profile.newPassword")}
                       className={`w-full bg-background border text-text text-sm rounded-xl px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-primary ${
                         passwordErrors.newPassword
                           ? "border-red-400"
@@ -369,7 +381,7 @@ const Profile = () => {
                       type="button"
                       onClick={() => setShowNewPassword((v) => !v)}
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-                      aria-label="Toggle new password visibility"
+                      aria-label={t("profile.toggleNewPassword")}
                     >
                       {showNewPassword ? (
                         <EyeOff size={16} />
@@ -387,12 +399,12 @@ const Profile = () => {
 
                 <div className="flex flex-col gap-1">
                   <label className="text-xs font-medium text-gray-500">
-                    Confirm new password
+                    {t("profile.confirmNewPassword")}
                   </label>
                   <input
                     type="password"
                     {...registerPassword("confirmPassword")}
-                    placeholder="Confirm new password"
+                    placeholder={t("profile.confirmNewPassword")}
                     className={`w-full bg-background border text-text text-sm rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary ${
                       passwordErrors.confirmPassword
                         ? "border-red-400"
@@ -412,7 +424,9 @@ const Profile = () => {
                 disabled={isSubmittingPassword}
                 className="bg-primary text-white text-sm font-semibold rounded-xl px-4 py-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
               >
-                {isSubmittingPassword ? "Updating..." : "Update password"}
+                {isSubmittingPassword
+                  ? t("profile.updating")
+                  : t("profile.updatePasswordButton")}
               </button>
             </form>
           )}

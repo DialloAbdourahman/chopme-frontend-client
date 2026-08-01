@@ -7,6 +7,7 @@ import {
 } from "@headlessui/react";
 import { AlertTriangle, Loader2, X } from "lucide-react";
 import { Fragment, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   open: boolean;
@@ -24,9 +25,10 @@ const DeleteModal = ({
   title,
   description,
   loading = false,
-  confirmText = "Delete",
+  confirmText,
   onConfirm,
 }: Props) => {
+  const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
 
   const close = () => {
@@ -86,7 +88,7 @@ const DeleteModal = ({
                     onClick={close}
                     className="rounded-md text-text/50 hover:text-text focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
                   >
-                    <span className="sr-only">Close</span>
+                    <span className="sr-only">{t("common.close")}</span>
                     <X className="h-5 w-5" aria-hidden="true" />
                   </button>
                 </div>
@@ -99,7 +101,7 @@ const DeleteModal = ({
                     onClick={close}
                     className="inline-flex w-full justify-center rounded-md bg-card px-3 py-2 text-sm font-semibold text-text shadow-sm ring-1 ring-inset ring-border hover:bg-background disabled:opacity-50 sm:w-auto"
                   >
-                    Cancel
+                    {t("common.cancel")}
                   </button>
                   <button
                     type="button"
@@ -108,7 +110,7 @@ const DeleteModal = ({
                     className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 disabled:opacity-50 sm:w-auto"
                   >
                     {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-                    {confirmText}
+                    {confirmText ?? t("common.delete")}
                   </button>
                 </div>
               </DialogPanel>

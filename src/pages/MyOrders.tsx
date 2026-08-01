@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   EnumOrderStatus,
   EnumStatusCode,
   EnumStatusResponse,
   type IOrderEntity,
 } from "chopme-frontend-common";
-import { ChevronLeft, ChevronRight, ShoppingBag } from "lucide-react";
+import { ChevronRight, ShoppingBag } from "lucide-react";
 import Navbar from "../components/Navbar";
 import OrderStatusBadge from "../components/OrderStatusBadge";
 import RefundStatusBadge from "../components/RefundStatusBadge";
+import Pagination from "../components/Pagination";
 import { OrderService } from "../services/order.service";
 import { RestaurantService } from "../services/restaurant.service";
 import { ComputeUtils } from "../utils/compute-utils";
@@ -24,17 +26,18 @@ import { setOrderStatusUpdate } from "../store/notification.slice";
 
 const LIMIT = 10;
 
-const statusOptions = [
-  { value: "", label: "All" },
-  ...Object.values(EnumOrderStatus).map((status) => ({
-    value: status,
-    label: ComputeUtils.formatStatus(status),
-  })),
-];
-
 const MyOrders = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { t } = useTranslation();
+
+  const statusOptions = [
+    { value: "", label: t("common.all") },
+    ...Object.values(EnumOrderStatus).map((status) => ({
+      value: status,
+      label: ComputeUtils.formatStatus(t, status),
+    })),
+  ];
 
   const { orderStatusUpdate } = useSelector(
     (state: RootState) => state.notification,
@@ -105,10 +108,10 @@ const MyOrders = () => {
           );
           setRestaurantNames(names);
         } else {
-          showErrorToast(data.message ?? "Could not load orders.");
+          showErrorToast(data.message ?? t("order.couldNotLoadOrders"));
         }
       } catch {
-        showErrorToast("Something went wrong. Please try again.");
+        showErrorToast(t("common.somethingWentWrong"));
       } finally {
         setLoading(false);
       }
@@ -128,16 +131,16 @@ const MyOrders = () => {
 
     switch (orderStatusUpdate.status) {
       case EnumOrderStatus.CANCELLED_BY_RESTAURANT:
-        showWarningToast("The restaurant cancelled your order.");
+        showWarningToast(t("order.restaurantCancelledOrder"));
         break;
       case EnumOrderStatus.PREPARING_ORDER:
-        showSuccessToast("The restaurant is preparing your order.");
+        showSuccessToast(t("order.restaurantPreparingOrder"));
         break;
       case EnumOrderStatus.IN_DELIVERY:
-        showSuccessToast("Your order is out for delivery.");
+        showSuccessToast(t("order.orderOutForDelivery"));
         break;
       case EnumOrderStatus.DELIVERED:
-        showSuccessToast("Your order has been delivered.");
+        showSuccessToast(t("order.orderDelivered"));
         break;
       default:
         break;
@@ -154,7 +157,7 @@ const MyOrders = () => {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
           <h1 className="text-xl font-bold text-text flex items-center gap-2">
             <ShoppingBag size={22} className="text-primary" />
-            My orders
+            {t("order.myOrders")}
           </h1>
 
           <select
@@ -178,7 +181,7 @@ const MyOrders = () => {
           </div>
         ) : orders.length === 0 ? (
           <div className="bg-card rounded-2xl p-8 text-center shadow-sm">
-            <p className="text-sm text-gray-500">No orders found.</p>
+            <p className="text-sm text-gray-500">{t("order.noOrdersFound")}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -207,7 +210,9 @@ const MyOrders = () => {
                   <div className="flex-1 min-w-0 flex flex-col gap-0.5">
                     <div className="flex items-start justify-between gap-2">
                       <p className="text-sm font-semibold text-text truncate">
-                        Order #{order.id.slice(-6).toUpperCase()}
+                        {t("order.orderHash", {
+                          id: order.id.slice(-6).toUpperCase(),
+                        })}
                       </p>
                       <p className="text-xs text-gray-500 text-right shrink-0">
                         {ComputeUtils.formatDate(order.createdAt)}
@@ -215,7 +220,8 @@ const MyOrders = () => {
                     </div>
 
                     <p className="text-xs text-text/80 truncate">
-                      {restaurantNames[order.restaurantId] ?? "Restaurant"}
+                      {restaurantNames[order.restaurantId] ??
+                        t("order.restaurant")}
                     </p>
 
                     <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
@@ -225,7 +231,7 @@ const MyOrders = () => {
                           FCFA
                         </p>
                         <span className="text-xs text-gray-500">
-                          • {itemCount} item{itemCount !== 1 ? "s" : ""}
+                          • {t("order.itemCount", { count: itemCount })}
                         </span>
                       </div>
 
@@ -248,29 +254,11 @@ const MyOrders = () => {
           </div>
         )}
 
-        {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-4 mt-8">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1 || loading}
-              className="h-10 w-10 min-w-[2.5rem] inline-flex items-center justify-center rounded-full bg-card text-text disabled:opacity-50 hover:bg-gray-100 transition-colors"
-              aria-label="Previous page"
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <span className="text-sm text-text">
-              Page {page} of {totalPages}
-            </span>
-            <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages || loading}
-              className="h-10 w-10 min-w-[2.5rem] inline-flex items-center justify-center rounded-full bg-card text-text disabled:opacity-50 hover:bg-gray-100 transition-colors"
-              aria-label="Next page"
-            >
-              <ChevronRight size={20} />
-            </button>
-          </div>
-        )}
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       </div>
     </div>
   );

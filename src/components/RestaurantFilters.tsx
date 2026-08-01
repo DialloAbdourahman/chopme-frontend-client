@@ -1,11 +1,12 @@
 import { SlidersHorizontal, X } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import type {
   EnumRestaurantType,
   FindRestaurantDto,
   IAddressEntity,
 } from "chopme-frontend-common";
-import { RESTAURANT_TYPES } from "../utils/constants";
+import { getRestaurantTypes } from "../utils/constants";
 
 type Props = {
   filters: FindRestaurantDto;
@@ -15,11 +16,14 @@ type Props = {
 };
 
 const RestaurantFilters = ({ filters, location, onApply, onClear }: Props) => {
+  const { t } = useTranslation();
   const [showFilters, setShowFilters] = useState(false);
   const [cityDraft, setCityDraft] = useState(filters?.city ?? "");
   const [typeDraft, setTypeDraft] = useState<EnumRestaurantType | undefined>(
     filters?.type,
   );
+
+  const restaurantTypes = getRestaurantTypes(t);
   const [radiusDraft, setRadiusDraft] = useState<string>(
     filters?.radiusKm ? String(filters.radiusKm) : "",
   );
@@ -104,22 +108,22 @@ const RestaurantFilters = ({ filters, location, onApply, onClear }: Props) => {
               Type
             </label>
             <div className="flex flex-wrap gap-2">
-              {RESTAURANT_TYPES.map((t) => (
+              {restaurantTypes.map((r) => (
                 <button
-                  key={t.type}
+                  key={r.type}
                   type="button"
                   onClick={() =>
                     setTypeDraft((prev) =>
-                      prev === t.type ? undefined : t.type,
+                      prev === r.type ? undefined : r.type,
                     )
                   }
                   className={`px-4 py-2 rounded-full text-xs font-medium transition-colors ${
-                    typeDraft === t.type
+                    typeDraft === r.type
                       ? "bg-primary text-white"
                       : "bg-background text-text hover:bg-primary/10"
                   }`}
                 >
-                  {t.title}
+                  {r.title}
                 </button>
               ))}
             </div>

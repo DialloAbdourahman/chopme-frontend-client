@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { CreateClientDto } from "chopme-frontend-common";
@@ -14,6 +15,7 @@ import { AuthService } from "../services/auth.service";
 import { TokensService } from "../services/tokens.service";
 import { KEYS } from "../utils/keys";
 import GoogleAuthButton from "../components/GoogleAuthButton";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   showErrorToast,
@@ -23,6 +25,7 @@ import {
 import useInitializeAfterAuth from "../hooks/useInitializeAfterAuth";
 
 const Signup = () => {
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -48,7 +51,7 @@ const Signup = () => {
         data.code === EnumStatusResponse.SUCCESS &&
         data.statusCode === EnumStatusCode.CLIENT_CREATED_SUCCESSFULLY
       ) {
-        showSuccessToast("Welcome! You'll soon be redirected...");
+        showSuccessToast(t("auth.welcomeSignup"));
 
         const { data: signinData } = await AuthService.emailPasswordLogin({
           email: values.email,
@@ -79,25 +82,28 @@ const Signup = () => {
       const err = error as AxiosError<IOrchestrationResult<string>>;
       switch (err?.response?.data?.statusCode) {
         case EnumStatusCode.EXISTS_ALREADY:
-          showWarningToast("Account already exists. Please login.");
+          showWarningToast(t("auth.accountExists"));
           break;
         case EnumStatusCode.UNABLE_TO_CREATE_ACCOUNT:
-          showWarningToast("Unable to create account. Please try again.");
+          showWarningToast(t("auth.unableToCreateAccount"));
           break;
         case EnumStatusCode.VALIDATION_ERROR:
-          showWarningToast("Please check your input and try again.");
+          showWarningToast(t("auth.checkInput"));
           break;
         case EnumStatusCode.INTERNAL_SERVER_ERROR:
-          showErrorToast("Something went wrong. Please try again.");
+          showErrorToast(t("auth.somethingWentWrong"));
           break;
         default:
-          showErrorToast("Something went wrong. Please try again.");
+          showErrorToast(t("auth.somethingWentWrong"));
       }
     }
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-10">
+    <div className="relative min-h-screen bg-background flex flex-col items-center justify-center px-4 py-10">
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
       <div className="w-full max-w-md">
         {/* Logo / Brand */}
         <div className="flex flex-col items-center mb-8">
@@ -107,7 +113,7 @@ const Signup = () => {
           <h1 className="text-3xl font-bold text-text tracking-tight">
             ChopMe
           </h1>
-          <p className="text-sm text-gray-400 mt-1">Sign up to Chopme</p>
+          <p className="text-sm text-gray-400 mt-1">{t("auth.signupTitle")}</p>
         </div>
 
         {/* Card */}
@@ -119,7 +125,7 @@ const Signup = () => {
             {/* Full name */}
             <div className="flex flex-col gap-1">
               <label className="text-xs font-semibold text-text uppercase tracking-wide">
-                Full name
+                {t("auth.fullName")}
               </label>
               <div
                 className={`flex items-center border rounded-xl px-4 py-3 gap-3 bg-background transition-colors ${
@@ -131,7 +137,7 @@ const Signup = () => {
                 <Mail size={18} className="text-gray-400 shrink-0" />
                 <input
                   type="fullName"
-                  placeholder="Eren Yager"
+                  placeholder={t("auth.fullNamePlaceholder")}
                   {...register("fullName")}
                   className="flex-1 bg-transparent outline-none text-text text-sm placeholder-gray-400"
                 />
@@ -146,7 +152,7 @@ const Signup = () => {
             {/* Email */}
             <div className="flex flex-col gap-1">
               <label className="text-xs font-semibold text-text uppercase tracking-wide">
-                Email
+                {t("auth.email")}
               </label>
               <div
                 className={`flex items-center border rounded-xl px-4 py-3 gap-3 bg-background transition-colors ${
@@ -158,7 +164,7 @@ const Signup = () => {
                 <Mail size={18} className="text-gray-400 shrink-0" />
                 <input
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder={t("auth.emailPlaceholder")}
                   {...register("email")}
                   className="flex-1 bg-transparent outline-none text-text text-sm placeholder-gray-400"
                 />
@@ -173,7 +179,7 @@ const Signup = () => {
             {/* Password */}
             <div className="flex flex-col gap-1">
               <label className="text-xs font-semibold text-text uppercase tracking-wide">
-                Password
+                {t("auth.password")}
               </label>
               <div
                 className={`flex items-center border rounded-xl px-4 py-3 gap-3 bg-background transition-colors ${
@@ -185,7 +191,7 @@ const Signup = () => {
                 <Lock size={18} className="text-gray-400 shrink-0" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
+                  placeholder={t("auth.passwordPlaceholder")}
                   {...register("password")}
                   className="flex-1 bg-transparent outline-none text-text text-sm placeholder-gray-400"
                 />
@@ -207,7 +213,7 @@ const Signup = () => {
             {/* Confirm Password */}
             <div className="flex flex-col gap-1">
               <label className="text-xs font-semibold text-text uppercase tracking-wide">
-                Confirm Password
+                {t("auth.confirmPassword")}
               </label>
               <div
                 className={`flex items-center border rounded-xl px-4 py-3 gap-3 bg-background transition-colors ${
@@ -219,7 +225,7 @@ const Signup = () => {
                 <Lock size={18} className="text-gray-400 shrink-0" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
+                  placeholder={t("auth.passwordPlaceholder")}
                   {...register("confirmPassword")}
                   className="flex-1 bg-transparent outline-none text-text text-sm placeholder-gray-400"
                 />
@@ -237,7 +243,9 @@ const Signup = () => {
               disabled={isSubmitting || loadingInitialize}
               className="w-full bg-primary text-white font-semibold rounded-xl py-3.5 text-sm shadow-sm hover:opacity-90 active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed mt-1"
             >
-              {isSubmitting || loadingInitialize ? "Signing up..." : "Sign up"}
+              {isSubmitting || loadingInitialize
+                ? t("auth.signingUp")
+                : t("auth.signUp")}
             </button>
           </form>
 
@@ -245,7 +253,7 @@ const Signup = () => {
           <div className="flex items-center gap-3 my-6">
             <div className="flex-1 h-px bg-gray-200" />
             <span className="text-xs text-gray-400 font-medium">
-              or continue with
+              {t("auth.orContinueWith")}
             </span>
             <div className="flex-1 h-px bg-gray-200" />
           </div>
@@ -256,7 +264,7 @@ const Signup = () => {
 
         {/* Sign in link */}
         <p className="text-center text-sm text-gray-400 mt-6">
-          Have an account already ?{" "}
+          {t("auth.haveAccount")}{" "}
           <Link
             to={
               redirectUrl
@@ -265,7 +273,7 @@ const Signup = () => {
             }
             className="text-primary font-semibold hover:underline"
           >
-            Sign in
+            {t("auth.signInLink")}
           </Link>
         </p>
       </div>

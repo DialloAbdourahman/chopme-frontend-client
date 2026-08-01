@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
@@ -25,6 +26,7 @@ import type { RootState } from "../store";
 import { addItemToCart, decrementCartItemQuantity } from "../store/cart";
 
 const MenuDetails = () => {
+  const { t } = useTranslation();
   const { menuId } = useParams<{ menuId: string; slug: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -146,9 +148,11 @@ const MenuDetails = () => {
           <div className="bg-card rounded-full p-4 mb-4">
             <UtensilsCrossed size={28} className="text-primary" />
           </div>
-          <h3 className="font-semibold text-text">Menu not found</h3>
+          <h3 className="font-semibold text-text">
+            {t("menuDetails.notFound")}
+          </h3>
           <p className="text-sm text-gray-500 mt-1">
-            This item doesn't exist or is no longer available
+            {t("menuDetails.notFoundDesc")}
           </p>
         </div>
       </div>
@@ -167,7 +171,7 @@ const MenuDetails = () => {
           className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-primary transition-colors px-4 pt-4"
         >
           <ArrowLeft size={16} />
-          Back
+          {t("common.back")}
         </button>
 
         {/* Gallery */}
@@ -199,9 +203,13 @@ const MenuDetails = () => {
           <div className="flex items-center gap-4 text-sm text-gray-500">
             <div className="flex items-center gap-1">
               <Clock size={14} className="text-primary" />
-              <span>Added {new Date(menu.createdAt).toLocaleDateString()}</span>
+              <span>
+                {t("menuDetails.added", {
+                  date: new Date(menu.createdAt).toLocaleDateString(),
+                })}
+              </span>
             </div>
-            <span>{totalOrders} orders</span>
+            <span>{t("menuDetails.orders", { count: totalOrders })}</span>
           </div>
 
           {menu.description && (
@@ -212,7 +220,9 @@ const MenuDetails = () => {
 
           <div className="bg-card rounded-2xl p-4 shadow-sm space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500">Price</span>
+              <span className="text-sm text-gray-500">
+                {t("menuDetails.price")}
+              </span>
               <span className="text-lg font-bold text-primary">
                 {menu.priceWithPlatformPercentage.toLocaleString()} FCFA
               </span>
@@ -223,7 +233,7 @@ const MenuDetails = () => {
           {quantityInCart > 0 ? (
             <div className="bg-card rounded-2xl p-4 shadow-sm flex items-center justify-between">
               <span className="text-sm font-medium text-text">
-                In your cart
+                {t("menuDetails.inYourCart")}
               </span>
               <div className="flex items-center gap-3">
                 <button
@@ -252,26 +262,26 @@ const MenuDetails = () => {
               onClick={handleAdd}
               className="w-full bg-primary text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              Add to cart
+              {t("menuDetails.addToCart")}
             </button>
           )}
           {canAddToCart !== EnumCanOrderMenu.CAN_ORDER && (
             <p className="text-xs text-red-500 text-center leading-tight">
               {canAddToCart === EnumCanOrderMenu.RESTAURANT_CLOSED &&
-                "Restaurant is currently closed."}
+                t("checkout.restaurantClosedMessage")}
               {canAddToCart === EnumCanOrderMenu.MENU_NOT_AVAILABLE &&
-                "This item is unavailable."}
+                t("menuDetails.itemUnavailable")}
               {canAddToCart === EnumCanOrderMenu.RESTAURANT_TOO_FAR &&
-                "Delivery is not available for your location."}
+                t("menuDetails.deliveryNotAvailable")}
               {canAddToCart === EnumCanOrderMenu.USER_DID_NOT_ADD_LOCATION &&
-                "Please add a delivery location."}
+                t("menuDetails.addDeliveryLocation")}
             </p>
           )}
 
           {/* Restaurant link */}
           <div className="bg-card rounded-2xl p-4 shadow-sm">
             <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-2">
-              From
+              {t("order.from")}
             </p>
             <button
               onClick={() => navigate(`/restaurants/${menu.restaurant.slug}`)}

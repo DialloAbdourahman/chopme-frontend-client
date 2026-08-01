@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { RestaurantService } from "../services/restaurant.service";
 import {
   EnumStatusCode,
@@ -16,6 +17,7 @@ type Props = {
 };
 
 const RestaurantsInHomepage = ({ location }: Props) => {
+  const { t } = useTranslation();
   const [restaurants, setRestaurants] = useState<IRestaurantEntity[]>([]);
   const [loading, setLoading] = useState(false);
   const [nearYou, setNearYou] = useState(false);
@@ -105,10 +107,10 @@ const RestaurantsInHomepage = ({ location }: Props) => {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-xl font-bold text-text">
-                Restaurants near you
+                {t("home.restaurantsNearYou")}
               </h2>
               <p className="text-sm text-gray-500 mt-0.5">
-                Tasty options close to your location
+                {t("home.nearYouSubtitle")}
               </p>
             </div>
           </div>
@@ -128,19 +130,19 @@ const RestaurantsInHomepage = ({ location }: Props) => {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-xl font-bold text-text">
-              {nearYou ? "Restaurants near you" : "Popular restaurants"}
+              {nearYou
+                ? t("home.restaurantsNearYou")
+                : t("home.popularRestaurants")}
             </h2>
             <p className="text-sm text-gray-500 mt-0.5">
-              {nearYou
-                ? "Tasty options close to your location"
-                : "Tasty options just for you"}
+              {nearYou ? t("home.nearYouSubtitle") : t("home.popularSubtitle")}
             </p>
           </div>
           <Link
             to={`/restaurants?page=1&filter=${JSON.stringify(filters)}`}
             className="text-primary text-sm font-semibold flex items-center gap-1 hover:underline"
           >
-            See all <ArrowRight size={16} />
+            {t("common.seeAll")} <ArrowRight size={16} />
           </Link>
         </div>
 

@@ -1,6 +1,7 @@
 import { AxiosError, isAxiosError } from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router-dom";
 import {
   EnumStatusCode,
@@ -62,6 +63,7 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
 ];
 
 const RestaurantRatings = ({ restaurant, setRestaurant }: Props) => {
+  const { t } = useTranslation();
   const location = useLocation();
   const { user } = useSelector((state: RootState) => state.user);
   const [myRating, setMyRating] = useState<IRestaurantRatingEntity | null>(
@@ -95,7 +97,7 @@ const RestaurantRatings = ({ restaurant, setRestaurant }: Props) => {
       }
     } catch (fetchError) {
       console.error("Failed to fetch restaurant ratings:", fetchError);
-      setError("Unable to load ratings. Please try again.");
+      setError(t("rating.unableToLoadRatings"));
     } finally {
       setLoadingRatings(false);
     }
@@ -116,7 +118,7 @@ const RestaurantRatings = ({ restaurant, setRestaurant }: Props) => {
     } catch (fetchError) {
       if (!isAxiosError(fetchError) || fetchError.response?.status !== 404) {
         console.error("Failed to fetch your restaurant rating:", fetchError);
-        setError("Unable to load your rating. Please try again.");
+        setError(t("rating.unableToLoadYourRating"));
       }
       setMyRating(null);
     } finally {
@@ -143,27 +145,32 @@ const RestaurantRatings = ({ restaurant, setRestaurant }: Props) => {
 
     switch (requestError.response?.data.statusCode) {
       case EnumStatusCode.NO_COMPLETED_ORDER_FOR_RESTAURANT:
-        showWarningToast(
-          "You must have a completed order to rate this restaurant.",
-        );
+        showWarningToast(t("rating.mustCompleteOrder"));
         break;
       case EnumStatusCode.RATING_ALREADY_EXISTS:
-        showWarningToast("You have already rated this restaurant.");
+        showWarningToast(t("rating.alreadyRated"));
         break;
       case EnumStatusCode.RESTAURANT_NOT_FOUND:
-        showWarningToast("This restaurant is no longer available.");
+        showWarningToast(t("rating.restaurantNotAvailable"));
         break;
       case EnumStatusCode.RATING_NOT_FOUND:
-        showWarningToast("This rating no longer exists.");
+        showWarningToast(t("rating.ratingNotFound"));
         break;
       case EnumStatusCode.VALIDATION_ERROR:
-        showWarningToast("Please check your rating and comment.");
+        showWarningToast(t("rating.checkRatingAndComment"));
         break;
       case EnumStatusCode.NOT_ALLOWED:
-        showWarningToast("You are not allowed to perform this action.");
+        showWarningToast(t("rating.notAllowedToRate"));
         break;
-      default:
-        showErrorToast(`Unable to ${action} your rating. Please try again.`);
+      default: {
+        const unableToActionKey =
+          action === "create"
+            ? "rating.unableToCreateRating"
+            : action === "update"
+              ? "rating.unableToUpdateRating"
+              : "rating.unableToDeleteRating";
+        showErrorToast(t(unableToActionKey));
+      }
     }
   };
 
@@ -180,14 +187,14 @@ const RestaurantRatings = ({ restaurant, setRestaurant }: Props) => {
         !response.data.data
       ) {
         showErrorToast(
-          response.data.message ?? "Unable to create your rating.",
+          response.data.message ?? t("rating.unableToCreateRating"),
         );
         return;
       }
 
       setMyRating(response.data.data);
       await Promise.all([fetchRatings(), refreshRestaurantRating()]);
-      showSuccessToast("Rating created successfully.");
+      showSuccessToast(t("rating.ratingCreated"));
     } catch (createError) {
       console.error("Failed to create restaurant rating:", createError);
       showRatingError(createError, "create");
@@ -212,7 +219,7 @@ const RestaurantRatings = ({ restaurant, setRestaurant }: Props) => {
         !response.data.data
       ) {
         showErrorToast(
-          response.data.message ?? "Unable to update your rating.",
+          response.data.message ?? t("rating.unableToUpdateRating"),
         );
         return;
       }
@@ -220,7 +227,7 @@ const RestaurantRatings = ({ restaurant, setRestaurant }: Props) => {
       setMyRating(response.data.data);
       setEditing(false);
       await Promise.all([fetchRatings(), refreshRestaurantRating()]);
-      showSuccessToast("Rating updated successfully.");
+      showSuccessToast(t("rating.ratingUpdated"));
     } catch (updateError) {
       console.error("Failed to update restaurant rating:", updateError);
       showRatingError(updateError, "update");
@@ -243,7 +250,7 @@ const RestaurantRatings = ({ restaurant, setRestaurant }: Props) => {
         response.data.statusCode !== EnumStatusCode.DELETED_SUCCESSFULLY
       ) {
         showErrorToast(
-          response.data.message ?? "Unable to delete your rating.",
+          response.data.message ?? t("rating.unableToDeleteRating"),
         );
         return;
       }
@@ -252,7 +259,7 @@ const RestaurantRatings = ({ restaurant, setRestaurant }: Props) => {
       setEditing(false);
       setShowDeleteModal(false);
       await Promise.all([fetchRatings(), refreshRestaurantRating()]);
-      showSuccessToast("Rating deleted successfully.");
+      showSuccessToast(t("rating.ratingDeleted"));
     } catch (deleteError) {
       console.error("Failed to delete restaurant rating:", deleteError);
       showRatingError(deleteError, "delete");
@@ -286,22 +293,20 @@ const RestaurantRatings = ({ restaurant, setRestaurant }: Props) => {
       <DeleteModal
         open={showDeleteModal}
         setOpen={setShowDeleteModal}
-        title="Delete your rating?"
-        description="This action cannot be undone."
+        title={t("rating.deleteYourRating")}
+        description={t("rating.deleteDescription")}
         loading={submitting}
         onConfirm={handleDelete}
       />
 
       {!user ? (
         <div className="rounded-2xl border border-border bg-card p-4 text-center shadow-sm">
-          <p className="text-sm text-gray-600">
-            Sign in to rate this restaurant.
-          </p>
+          <p className="text-sm text-gray-600">{t("rating.signInToRate")}</p>
           <Link
             to={signInUrl}
             className="mt-3 inline-flex rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
           >
-            Sign in to rate
+            {t("rating.signInToRateButton")}
           </Link>
         </div>
       ) : (
@@ -327,7 +332,9 @@ const RestaurantRatings = ({ restaurant, setRestaurant }: Props) => {
       )}
 
       <div className="bg-card rounded-2xl p-4 shadow-sm space-y-4">
-        <h2 className="font-semibold text-text">Customer ratings</h2>
+        <h2 className="font-semibold text-text">
+          {t("rating.customerRatings")}
+        </h2>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 

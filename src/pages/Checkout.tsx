@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { Minus, Plus, ShoppingBag, Trash2, Utensils } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,7 +37,6 @@ import usePromptLocation from "../hooks/usePromptLocation";
 type CartMenuItemProps = {
   item: ICartItem;
   menu: IMenuEntity;
-  restaurant: IRestaurantEntity;
   onIncrement: (menuId: string) => void;
   onDecrement: (menuId: string) => void;
   onRemove: (menuId: string) => void;
@@ -49,6 +49,7 @@ const CartMenuItem = ({
   onDecrement,
   onRemove,
 }: CartMenuItemProps) => {
+  const { t } = useTranslation();
   const imageUrl = ComputeUtils.getMenuImageUrl(menu);
 
   return (
@@ -68,7 +69,7 @@ const CartMenuItem = ({
         {menu && !menu.available && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
             <span className="text-white text-[8px] font-semibold bg-gray-800 px-1.5 py-0.5 rounded-full text-center leading-tight">
-              Unavailable
+              {t("checkout.unavailable")}
             </span>
           </div>
         )}
@@ -77,12 +78,12 @@ const CartMenuItem = ({
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
           <h4 className="text-sm font-semibold text-text truncate">
-            {menu?.name ?? "Loading..."}
+            {menu?.name ?? t("common.loading")}
           </h4>
           <button
             onClick={() => onRemove(item.menuId)}
             className="p-1.5 text-gray-400 hover:text-red-500 transition-colors"
-            aria-label="Remove item"
+            aria-label={t("checkout.removeItem")}
           >
             <Trash2 size={16} />
           </button>
@@ -97,7 +98,7 @@ const CartMenuItem = ({
         </p>
         {menu && !menu.available && (
           <p className="text-xs text-red-600 mt-1 font-bold animate-bounce">
-            No longer available
+            {t("checkout.noLongerAvailable")}
           </p>
         )}
 
@@ -124,6 +125,7 @@ const CartMenuItem = ({
 };
 
 const Checkout = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { cart } = useSelector((state: RootState) => state.cart);
@@ -282,13 +284,11 @@ const Checkout = () => {
   const handleSavePhoneNumber = async () => {
     const phone = phoneNumberInput.trim();
     if (!phone) {
-      setPhoneNumberError("Please enter a phone number.");
+      setPhoneNumberError(t("checkout.pleaseEnterPhoneNumber"));
       return;
     }
     if (!/^6\d{8}$/.test(phone)) {
-      setPhoneNumberError(
-        "Phone number must be a valid number like 677552485.",
-      );
+      setPhoneNumberError(t("checkout.phoneNumberInvalid"));
       return;
     }
     setPhoneNumberError(null);
@@ -306,11 +306,11 @@ const Checkout = () => {
         setPhoneNumberInput("");
       } else {
         setPhoneNumberError(
-          result.data.message ?? "Failed to save phone number.",
+          result.data.message ?? t("checkout.failedToSavePhoneNumber"),
         );
       }
     } catch (error) {
-      setPhoneNumberError("Failed to save phone number. Please try again.");
+      setPhoneNumberError(t("checkout.failedToSavePhoneNumberError"));
     } finally {
       setIsSavingPhoneNumber(false);
     }
@@ -353,11 +353,11 @@ const Checkout = () => {
           // Fall back to order details if payment URL cannot be retrieved.
         }
 
-        showSuccessToast("Order placed successfully");
+        showSuccessToast(t("checkout.orderPlaced"));
         dispatch(clearCart());
         navigate(`/orders/${orderId}`);
       } else {
-        showErrorToast(data.message ?? "Could not place order.");
+        showErrorToast(data.message ?? t("checkout.couldNotPlaceOrder"));
       }
     } catch (error) {
       const err = error as AxiosError<IOrchestrationResult<string>>;
@@ -365,39 +365,38 @@ const Checkout = () => {
 
       switch (statusCode) {
         case EnumStatusCode.RESTAURANT_NOT_FOUND:
-          showWarningToast("Restaurant not found.");
+          showWarningToast(t("checkout.restaurantNotFound"));
           break;
         case EnumStatusCode.RESTAURANT_CLOSED:
-          showWarningToast("Restaurant is currently closed.");
+          showWarningToast(t("checkout.restaurantClosed"));
           break;
         case EnumStatusCode.CLIENT_NOT_FOUND:
-          showWarningToast("Client not found. Please sign in again.");
+          showWarningToast(t("checkout.clientNotFound"));
           break;
         case EnumStatusCode.CLIENT_INFORMATION_INCOMPLETE:
-          showWarningToast("Please add your address and phone number.");
+          showWarningToast(t("checkout.clientInfoIncomplete"));
           break;
         case EnumStatusCode.TOO_FAR:
-          showWarningToast("This restaurant is too far for delivery.");
+          showWarningToast(t("checkout.tooFar"));
           break;
         case EnumStatusCode.ONE_OF_THE_MENUS_DOES_NOT_EXIST:
-          showWarningToast("One or more items were not found.");
+          showWarningToast(t("checkout.itemsNotFound"));
           break;
         case EnumStatusCode.NOT_FROM_SAME_RESTAURANT:
-          showWarningToast("All items must be from the same restaurant.");
+          showWarningToast(t("checkout.notFromSameRestaurant"));
           break;
         case EnumStatusCode.ONE_OF_THE_MENUS_IS_NOT_AVAILABLE:
-          showWarningToast("One or more items are no longer available.");
+          showWarningToast(t("checkout.itemsNotAvailable"));
           break;
         case EnumStatusCode.VALIDATION_ERROR:
-          showWarningToast("Please check your cart and try again.");
+          showWarningToast(t("checkout.checkCart"));
           break;
         case EnumStatusCode.INTERNAL_SERVER_ERROR:
-          showErrorToast("Something went wrong. Please try again.");
+          showErrorToast(t("common.somethingWentWrong"));
           break;
         default:
           showErrorToast(
-            err.response?.data?.message ??
-              "Something went wrong. Please try again.",
+            err.response?.data?.message ?? t("common.somethingWentWrong"),
           );
       }
     } finally {
@@ -416,7 +415,7 @@ const Checkout = () => {
         <div className="flex flex-col items-center justify-center py-24">
           <div className="h-12 w-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
           <p className="text-sm font-semibold text-text">
-            Redirecting to payment...
+            {t("checkout.redirectingToPayment")}
           </p>
         </div>
       </div>
@@ -431,15 +430,17 @@ const Checkout = () => {
           <div className="bg-card rounded-full p-4 mb-4">
             <ShoppingBag size={28} className="text-primary" />
           </div>
-          <h3 className="font-semibold text-text">Your cart is empty</h3>
+          <h3 className="font-semibold text-text">
+            {t("checkout.cartEmptyTitle")}
+          </h3>
           <p className="text-sm text-gray-500 mt-1">
-            Add items from a restaurant to get started
+            {t("checkout.cartEmptySubtitle")}
           </p>
           <button
             onClick={() => navigate("/")}
             className="mt-6 bg-primary text-white rounded-xl px-6 py-2.5 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
           >
-            Browse restaurants
+            {t("checkout.browseRestaurants")}
           </button>
         </div>
       </div>
@@ -454,15 +455,17 @@ const Checkout = () => {
           <div className="bg-card rounded-full p-4 mb-4">
             <ShoppingBag size={28} className="text-primary" />
           </div>
-          <h3 className="font-semibold text-text">Restaurant unavailable</h3>
+          <h3 className="font-semibold text-text">
+            {t("checkout.restaurantUnavailableTitle")}
+          </h3>
           <p className="text-sm text-gray-500 mt-1 max-w-xs">
-            This restaurant does not exist anymore or is no longer available.
+            {t("checkout.restaurantUnavailableDesc")}
           </p>
           <button
             onClick={() => navigate("/")}
             className="mt-6 bg-primary text-white rounded-xl px-6 py-2.5 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
           >
-            Browse restaurants
+            {t("checkout.browseRestaurants")}
           </button>
         </div>
       </div>
@@ -476,14 +479,14 @@ const Checkout = () => {
       <div className="max-w-3xl mx-auto px-4 pt-6">
         <h1 className="text-xl font-bold text-text flex items-center gap-2 mb-6">
           <ShoppingBag size={22} className="text-primary" />
-          Checkout ({totalItems})
+          {t("checkout.title")} ({totalItems})
         </h1>
 
         {(restaurant || cart.restaurantName) && (
           <div className="bg-card rounded-2xl p-4 shadow-sm mb-4">
             {restaurant && isRestaurantClosed && (
               <p className="text-sm font-semibold text-red-500 mb-2">
-                Restaurant is closed
+                {t("checkout.restaurantIsClosed")}
               </p>
             )}
             {restaurant &&
@@ -491,11 +494,11 @@ const Checkout = () => {
               !deliveryPricing &&
               location && (
                 <p className="text-sm font-semibold text-red-500 mb-2">
-                  Restaurant is too far, cannot order from it
+                  {t("checkout.tooFarCannotOrder")}
                 </p>
               )}
             <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-1">
-              From
+              {t("order.from")}
             </p>
             <p className="text-sm font-semibold text-text">
               {restaurant?.name ?? cart.restaurantName}
@@ -507,7 +510,7 @@ const Checkout = () => {
             )}
             {restaurant?.distanceKm !== undefined && (
               <p className="text-xs text-primary mt-1">
-                {restaurant.distanceKm} km away
+                {t("order.kmAway", { distance: restaurant.distanceKm })}
               </p>
             )}
           </div>
@@ -526,7 +529,6 @@ const Checkout = () => {
                 key={item.menuId}
                 item={item}
                 menu={menuDetails[item.menuId]}
-                restaurant={restaurant!}
                 onIncrement={handleIncrement}
                 onDecrement={handleDecrement}
                 onRemove={handleRemove}
@@ -539,10 +541,10 @@ const Checkout = () => {
           <div className="mt-8 bg-card rounded-2xl p-4 shadow-sm space-y-3">
             <div>
               <p className="text-sm font-semibold text-text">
-                Add your phone number
+                {t("checkout.addPhoneNumberTitle")}
               </p>
               <p className="text-xs text-gray-500 mt-0.5">
-                A phone number is required so the restaurant can contact you.
+                {t("checkout.addPhoneNumberDescription")}
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
@@ -556,7 +558,7 @@ const Checkout = () => {
                       e.target.value.replace(/\D/g, "").slice(0, 9),
                     )
                   }
-                  placeholder="678552214"
+                  placeholder={t("checkout.phonePlaceholder")}
                   className="flex-1 ml-1 outline-none bg-transparent"
                 />
               </div>
@@ -565,7 +567,9 @@ const Checkout = () => {
                 disabled={isSavingPhoneNumber || !phoneNumberInput.trim()}
                 className="shrink-0 w-full sm:w-auto bg-primary text-white rounded-xl px-4 py-2.5 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSavingPhoneNumber ? "Saving..." : "Save"}
+                {isSavingPhoneNumber
+                  ? t("checkout.saving")
+                  : t("checkout.save")}
               </button>
             </div>
             {phoneNumberError && (
@@ -578,14 +582,18 @@ const Checkout = () => {
           <div className="mt-8 bg-card rounded-2xl p-4 shadow-sm space-y-4">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">Subtotal</span>
+                <span className="text-sm text-gray-500">
+                  {t("order.subtotal")}
+                </span>
                 <span className="text-base font-medium text-text">
                   {totalPrice?.toLocaleString()} FCFA
                 </span>
               </div>
               {deliveryPricing && (
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">Delivery</span>
+                  <span className="text-sm text-gray-500">
+                    {t("order.delivery")}
+                  </span>
                   <span className="text-base font-medium text-text">
                     {deliveryPricing.priceWithPlatformPercentage.toLocaleString()}{" "}
                     FCFA
@@ -593,7 +601,9 @@ const Checkout = () => {
                 </div>
               )}
               <div className="flex items-center justify-between pt-2 border-t border-gray-200">
-                <span className="text-sm text-gray-500">Total</span>
+                <span className="text-sm text-gray-500">
+                  {t("order.total")}
+                </span>
                 <span className="text-lg font-bold text-text">
                   {(
                     (totalPrice ?? 0) +
@@ -611,21 +621,21 @@ const Checkout = () => {
                 className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-background transition-colors"
               >
                 <Trash2 size={16} />
-                Clear
+                {t("checkout.clear")}
               </button>
               {!isLoggedIn ? (
                 <Link
                   to={`/signin?redirect_url=${encodeURIComponent("/checkout")}`}
                   className="flex-1 bg-primary text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all text-center"
                 >
-                  Login to order
+                  {t("checkout.loginToOrder")}
                 </Link>
               ) : !location ? (
                 <button
                   onClick={() => dispatch(setOpenAddUserLocationModal(true))}
                   className="flex-1 bg-primary text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
                 >
-                  Add location
+                  {t("checkout.addLocation")}
                 </button>
               ) : (
                 <button
@@ -647,33 +657,35 @@ const Checkout = () => {
                       : "bg-primary text-white hover:opacity-90 active:scale-95"
                   }`}
                 >
-                  {isPlacingOrder ? "Processing..." : "Pay order"}
+                  {isPlacingOrder
+                    ? t("checkout.processing")
+                    : t("checkout.payOrder")}
                 </button>
               )}
             </div>
             {!location && (
               <p className="text-xs text-red-500 text-center leading-tight">
-                Please add your location
+                {t("checkout.pleaseAddLocation")}
               </p>
             )}
             {isRestaurantClosed && (
               <p className="text-xs text-red-500 text-center leading-tight">
-                This restaurant is currently closed.
+                {t("checkout.restaurantClosedMessage")}
               </p>
             )}
             {restaurant?.distanceKm && !deliveryPricing && (
               <p className="text-xs text-red-500 text-center leading-tight">
-                This restaurant is too far from your address for delivery.
+                {t("checkout.tooFarDelivery")}
               </p>
             )}
             {hasUnavailableItem && (
               <p className="text-xs text-red-500 text-center leading-tight">
-                One or more items in your cart are no longer available.
+                {t("checkout.unavailableItems")}
               </p>
             )}
             {needsPhoneNumber && (
               <p className="text-xs text-red-500 text-center leading-tight">
-                Please add a phone number to place your order.
+                {t("checkout.addPhoneToOrder")}
               </p>
             )}
           </div>

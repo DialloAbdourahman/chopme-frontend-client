@@ -1,4 +1,5 @@
 import { EnumRefundStatus } from "chopme-frontend-common";
+import { useTranslation } from "react-i18next";
 import { ComputeUtils } from "../utils/compute-utils";
 
 type Props = {
@@ -6,7 +7,8 @@ type Props = {
 };
 
 const RefundStatusBadge = ({ status }: Props) => {
-  const label = ComputeUtils.formatRefundStatus(status);
+  const { t } = useTranslation();
+  const label = ComputeUtils.formatRefundStatus(t, status);
 
   const colorClass =
     status === EnumRefundStatus.SUCCESSFUL
@@ -22,7 +24,7 @@ const RefundStatusBadge = ({ status }: Props) => {
     <span
       className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${colorClass}`}
     >
-      Refund Status: {label}
+      {t("refundStatus.title")}: {label}
     </span>
   );
 };

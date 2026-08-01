@@ -1,6 +1,8 @@
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const LoadingScreen = () => {
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen w-full bg-background flex flex-col items-center justify-center px-4">
       <div className="flex flex-col items-center gap-4">
@@ -10,7 +12,7 @@ const LoadingScreen = () => {
           aria-hidden="true"
         />
         <p className="text-base sm:text-lg font-medium text-text">
-          Loading...
+          {t("common.loading")}
         </p>
       </div>
     </div>

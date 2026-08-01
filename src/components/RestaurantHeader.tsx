@@ -1,6 +1,7 @@
 import type { IRestaurantEntity } from "chopme-frontend-common";
 import { Clock, Eye, MapPin, Star, UtensilsCrossed } from "lucide-react";
-import { RESTAURANT_TYPES } from "../utils/constants";
+import { useTranslation } from "react-i18next";
+import { getRestaurantTypes } from "../utils/constants";
 import { ComputeUtils } from "../utils/compute-utils";
 
 type Props = {
@@ -8,8 +9,9 @@ type Props = {
 };
 
 const RestaurantHeader = ({ restaurant }: Props) => {
-  const typeTitle = RESTAURANT_TYPES.find(
-    (t) => t.type === restaurant.type,
+  const { t } = useTranslation();
+  const typeTitle = getRestaurantTypes(t).find(
+    (r) => r.type === restaurant.type,
   )?.title;
 
   const rating = ComputeUtils.computeRestaurantRating(restaurant.rating);

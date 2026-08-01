@@ -1,9 +1,10 @@
 import { Star, Clock, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { IAddressEntity, IRestaurantEntity } from "chopme-frontend-common";
+import { useTranslation } from "react-i18next";
 import { KEYS } from "../utils/keys";
 import { ComputeUtils } from "../utils/compute-utils";
-import { RESTAURANT_TYPES } from "../utils/constants";
+import { getRestaurantTypes } from "../utils/constants";
 
 type Props = {
   restaurant: IRestaurantEntity;
@@ -11,6 +12,7 @@ type Props = {
 };
 
 const RestaurantCard = ({ restaurant }: Props) => {
+  const { t } = useTranslation();
   const { name, slug, type, coverImage, pictures, distanceKm } = restaurant;
 
   const imageUrl = coverImage
@@ -57,7 +59,7 @@ const RestaurantCard = ({ restaurant }: Props) => {
         <div>
           <h3 className="font-bold text-text">{name}</h3>
           <p className="text-xs text-gray-500 mt-0.5">
-            {RESTAURANT_TYPES.find((t) => t.type === type)?.title}
+            {getRestaurantTypes(t).find((r) => r.type === type)?.title}
           </p>
 
           {distanceKm && (

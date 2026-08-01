@@ -1,5 +1,6 @@
 import { Minus, Plus, ShoppingBag, Utensils } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import type { IMenuEntity, IRestaurantEntity } from "chopme-frontend-common";
 import { KEYS } from "../utils/keys";
 import { ComputeUtils } from "../utils/compute-utils";
@@ -23,6 +24,7 @@ const MenuCard = ({
   restaurant,
 }: Props) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { name, description, coverImage, pictures, available } = menu;
 
   const imageUrl = coverImage
@@ -65,7 +67,7 @@ const MenuCard = ({
         {!available && (
           <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
             <span className="text-white text-[10px] font-semibold bg-gray-800 px-2 py-0.5 rounded-full">
-              Unavailable
+              {t("menuCard.unavailable")}
             </span>
           </div>
         )}
@@ -77,7 +79,7 @@ const MenuCard = ({
           <h4 className="font-semibold text-text text-sm truncate">{name}</h4>
           <div className="flex items-center gap-1 shrink-0 text-[10px] font-medium text-gray-500">
             <ShoppingBag size={12} className="text-primary" />
-            <span>{totalOrders} sold</span>
+            <span>{t("menuCard.sold", { count: totalOrders })}</span>
           </div>
         </div>
 
@@ -98,7 +100,7 @@ const MenuCard = ({
                   e.stopPropagation();
                   onDecrement(menu);
                 }}
-                aria-label="Decrease quantity"
+                aria-label={t("menuCard.decreaseQuantity")}
                 className="w-7 h-7 flex items-center justify-center bg-primary/10 text-primary rounded-lg hover:bg-primary/20 active:scale-95 transition-all"
               >
                 <Minus size={14} />
@@ -111,7 +113,7 @@ const MenuCard = ({
                   e.stopPropagation();
                   onIncrement(menu);
                 }}
-                aria-label="Increase quantity"
+                aria-label={t("menuCard.increaseQuantity")}
                 className="w-7 h-7 flex items-center justify-center bg-primary text-white rounded-lg hover:opacity-90 active:scale-95 transition-all"
               >
                 <Plus size={14} />
@@ -128,20 +130,20 @@ const MenuCard = ({
               }}
               className="bg-primary text-white rounded-xl px-3 py-1.5 text-xs font-semibold hover:opacity-90 active:scale-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              Add
+              {t("menuCard.add")}
             </button>
           )}
         </div>
         {canAddToCart !== EnumCanOrderMenu.CAN_ORDER && (
           <p className="text-[10px] text-red-500 mt-1 text-right leading-tight">
             {canAddToCart === EnumCanOrderMenu.RESTAURANT_CLOSED &&
-              "Restaurant is currently closed."}
+              t("menuCard.restaurantClosed")}
             {canAddToCart === EnumCanOrderMenu.MENU_NOT_AVAILABLE &&
-              "This item is unavailable."}
+              t("menuCard.itemUnavailable")}
             {canAddToCart === EnumCanOrderMenu.RESTAURANT_TOO_FAR &&
-              "Delivery is not available for your location."}
+              t("menuCard.deliveryNotAvailable")}
             {canAddToCart === EnumCanOrderMenu.USER_DID_NOT_ADD_LOCATION &&
-              "Please add a delivery location."}
+              t("menuCard.addDeliveryLocation")}
           </p>
         )}
       </div>

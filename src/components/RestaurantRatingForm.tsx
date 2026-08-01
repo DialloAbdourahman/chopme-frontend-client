@@ -7,6 +7,7 @@ import { createRestaurantRatingSchema } from "chopme-frontend-common";
 import { Star } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   initialRating?: IRestaurantRatingEntity | null;
@@ -21,6 +22,7 @@ const RestaurantRatingForm = ({
   onSubmit,
   onClose,
 }: Props) => {
+  const { t } = useTranslation();
   const {
     register,
     handleSubmit,
@@ -52,9 +54,14 @@ const RestaurantRatingForm = ({
       <input type="hidden" {...register("rating", { valueAsNumber: true })} />
       <div className="flex items-center justify-between gap-3">
         <h3 className="font-semibold text-text">
-          {initialRating ? "Update your rating" : "Rate this restaurant"}
+          {initialRating
+            ? t("rating.updateYourRating")
+            : t("rating.rateThisRestaurant")}
         </h3>
-        <div className="flex items-center gap-1" aria-label="Star rating">
+        <div
+          className="flex items-center gap-1"
+          aria-label={t("rating.starRating")}
+        >
           {[1, 2, 3, 4, 5].map((star) => (
             <button
               key={star}
@@ -65,7 +72,7 @@ const RestaurantRatingForm = ({
                   shouldValidate: true,
                 })
               }
-              aria-label={`${star} star${star === 1 ? "" : "s"}`}
+              aria-label={t("rating.star", { count: star })}
               className="rounded p-0.5 focus:outline-none focus:ring-2 focus:ring-primary"
             >
               <Star
@@ -85,7 +92,7 @@ const RestaurantRatingForm = ({
         {...register("comment")}
         maxLength={1000}
         rows={3}
-        placeholder="Share your experience"
+        placeholder={t("rating.placeholder")}
         className="w-full resize-none rounded-xl border border-border bg-background p-3 text-sm text-text outline-none focus:ring-2 focus:ring-primary"
       />
       {errors.comment && (
@@ -101,7 +108,7 @@ const RestaurantRatingForm = ({
             }}
             className="rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Close
+            {t("common.close")}
           </button>
         )}
         <button
@@ -110,10 +117,10 @@ const RestaurantRatingForm = ({
           className="rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading
-            ? "Saving..."
+            ? t("rating.saving")
             : initialRating
-              ? "Update rating"
-              : "Submit rating"}
+              ? t("rating.updateRating")
+              : t("rating.submitRating")}
         </button>
       </div>
     </form>

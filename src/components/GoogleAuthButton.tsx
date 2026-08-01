@@ -7,6 +7,7 @@ import {
 } from "../utils/toasts";
 import { useGoogleLogin } from "@react-oauth/google";
 import { AxiosError } from "axios";
+import { useTranslation } from "react-i18next";
 import type { IOrchestrationResult, IAuthEntity } from "chopme-frontend-common";
 import { EnumStatusCode, EnumStatusResponse } from "chopme-frontend-common";
 import { AuthService } from "../services/auth.service";
@@ -17,6 +18,7 @@ import { useState } from "react";
 const GoogleAuthButton = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
 
   const { initialize, loading: loadingInitialize } = useInitializeAfterAuth({
@@ -43,7 +45,7 @@ const GoogleAuthButton = () => {
             value: refreshToken,
           });
           await initialize();
-          showSuccessToast("Welcome back!");
+          showSuccessToast(t("googleAuth.welcomeBack"));
           const encoded = searchParams.get("redirect_url");
           const redirectTo = encoded ? decodeURIComponent(encoded) : "/";
           navigate(redirectTo, { replace: true });
@@ -52,26 +54,26 @@ const GoogleAuthButton = () => {
         const err = error as AxiosError<IOrchestrationResult<string>>;
         switch (err?.response?.data?.statusCode) {
           case EnumStatusCode.INVALID_CREDENTIALS:
-            showWarningToast("Invalid credentials. Please try again.");
+            showWarningToast(t("googleAuth.invalidCredentials"));
             break;
           case EnumStatusCode.LOGIN_METHOD_NOT_ALLOWED:
-            showWarningToast("Login method not allowed. Please try again.");
+            showWarningToast(t("googleAuth.loginMethodNotAllowed"));
             break;
           case EnumStatusCode.VALIDATION_ERROR:
-            showWarningToast("Please check your input and try again.");
+            showWarningToast(t("googleAuth.validationError"));
             break;
           case EnumStatusCode.INTERNAL_SERVER_ERROR:
-            showErrorToast("Something went wrong. Please try again.");
+            showErrorToast(t("googleAuth.somethingWentWrong"));
             break;
           default:
-            showErrorToast("Something went wrong. Please try again.");
+            showErrorToast(t("googleAuth.somethingWentWrong"));
         }
       } finally {
         setIsLoading(false);
       }
     },
     onError: () => {
-      showErrorToast("Unable to authenticate with google");
+      showErrorToast(t("googleAuth.unableToAuthenticate"));
     },
   });
 
@@ -103,7 +105,7 @@ const GoogleAuthButton = () => {
               fill="#EA4335"
             />
           </svg>
-          Continue with Google
+          {t("googleAuth.continueWithGoogle")}
         </>
       )}
     </button>

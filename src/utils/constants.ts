@@ -1,28 +1,35 @@
 import { EnumOrderStatus, EnumRestaurantType } from "chopme-frontend-common";
+import type { TFunction } from "i18next";
 
-export const RESTAURANT_TYPES: {
-  title: string;
-  type: EnumRestaurantType;
-}[] = [
-  {
-    title: "Fast Food",
-    type: EnumRestaurantType.FAST_FOOD,
-  },
-  {
-    title: "Café",
-    type: EnumRestaurantType.CAFE,
-  },
+export const getRestaurantTypes = (t: TFunction) => [
+  { title: t("restaurantTypes.fastFood"), type: EnumRestaurantType.FAST_FOOD },
+  { title: t("restaurantTypes.cafe"), type: EnumRestaurantType.CAFE },
 ];
 
-export const statusLabels: Record<EnumOrderStatus, string> = {
-  [EnumOrderStatus.CREATED]: "Created",
-  [EnumOrderStatus.PAYMENT_INITIATED]: "Payment initiated",
-  [EnumOrderStatus.PAYMENT_FAILED]: "Payment failed",
-  [EnumOrderStatus.PAID]: "Paid",
-  [EnumOrderStatus.CANCELLED_BY_CUSTOMER]: "Cancelled by you",
-  [EnumOrderStatus.CANCELLED_BY_RESTAURANT]: "Cancelled by restaurant",
-  [EnumOrderStatus.PREPARING_ORDER]: "Preparing order",
-  [EnumOrderStatus.IN_DELIVERY]: "In delivery",
-  [EnumOrderStatus.DELIVERED]: "Delivered",
-  [EnumOrderStatus.DISBURSED]: "Disbursed",
-};
+export const getOrderStatusLabels = (t: TFunction) => [
+  { value: EnumOrderStatus.CREATED, label: t("orderStatus.created") },
+  {
+    value: EnumOrderStatus.PAYMENT_INITIATED,
+    label: t("orderStatus.paymentInitiated"),
+  },
+  {
+    value: EnumOrderStatus.PAYMENT_FAILED,
+    label: t("orderStatus.paymentFailed"),
+  },
+  { value: EnumOrderStatus.PAID, label: t("orderStatus.paid") },
+  {
+    value: EnumOrderStatus.CANCELLED_BY_CUSTOMER,
+    label: t("orderStatus.cancelledByCustomer"),
+  },
+  {
+    value: EnumOrderStatus.CANCELLED_BY_RESTAURANT,
+    label: t("orderStatus.cancelledByRestaurant"),
+  },
+  {
+    value: EnumOrderStatus.PREPARING_ORDER,
+    label: t("orderStatus.preparingOrder"),
+  },
+  { value: EnumOrderStatus.IN_DELIVERY, label: t("orderStatus.inDelivery") },
+  { value: EnumOrderStatus.DELIVERED, label: t("orderStatus.delivered") },
+  { value: EnumOrderStatus.DISBURSED, label: t("orderStatus.disbursed") },
+];

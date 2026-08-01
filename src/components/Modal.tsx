@@ -7,6 +7,7 @@ import {
 } from "@headlessui/react";
 import { Fragment } from "react";
 import { X, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useRef, type ReactNode } from "react";
 
 type Props = {
@@ -39,6 +40,7 @@ const Modal = ({
   onValidate = () => {},
   besideTitleComponent,
 }: Props) => {
+  const { t } = useTranslation();
   const cancelButtonRef = useRef(null);
 
   const maxWidthClass = {
@@ -105,7 +107,7 @@ const Modal = ({
                           className="rounded-md bg-card text-text/50 hover:text-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
                           onClick={() => setOpen(false)}
                         >
-                          <span className="sr-only">Close</span>
+                          <span className="sr-only">{t("common.close")}</span>
                           <X className="h-6 w-6" aria-hidden="true" />
                         </button>
                       </div>
@@ -136,7 +138,7 @@ const Modal = ({
                         onClick={() => setOpen(false)}
                         ref={cancelButtonRef}
                       >
-                        cancel
+                        {t("common.cancel")}
                       </button>
                     )}
                   </div>

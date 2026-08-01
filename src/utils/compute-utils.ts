@@ -11,7 +11,8 @@ import {
 } from "chopme-frontend-common";
 import { KEYS } from "./keys";
 import { EnumCanOrderMenu } from "../enums/can-order-menu";
-import { statusLabels } from "./constants";
+import { getOrderStatusLabels } from "./constants";
+import type { TFunction } from "i18next";
 
 export class ComputeUtils {
   /**
@@ -142,8 +143,11 @@ export class ComputeUtils {
     return img ? `${KEYS.PUBLIC_S3_PREFIX}/${img}` : null;
   };
 
-  static formatStatus(status: EnumOrderStatus) {
-    return statusLabels[status] ?? status;
+  static formatStatus(t: TFunction, status: EnumOrderStatus) {
+    return (
+      getOrderStatusLabels(t).find((s) => s.value === status)?.label ??
+      t(status)
+    );
   }
 
   static formatDate(date: Date | string | null | undefined) {
@@ -151,27 +155,27 @@ export class ComputeUtils {
     return new Date(date).toLocaleString();
   }
 
-  static formatCancelledReason(reason: EnumOrderCancelledReason) {
+  static formatCancelledReason(t: TFunction, reason: EnumOrderCancelledReason) {
     switch (reason) {
       case EnumOrderCancelledReason.TOO_LATE:
-        return "Order was too late";
+        return t("cancelledReason.tooLate");
       case EnumOrderCancelledReason.OUT_OF_STOCK:
-        return "Item out of stock";
+        return t("cancelledReason.outOfStock");
       default:
         return reason;
     }
   }
 
-  static formatRefundStatus(status: EnumRefundStatus) {
+  static formatRefundStatus(t: TFunction, status: EnumRefundStatus) {
     switch (status) {
       case EnumRefundStatus.SUCCESSFUL:
-        return "Successful";
+        return t("refundStatus.successful");
       case EnumRefundStatus.INITIATED:
-        return "Initiated";
+        return t("refundStatus.initiated");
       case EnumRefundStatus.FAILED:
-        return "Failed";
+        return t("refundStatus.failed");
       case EnumRefundStatus.FAILED_TO_INITIATE:
-        return "Failed to initiate";
+        return t("refundStatus.failedToInitiate");
       default:
         return status;
     }

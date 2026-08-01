@@ -1,5 +1,6 @@
 import { ArrowLeft, Search, Store } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   EnumStatusCode,
@@ -26,6 +27,7 @@ const parseFilters = (value: string | null): FindRestaurantDto => {
 };
 
 const RestaurantsList = () => {
+  const { t } = useTranslation();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [restaurants, setRestaurants] = useState<IRestaurantEntity[]>([]);
@@ -140,11 +142,13 @@ const RestaurantsList = () => {
               className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-primary transition-colors mb-2"
             >
               <ArrowLeft size={16} />
-              Back to home
+              {t("restaurantsList.backToHome")}
             </Link>
-            <h1 className="text-2xl font-bold text-text">Restaurants</h1>
+            <h1 className="text-2xl font-bold text-text">
+              {t("restaurantsList.title")}
+            </h1>
             <p className="text-sm text-gray-500 mt-0.5">
-              Search and discover the best places to eat
+              {t("restaurantsList.subtitle")}
             </p>
           </div>
 
@@ -160,14 +164,14 @@ const RestaurantsList = () => {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search for a restaurant..."
+              placeholder={t("restaurantsList.searchPlaceholder")}
               className="flex-1 bg-transparent text-sm text-text placeholder-gray-400 outline-none min-w-0"
             />
             <button
               type="submit"
               className="bg-primary text-white rounded-xl px-4 py-2 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
             >
-              Search
+              {t("common.search")}
             </button>
           </form>
 
@@ -207,9 +211,11 @@ const RestaurantsList = () => {
               <div className="bg-card rounded-full p-4 mb-4">
                 <Store size={28} className="text-primary" />
               </div>
-              <h3 className="font-semibold text-text">No restaurants found</h3>
+              <h3 className="font-semibold text-text">
+                {t("restaurantsList.noRestaurantsFound")}
+              </h3>
               <p className="text-sm text-gray-500 mt-1">
-                Try a different search term
+                {t("restaurantsList.tryDifferentSearch")}
               </p>
             </div>
           )}

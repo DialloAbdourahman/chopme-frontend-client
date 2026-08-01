@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Store } from "lucide-react";
 import {
@@ -19,6 +20,7 @@ import RestaurantMenus from "../components/RestaurantMenus";
 import RestaurantRatings from "../components/RestaurantRatings";
 
 const RestaurantDetails = () => {
+  const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
 
@@ -99,9 +101,11 @@ const RestaurantDetails = () => {
           <div className="bg-card rounded-full p-4 mb-4">
             <Store size={28} className="text-primary" />
           </div>
-          <h3 className="font-semibold text-text">Restaurant not found</h3>
+          <h3 className="font-semibold text-text">
+            {t("restaurantDetails.notFound")}
+          </h3>
           <p className="text-sm text-gray-500 mt-1">
-            This restaurant doesn't exist or is no longer available
+            {t("restaurantDetails.notFoundDesc")}
           </p>
         </div>
       </div>
@@ -118,7 +122,7 @@ const RestaurantDetails = () => {
           className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-primary transition-colors  pt-4"
         >
           <ArrowLeft size={16} />
-          Back
+          {t("common.back")}
         </button>
 
         <div className="mt-4"></div>

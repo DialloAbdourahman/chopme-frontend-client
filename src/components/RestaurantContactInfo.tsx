@@ -1,5 +1,6 @@
 import { Contact, Mail, MapPin, Phone } from "lucide-react";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { useTranslation } from "react-i18next";
 import type {
   IRestaurantAddress,
   IRestaurantLocation,
@@ -14,6 +15,7 @@ type Props = {
 };
 
 const RestaurantContactInfo = ({ phone, email, address, location }: Props) => {
+  const { t } = useTranslation();
   const fullAddress =
     address.longName ??
     [address.city, address.state, address.country].filter(Boolean).join(", ");
@@ -38,7 +40,9 @@ const RestaurantContactInfo = ({ phone, email, address, location }: Props) => {
     <div className="bg-card rounded-2xl p-4 shadow-sm">
       <div className="flex items-center gap-2 mb-3">
         <Contact size={18} className="text-primary" />
-        <h2 className="font-semibold text-text">Contact & address</h2>
+        <h2 className="font-semibold text-text">
+          {t("restaurant.contactAndAddress")}
+        </h2>
       </div>
       <ul className="space-y-3">
         <li className="flex items-start gap-3 text-sm text-gray-600">

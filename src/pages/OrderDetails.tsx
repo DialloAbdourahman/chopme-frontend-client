@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   ArrowLeft,
   MapPin,
@@ -38,6 +39,7 @@ import { setOrderStatusUpdate } from "../store/notification.slice";
 const OrderDetails = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleBack = () => {
     if (window.history.length > 1) {
@@ -62,7 +64,7 @@ const OrderDetails = () => {
 
   const fetchOrder = useCallback(async (): Promise<boolean> => {
     if (!orderId) {
-      setError("Invalid order");
+      setError(t("order.invalidOrder"));
       setLoading(false);
       return false;
     }
@@ -93,7 +95,7 @@ const OrderDetails = () => {
             setRestaurant(restaurantRes.data.data);
           }
         } catch {
-          showErrorToast("Failed to load restaurant details");
+          showErrorToast(t("order.failedToLoadRestaurantDetails"));
         }
 
         const menusMap: Record<string, IMenuEntity> = {};
@@ -117,7 +119,7 @@ const OrderDetails = () => {
         setMenus(menusMap);
         return true;
       } else {
-        const message = orderRes.data.message ?? "Order not found";
+        const message = orderRes.data.message ?? t("order.orderNotFound");
         setError(message);
         showWarningToast(message);
         return false;
@@ -128,32 +130,31 @@ const OrderDetails = () => {
 
       switch (statusCode) {
         case EnumStatusCode.RESTAURANT_NOT_FOUND:
-          setError("Restaurant not found.");
-          showWarningToast("Restaurant not found.");
+          setError(t("order.restaurantNotFound"));
+          showWarningToast(t("order.restaurantNotFound"));
           break;
 
         case EnumStatusCode.ONE_OF_THE_MENUS_DOES_NOT_EXIST:
-          setError("One or more items were not found.");
-          showWarningToast("One or more items were not found.");
+          setError(t("order.itemsNotFound"));
+          showWarningToast(t("order.itemsNotFound"));
           break;
 
         case EnumStatusCode.ORDER_NOT_FOUND:
         case EnumStatusCode.NOT_FOUND:
-          setError("Order not found.");
-          showWarningToast("Order not found.");
+          setError(t("order.orderNotFound"));
+          showWarningToast(t("order.orderNotFound"));
           break;
         case EnumStatusCode.VALIDATION_ERROR:
-          setError("Please check the order information and try again.");
-          showWarningToast("Please check the order information and try again.");
+          setError(t("order.checkOrderInformation"));
+          showWarningToast(t("order.checkOrderInformation"));
           break;
         case EnumStatusCode.INTERNAL_SERVER_ERROR:
-          setError("Something went wrong. Please try again.");
-          showErrorToast("Something went wrong. Please try again.");
+          setError(t("common.somethingWentWrong"));
+          showErrorToast(t("common.somethingWentWrong"));
           break;
         default:
           const message =
-            err.response?.data?.message ??
-            "Something went wrong. Please try again.";
+            err.response?.data?.message ?? t("common.somethingWentWrong");
           setError(message);
           showErrorToast(message);
       }
@@ -185,7 +186,7 @@ const OrderDetails = () => {
       ) {
         window.location.href = res.data.data.url;
       } else {
-        showWarningToast(res.data.message ?? "Could not start payment.");
+        showWarningToast(res.data.message ?? t("order.couldNotStartPayment"));
       }
     } catch (error) {
       const err = error as AxiosError<IOrchestrationResult<string>>;
@@ -193,26 +194,23 @@ const OrderDetails = () => {
 
       switch (statusCode) {
         case EnumStatusCode.ORDER_NOT_FOUND:
-          showWarningToast("Order not found.");
+          showWarningToast(t("order.orderNotFound"));
           break;
         case EnumStatusCode.ORDER_CANNOT_BE_PAID:
-          showWarningToast(
-            "Order can only be paid when it is in Created status.",
-          );
+          showWarningToast(t("order.orderCanOnlyBePaidWhenCreated"));
           break;
         case EnumStatusCode.PAYMENT_TIME_EXPIRED:
-          showWarningToast("Payment deadline has passed.");
+          showWarningToast(t("order.paymentDeadlinePassed"));
           break;
         case EnumStatusCode.CLIENT_NOT_FOUND:
-          showWarningToast("Client not found. Please sign in again.");
+          showWarningToast(t("order.clientNotFound"));
           break;
         case EnumStatusCode.INTERNAL_SERVER_ERROR:
-          showErrorToast("Something went wrong. Please try again.");
+          showErrorToast(t("common.somethingWentWrong"));
           break;
         default:
           showErrorToast(
-            err.response?.data?.message ??
-              "Something went wrong. Please try again.",
+            err.response?.data?.message ?? t("common.somethingWentWrong"),
           );
       }
     } finally {
@@ -232,9 +230,9 @@ const OrderDetails = () => {
         res.data.data
       ) {
         setOrder(res.data.data);
-        showSuccessToast("Order cancelled");
+        showSuccessToast(t("order.orderCancelled"));
       } else {
-        showWarningToast(res.data.message ?? "Could not cancel order.");
+        showWarningToast(res.data.message ?? t("order.couldNotCancelOrder"));
       }
     } catch (error) {
       const err = error as AxiosError<IOrchestrationResult<string>>;
@@ -242,20 +240,17 @@ const OrderDetails = () => {
 
       switch (statusCode) {
         case EnumStatusCode.ORDER_NOT_FOUND:
-          showWarningToast("Order not found.");
+          showWarningToast(t("order.orderNotFound"));
           break;
         case EnumStatusCode.ORDER_CANNOT_BE_UPDATED:
-          showWarningToast(
-            "Order can only be cancelled when it is in Created status.",
-          );
+          showWarningToast(t("order.orderCanOnlyBeCancelledWhenCreated"));
           break;
         case EnumStatusCode.INTERNAL_SERVER_ERROR:
-          showErrorToast("Something went wrong. Please try again.");
+          showErrorToast(t("common.somethingWentWrong"));
           break;
         default:
           showErrorToast(
-            err.response?.data?.message ??
-              "Something went wrong. Please try again.",
+            err.response?.data?.message ?? t("common.somethingWentWrong"),
           );
       }
     } finally {
@@ -280,16 +275,16 @@ const OrderDetails = () => {
 
     switch (orderStatusUpdate.status) {
       case EnumOrderStatus.CANCELLED_BY_RESTAURANT:
-        showWarningToast("The restaurant cancelled your order.");
+        showWarningToast(t("order.restaurantCancelledOrder"));
         break;
       case EnumOrderStatus.PREPARING_ORDER:
-        showSuccessToast("The restaurant is preparing your order.");
+        showSuccessToast(t("order.restaurantPreparingOrder"));
         break;
       case EnumOrderStatus.IN_DELIVERY:
-        showSuccessToast("Your order is out for delivery.");
+        showSuccessToast(t("order.orderOutForDelivery"));
         break;
       case EnumOrderStatus.DELIVERED:
-        showSuccessToast("Your order has been delivered.");
+        showSuccessToast(t("order.orderDelivered"));
         break;
       default:
         break;
@@ -322,11 +317,11 @@ const OrderDetails = () => {
             className="flex items-center gap-1 text-sm text-gray-500 hover:text-primary transition-colors mb-4"
           >
             <ArrowLeft size={18} />
-            Back
+            {t("common.back")}
           </button>
           <div className="bg-card rounded-2xl p-8 text-center shadow-sm">
             <p className="text-text font-semibold">
-              {error ?? "Order not found"}
+              {error ?? t("order.orderNotFound")}
             </p>
           </div>
         </div>
@@ -343,20 +338,20 @@ const OrderDetails = () => {
           className="flex items-center gap-1 text-sm text-gray-500 hover:text-primary transition-colors mb-4"
         >
           <ArrowLeft size={18} />
-          Back
+          {t("common.back")}
         </button>
 
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-xl font-bold text-text flex items-center gap-2">
             <ShoppingBag size={22} className="text-primary" />
-            Order details
+            {t("order.orderDetails")}
           </h1>
           <div className="flex items-center gap-2">
             <button
               onClick={handleRefresh}
               disabled={loading || isPaying || isCancelling}
               className="p-2 rounded-full hover:bg-gray-100 text-gray-500 disabled:opacity-50 transition-colors"
-              aria-label="Refresh order"
+              aria-label={t("order.refreshOrder")}
             >
               <RefreshCw size={18} />
             </button>
@@ -368,7 +363,7 @@ const OrderDetails = () => {
           <div className="bg-card rounded-2xl p-4 shadow-sm mb-4">
             <div className="flex items-start justify-between gap-3">
               <p className="text-sm font-semibold text-red-700">
-                Order cancelled by restaurant
+                {t("order.orderCancelledByRestaurant")}
               </p>
               {order.refundStatus && (
                 <RefundStatusBadge status={order.refundStatus} />
@@ -376,13 +371,14 @@ const OrderDetails = () => {
             </div>
             {order.cancelledAt && (
               <p className="text-xs text-red-600/80 mt-0.5">
-                Cancelled at {ComputeUtils.formatDate(order.cancelledAt)}
+                {t("order.cancelledAt")}{" "}
+                {ComputeUtils.formatDate(order.cancelledAt)}
               </p>
             )}
             {order.orderCancelReason && (
               <p className="text-xs text-red-600/80 mt-0.5">
-                Reason:{" "}
-                {ComputeUtils.formatCancelledReason(order.orderCancelReason)}
+                {t("order.reason")}{" "}
+                {ComputeUtils.formatCancelledReason(t, order.orderCancelReason)}
               </p>
             )}
           </div>
@@ -391,7 +387,7 @@ const OrderDetails = () => {
         {restaurant && (
           <div className="bg-card rounded-2xl p-4 shadow-sm mb-4">
             <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-1">
-              From
+              {t("order.from")}
             </p>
             <p className="text-sm font-semibold text-text">{restaurant.name}</p>
             {restaurant.address && (
@@ -401,13 +397,15 @@ const OrderDetails = () => {
               </p>
             )}
             <p className="text-xs text-primary mt-1">
-              {order.distanceKm.toFixed(2)} km away
+              {t("order.kmAway", { distance: order.distanceKm.toFixed(2) })}
             </p>
           </div>
         )}
 
         <div className="bg-card rounded-2xl p-4 shadow-sm space-y-4 mb-4">
-          <h2 className="text-sm font-semibold text-text">Items</h2>
+          <h2 className="text-sm font-semibold text-text">
+            {t("order.items")}
+          </h2>
           {order.items.map((item) => {
             const menu = menus[item.productId];
             const unitPrice = item.priceWithPlatformPercentage ?? 0;
@@ -423,10 +421,10 @@ const OrderDetails = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-text truncate">
-                    {menu?.name ?? "Menu item"}
+                    {menu?.name ?? t("order.menuItem")}
                   </p>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    Qty: {item.quantity}
+                    {t("order.quantity", { qty: item.quantity })}
                   </p>
                 </div>
                 <div className="text-right">
@@ -434,7 +432,9 @@ const OrderDetails = () => {
                     {lineTotal.toLocaleString()} FCFA
                   </p>
                   <p className="text-xs text-gray-500">
-                    {unitPrice.toLocaleString()} FCFA each
+                    {t("order.priceEach", {
+                      price: unitPrice.toLocaleString(),
+                    })}
                   </p>
                 </div>
               </div>
@@ -443,22 +443,24 @@ const OrderDetails = () => {
         </div>
 
         <div className="bg-card rounded-2xl p-4 shadow-sm space-y-2 mb-4">
-          <h2 className="text-sm font-semibold text-text mb-2">Pricing</h2>
+          <h2 className="text-sm font-semibold text-text mb-2">
+            {t("order.pricing")}
+          </h2>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500">Subtotal</span>
+            <span className="text-sm text-gray-500">{t("order.subtotal")}</span>
             <span className="text-sm font-medium text-text">
               {order.pricing.totalAmountCollected.toLocaleString()} FCFA
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500">Delivery</span>
+            <span className="text-sm text-gray-500">{t("order.delivery")}</span>
             <span className="text-sm font-medium text-text">
               {order.pricing.deliveryFeeAmountWithCollectionAndDisbursementPercentage.toLocaleString()}{" "}
               FCFA
             </span>
           </div>
           <div className="flex items-center justify-between pt-2 border-t border-gray-200">
-            <span className="text-sm text-gray-500">Total</span>
+            <span className="text-sm text-gray-500">{t("order.total")}</span>
             <span className="text-lg font-bold text-text">
               {order.pricing.totalAmountCollectedWithDelivery.toLocaleString()}{" "}
               FCFA
@@ -477,10 +479,10 @@ const OrderDetails = () => {
           >
             <CreditCard size={18} />
             {isPaying
-              ? "Starting payment..."
+              ? t("order.startingPayment")
               : order.status === EnumOrderStatus.CREATED
-                ? "Pay for your order now"
-                : "Finalize payment"}
+                ? t("order.payNow")
+                : t("order.finalizePayment")}
           </button>
         )}
 
@@ -490,13 +492,15 @@ const OrderDetails = () => {
             disabled={isPaying || isCancelling}
             className="w-full mb-4 bg-red-500 text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
           >
-            Cancel order
+            {t("order.cancelOrder")}
           </button>
         )}
 
         {order.paidAt && (
           <div className="bg-card rounded-2xl p-4 shadow-sm mb-4">
-            <p className="text-sm font-semibold text-text">Paid at</p>
+            <p className="text-sm font-semibold text-text">
+              {t("order.paidAtTitle")}
+            </p>
             <p className="text-xs text-gray-500 mt-0.5">
               {ComputeUtils.formatDate(order.paidAt)}
             </p>
@@ -505,7 +509,7 @@ const OrderDetails = () => {
 
         <div className="bg-card rounded-2xl p-4 shadow-sm">
           <h2 className="text-sm font-semibold text-text mb-4">
-            Order history
+            {t("order.orderHistory")}
           </h2>
           <div className="relative pl-4 space-y-6">
             <div className="absolute left-[5px] top-2 bottom-2 w-0.5 bg-gray-200" />
@@ -519,7 +523,7 @@ const OrderDetails = () => {
                   }`}
                 />
                 <p className="text-sm font-medium text-text">
-                  {ComputeUtils.formatStatus(transition.status)}
+                  {ComputeUtils.formatStatus(t, transition.status)}
                 </p>
                 <p className="text-xs text-gray-500">
                   {ComputeUtils.formatDate(transition.timestamp)}
@@ -533,10 +537,10 @@ const OrderDetails = () => {
       <DeleteModal
         open={showCancelModal}
         setOpen={setShowCancelModal}
-        title="Cancel your order?"
-        description="This action cannot be undone."
+        title={t("order.cancelYourOrder")}
+        description={t("common.cannotUndo")}
         loading={isCancelling}
-        confirmText="Cancel order"
+        confirmText={t("order.cancelOrder")}
         onConfirm={handleConfirmCancel}
       />
     </div>

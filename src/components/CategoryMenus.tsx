@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ChevronDown, Loader2, ShoppingCart } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
+import { Trans, useTranslation } from "react-i18next";
 import {
   EnumStatusCode,
   EnumStatusResponse,
@@ -26,6 +27,7 @@ type Props = {
 const LIMIT = 10;
 
 const CategoryMenus = ({ restaurant, category }: Props) => {
+  const { t } = useTranslation();
   const [menus, setMenus] = useState<IMenuEntity[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -153,7 +155,7 @@ const CategoryMenus = ({ restaurant, category }: Props) => {
           onClick={() => setPage((p) => p + 1)}
           className="w-full mt-3 flex items-center justify-center gap-1.5 text-sm font-semibold text-primary bg-primary/5 hover:bg-primary/10 rounded-xl py-2.5 transition-colors"
         >
-          View more
+          {t("categoryMenus.viewMore")}
           <ChevronDown size={16} />
         </button>
       )}
@@ -168,24 +170,28 @@ const CategoryMenus = ({ restaurant, category }: Props) => {
         <Modal
           open={showCartWarning}
           setOpen={setShowCartWarning}
-          title="Start a new cart?"
+          title={t("categoryMenus.startNewCartTitle")}
           xlSize="1"
-          textButton="Start new cart"
+          textButton={t("categoryMenus.startNewCartButton")}
           onValidate={handleConfirmNewCart}
         >
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-primary">
               <ShoppingCart className="h-5 w-5" />
               <span className="font-medium">
-                You already have a cart at{" "}
-                <span className="text-accent">{cart?.restaurantName}</span>
+                <Trans
+                  i18nKey="categoryMenus.cartAt"
+                  values={{ restaurantName: cart?.restaurantName }}
+                  components={[<span className="text-accent" />]}
+                />
               </span>
             </div>
             <p>
-              You can only order from one restaurant at a time. Starting a new
-              cart at{" "}
-              <span className="text-accent font-medium">{restaurant.name}</span>{" "}
-              will remove all the items from your current cart.
+              <Trans
+                i18nKey="categoryMenus.newCartWarning"
+                values={{ restaurantName: restaurant.name }}
+                components={[<span className="text-accent font-medium" />]}
+              />
             </p>
           </div>
         </Modal>

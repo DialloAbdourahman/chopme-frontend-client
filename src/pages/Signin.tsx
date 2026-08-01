@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { EmailPasswordLoginDto } from "chopme-frontend-common";
@@ -14,6 +15,7 @@ import { AuthService } from "../services/auth.service";
 import { TokensService } from "../services/tokens.service";
 import { KEYS } from "../utils/keys";
 import GoogleAuthButton from "../components/GoogleAuthButton";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   showErrorToast,
@@ -23,6 +25,7 @@ import {
 import useInitializeAfterAuth from "../hooks/useInitializeAfterAuth";
 
 const Signin = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectUrl = searchParams.get("redirect_url");
@@ -58,7 +61,7 @@ const Signin = () => {
           value: refreshToken,
         });
         await initialize();
-        showSuccessToast("Welcome back!");
+        showSuccessToast(t("auth.welcomeBack"));
         const encoded = searchParams.get("redirect_url");
         const redirectTo = encoded ? decodeURIComponent(encoded) : "/";
         navigate(redirectTo, { replace: true });
@@ -67,25 +70,28 @@ const Signin = () => {
       const err = error as AxiosError<IOrchestrationResult<string>>;
       switch (err?.response?.data?.statusCode) {
         case EnumStatusCode.INVALID_CREDENTIALS:
-          showWarningToast("Invalid credentials. Please try again.");
+          showWarningToast(t("auth.invalidCredentials"));
           break;
         case EnumStatusCode.LOGIN_METHOD_NOT_ALLOWED:
-          showWarningToast("Login method not allowed. Please try again.");
+          showWarningToast(t("auth.loginMethodNotAllowed"));
           break;
         case EnumStatusCode.VALIDATION_ERROR:
-          showWarningToast("Please check your input and try again.");
+          showWarningToast(t("auth.checkInput"));
           break;
         case EnumStatusCode.INTERNAL_SERVER_ERROR:
-          showErrorToast("Something went wrong. Please try again.");
+          showErrorToast(t("auth.somethingWentWrong"));
           break;
         default:
-          showErrorToast("Something went wrong. Please try again.");
+          showErrorToast(t("auth.somethingWentWrong"));
       }
     }
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-10">
+    <div className="relative min-h-screen bg-background flex flex-col items-center justify-center px-4 py-10">
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
       <div className="w-full max-w-md">
         {/* Logo / Brand */}
         <div className="flex flex-col items-center mb-8">
@@ -95,7 +101,7 @@ const Signin = () => {
           <h1 className="text-3xl font-bold text-text tracking-tight">
             ChopMe
           </h1>
-          <p className="text-sm text-gray-400 mt-1">Sign in to your account</p>
+          <p className="text-sm text-gray-400 mt-1">{t("auth.signinTitle")}</p>
         </div>
 
         {/* Card */}
@@ -107,7 +113,7 @@ const Signin = () => {
             {/* Email */}
             <div className="flex flex-col gap-1">
               <label className="text-xs font-semibold text-text uppercase tracking-wide">
-                Email
+                {t("auth.email")}
               </label>
               <div
                 className={`flex items-center border rounded-xl px-4 py-3 gap-3 bg-background transition-colors ${
@@ -119,7 +125,7 @@ const Signin = () => {
                 <Mail size={18} className="text-gray-400 shrink-0" />
                 <input
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder={t("auth.emailPlaceholder")}
                   {...register("email")}
                   className="flex-1 bg-transparent outline-none text-text text-sm placeholder-gray-400"
                 />
@@ -134,7 +140,7 @@ const Signin = () => {
             {/* Password */}
             <div className="flex flex-col gap-1">
               <label className="text-xs font-semibold text-text uppercase tracking-wide">
-                Password
+                {t("auth.password")}
               </label>
               <div
                 className={`flex items-center border rounded-xl px-4 py-3 gap-3 bg-background transition-colors ${
@@ -146,7 +152,7 @@ const Signin = () => {
                 <Lock size={18} className="text-gray-400 shrink-0" />
                 <input
                   type={showPassword ? "text" : "password"}
-                  placeholder="••••••••"
+                  placeholder={t("auth.passwordPlaceholder")}
                   {...register("password")}
                   className="flex-1 bg-transparent outline-none text-text text-sm placeholder-gray-400"
                 />
@@ -170,7 +176,7 @@ const Signin = () => {
                 type="button"
                 className="text-xs text-primary font-medium hover:underline"
               >
-                Forgot password?
+                {t("auth.forgotPassword")}
               </button>
             </div>
 
@@ -180,7 +186,9 @@ const Signin = () => {
               disabled={isSubmitting || loadingInitialize}
               className="w-full bg-primary text-white font-semibold rounded-xl py-3.5 text-sm shadow-sm hover:opacity-90 active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed mt-1"
             >
-              {isSubmitting || loadingInitialize ? "Signing in..." : "Sign in"}
+              {isSubmitting || loadingInitialize
+                ? t("auth.signingIn")
+                : t("auth.signIn")}
             </button>
           </form>
 
@@ -188,7 +196,7 @@ const Signin = () => {
           <div className="flex items-center gap-3 my-6">
             <div className="flex-1 h-px bg-gray-200" />
             <span className="text-xs text-gray-400 font-medium">
-              or continue with
+              {t("auth.orContinueWith")}
             </span>
             <div className="flex-1 h-px bg-gray-200" />
           </div>
@@ -199,7 +207,7 @@ const Signin = () => {
 
         {/* Sign up link */}
         <p className="text-center text-sm text-gray-400 mt-6">
-          Don't have an account?{" "}
+          {t("auth.noAccount")}{" "}
           <Link
             to={
               redirectUrl
@@ -208,7 +216,7 @@ const Signin = () => {
             }
             className="text-primary font-semibold hover:underline"
           >
-            Sign up
+            {t("auth.signUpLink")}
           </Link>
         </p>
       </div>

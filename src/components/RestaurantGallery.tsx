@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { KEYS } from "../utils/keys";
 
 type Props = {
@@ -8,6 +9,7 @@ type Props = {
 };
 
 const RestaurantGallery = ({ name, coverImage, pictures }: Props) => {
+  const { t } = useTranslation();
   const images = [...(coverImage ? [coverImage] : []), ...(pictures ?? [])].map(
     (img) => `${KEYS.PUBLIC_S3_PREFIX}/${img}`,
   );
@@ -17,7 +19,9 @@ const RestaurantGallery = ({ name, coverImage, pictures }: Props) => {
   if (images.length === 0) {
     return (
       <div className="w-full h-56 sm:h-72 bg-gray-200 flex items-center justify-center rounded-b-3xl">
-        <span className="text-gray-400 text-sm">No image available</span>
+        <span className="text-gray-400 text-sm">
+          {t("restaurant.noImageAvailable")}
+        </span>
       </div>
     );
   }

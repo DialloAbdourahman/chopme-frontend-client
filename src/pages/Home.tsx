@@ -2,6 +2,7 @@ import { Search, ChefHat, Store, Phone } from "lucide-react";
 import Navbar from "../components/Navbar";
 import RestaurantsInHomepage from "../components/RestaurantsInHomepage";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { RootState } from "../store";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -10,6 +11,7 @@ import type { FindRestaurantDto } from "chopme-frontend-common";
 import usePromptLocation from "../hooks/usePromptLocation";
 
 const Home = () => {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const { client, userAddressLocalStorage } = useSelector(
     (state: RootState) => state.user,
@@ -47,15 +49,14 @@ const Home = () => {
             <div className="relative z-10">
               <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs font-medium mb-4">
                 <ChefHat size={14} />
-                <span>Craving something delicious?</span>
+                <span>{t("home.heroBadge")}</span>
               </div>
 
               <h1 className="text-2xl md:text-4xl font-bold leading-tight mb-3">
-                Order from the best restaurants near you
+                {t("home.heroTitle")}
               </h1>
               <p className="text-sm md:text-base text-white/90 mb-6 max-w-lg">
-                Discover tasty meals from local restaurants and get them
-                delivered fast. Fresh, hot, and exactly how you like it.
+                {t("home.heroDescription")}
               </p>
 
               {/* Search bar */}
@@ -68,7 +69,7 @@ const Home = () => {
                   type="text"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search dishes, restaurants..."
+                  placeholder={t("home.searchPlaceholder")}
                   className="flex-1 min-w-0 bg-transparent outline-none text-text text-sm placeholder-gray-400"
                 />
 
@@ -76,18 +77,23 @@ const Home = () => {
                   to={`/restaurants?page=1&filter=${JSON.stringify(filters)}`}
                   className="flex-shrink-0 bg-primary text-white rounded-xl px-5 py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity"
                 >
-                  Find
+                  {t("common.search")}
                 </Link>
               </div>
 
               {/* Quick tags */}
               <div className="flex flex-wrap gap-2 mt-5">
-                {["Pizza", "Local", "Sushi", "Desserts"].map((tag) => (
+                {[
+                  { key: "pizza", label: t("home.tagsPizza") },
+                  { key: "local", label: t("home.tagsLocal") },
+                  { key: "sushi", label: t("home.tagsSushi") },
+                  { key: "desserts", label: t("home.tagsDesserts") },
+                ].map((tag) => (
                   <span
-                    key={tag}
+                    key={tag.key}
                     className="bg-white/20 hover:bg-white/30 transition-colors text-xs font-medium px-3 py-1.5 rounded-full cursor-pointer"
                   >
-                    {tag}
+                    {tag.label}
                   </span>
                 ))}
               </div>
@@ -102,21 +108,21 @@ const Home = () => {
       <section className="px-4 pb-16">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-xl font-bold text-text text-center mb-8">
-            How it works
+            {t("home.howItWorks")}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
               {
-                title: "Choose a restaurant",
-                desc: "Browse menus and pick your favorite place.",
+                title: t("home.chooseRestaurantTitle"),
+                desc: t("home.chooseRestaurantDesc"),
               },
               {
-                title: "Build your order",
-                desc: "Add dishes, customize, and checkout easily.",
+                title: t("home.buildOrderTitle"),
+                desc: t("home.buildOrderDesc"),
               },
               {
-                title: "Enjoy delivery",
-                desc: "We bring your meal hot and fresh to your door.",
+                title: t("home.enjoyDeliveryTitle"),
+                desc: t("home.enjoyDeliveryDesc"),
               },
             ].map((step, index) => (
               <div
@@ -143,25 +149,24 @@ const Home = () => {
             <div className="flex-1 text-center md:text-left">
               <div className="inline-flex items-center gap-2 bg-primary/10 text-primary rounded-full px-3 py-1.5 text-xs font-semibold mb-3">
                 <Store size={14} />
-                <span>For restaurant owners</span>
+                <span>{t("home.forRestaurantOwners")}</span>
               </div>
               <h2 className="text-xl font-bold text-text mb-2">
-                Register your restaurant
+                {t("home.registerTitle")}
               </h2>
               <p className="text-sm text-gray-500 mb-6">
-                Join ChopMe and reach thousands of hungry customers in your
-                city. We handle delivery so you can focus on the food.
+                {t("home.registerDesc")}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
                 <button className="bg-primary text-white rounded-xl px-6 py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all">
-                  Get started
+                  {t("home.getStarted")}
                 </button>
                 <a
                   href="tel:+237123456789"
                   className="flex items-center justify-center gap-2 border border-gray-200 rounded-xl px-6 py-3 text-sm font-semibold text-text hover:bg-background transition-colors"
                 >
                   <Phone size={16} className="text-primary" />
-                  Call us
+                  {t("home.callUs")}
                 </a>
               </div>
             </div>
@@ -173,10 +178,10 @@ const Home = () => {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-text">
-                      Grow your business
+                      {t("home.growBusinessTitle")}
                     </p>
                     <p className="text-xs text-gray-500">
-                      More orders, more revenue
+                      {t("home.growBusinessDesc")}
                     </p>
                   </div>
                 </div>
@@ -185,8 +190,12 @@ const Home = () => {
                     <ChefHat size={20} />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-text">Focus on food</p>
-                    <p className="text-xs text-gray-500">We handle logistics</p>
+                    <p className="text-sm font-bold text-text">
+                      {t("home.focusOnFoodTitle")}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {t("home.focusOnFoodDesc")}
+                    </p>
                   </div>
                 </div>
               </div>

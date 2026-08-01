@@ -1,4 +1,5 @@
 import { EnumOrderStatus } from "chopme-frontend-common";
+import { useTranslation } from "react-i18next";
 import { ComputeUtils } from "../utils/compute-utils";
 
 type Props = {
@@ -6,7 +7,8 @@ type Props = {
 };
 
 const OrderStatusBadge = ({ status }: Props) => {
-  const label = ComputeUtils.formatStatus(status);
+  const { t } = useTranslation();
+  const label = ComputeUtils.formatStatus(t, status);
 
   const colorClass =
     status === EnumOrderStatus.CREATED

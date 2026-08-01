@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Minus, Plus, ShoppingBag, Trash2, Utensils, X } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   EnumStatusCode,
   EnumStatusResponse,
@@ -24,6 +25,7 @@ type Props = {
 const CartDrawer = ({ open, onClose }: Props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { cart } = useSelector((state: RootState) => state.cart);
 
   const [menuDetails, setMenuDetails] = useState<Record<string, IMenuEntity>>(
@@ -89,7 +91,7 @@ const CartDrawer = ({ open, onClose }: Props) => {
         <div className="p-4 border-b border-gray-100 flex items-center justify-between">
           <h2 className="text-lg font-bold text-text flex items-center gap-2">
             <ShoppingBag size={20} className="text-primary" />
-            Your cart ({totalItems})
+            {t("cartDrawer.title", { count: totalItems })}
           </h2>
           <button
             onClick={onClose}
@@ -103,9 +105,9 @@ const CartDrawer = ({ open, onClose }: Props) => {
           {!cart || cart.items.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <ShoppingBag size={40} className="text-primary/40 mb-3" />
-              <p className="text-sm text-gray-500">Your cart is empty</p>
+              <p className="text-sm text-gray-500">{t("cartDrawer.empty")}</p>
               <p className="text-xs text-gray-400 mt-1">
-                Add items from a restaurant to get started
+                {t("cartDrawer.emptyHint")}
               </p>
             </div>
           ) : loading ? (
@@ -148,7 +150,7 @@ const CartDrawer = ({ open, onClose }: Props) => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="text-sm font-semibold text-text truncate">
-                        {menu?.name ?? "Loading..."}
+                        {menu?.name ?? t("common.loading")}
                       </h4>
                       <p className="text-xs text-primary font-semibold mt-0.5">
                         {menu
@@ -197,7 +199,7 @@ const CartDrawer = ({ open, onClose }: Props) => {
         {cart && cart.items.length > 0 && (
           <div className="p-4 border-t border-gray-100 space-y-3">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-500">Total</span>
+              <span className="text-gray-500">{t("order.total")}</span>
               <span className="font-bold text-text text-base">
                 {totalPrice?.toLocaleString()} FCFA
               </span>
@@ -208,7 +210,7 @@ const CartDrawer = ({ open, onClose }: Props) => {
                 className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-background transition-colors"
               >
                 <Trash2 size={14} />
-                Clear
+                {t("cartDrawer.clear")}
               </button>
               <button
                 onClick={() => {
@@ -217,7 +219,7 @@ const CartDrawer = ({ open, onClose }: Props) => {
                 }}
                 className="flex-1 bg-primary text-white rounded-xl py-2.5 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
               >
-                Checkout
+                {t("cartDrawer.checkout")}
               </button>
             </div>
           </div>
