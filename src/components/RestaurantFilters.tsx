@@ -67,7 +67,7 @@ const RestaurantFilters = ({ filters, location, onApply, onClear }: Props) => {
           className="flex items-center gap-2 bg-card rounded-xl px-4 py-2 text-sm font-medium text-text shadow-sm hover:shadow-md transition-shadow"
         >
           <SlidersHorizontal size={16} className="text-primary" />
-          Filters
+          {t("restaurantFilters.filters")}
           {activeFiltersCount > 0 && (
             <span className="bg-primary text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
               {activeFiltersCount}
@@ -80,7 +80,7 @@ const RestaurantFilters = ({ filters, location, onApply, onClear }: Props) => {
             className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-primary transition-colors"
           >
             <X size={14} />
-            Clear filters
+            {t("restaurantFilters.clearFilters")}
           </button>
         )}
       </div>
@@ -91,13 +91,13 @@ const RestaurantFilters = ({ filters, location, onApply, onClear }: Props) => {
           {/* City */}
           <div>
             <label className="block text-sm font-medium text-text mb-1.5">
-              City
+              {t("restaurantFilters.city")}
             </label>
             <input
               type="text"
               value={cityDraft}
               onChange={(e) => setCityDraft(e.target.value)}
-              placeholder="e.g. Yaounde"
+              placeholder={t("restaurantFilters.cityPlaceholder")}
               className="w-full bg-background rounded-xl px-4 py-2.5 text-sm text-text placeholder-gray-400 outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
@@ -105,7 +105,7 @@ const RestaurantFilters = ({ filters, location, onApply, onClear }: Props) => {
           {/* Type */}
           <div>
             <label className="block text-sm font-medium text-text mb-1.5">
-              Type
+              {t("restaurantFilters.type")}
             </label>
             <div className="flex flex-wrap gap-2">
               {restaurantTypes.map((r) => (
@@ -132,7 +132,7 @@ const RestaurantFilters = ({ filters, location, onApply, onClear }: Props) => {
           {/* Radius */}
           <div>
             <label className="block text-sm font-medium text-text mb-1.5">
-              Radius (km)
+              {t("restaurantFilters.radius")}
             </label>
             <div className="flex flex-wrap gap-2">
               {[5, 10, 25, 50, 100].map((km) => (
@@ -150,13 +150,13 @@ const RestaurantFilters = ({ filters, location, onApply, onClear }: Props) => {
                       : "bg-background text-text hover:bg-primary/10"
                   }`}
                 >
-                  {km} km
+                  {t("restaurantFilters.km", { km })}
                 </button>
               ))}
             </div>
             {radiusDraft && !location && (
               <p className="text-xs text-gray-500 mt-1.5">
-                Set your location to filter by distance
+                {t("restaurantFilters.locationHint")}
               </p>
             )}
           </div>
@@ -168,14 +168,14 @@ const RestaurantFilters = ({ filters, location, onApply, onClear }: Props) => {
               onClick={handleApply}
               className="flex-1 bg-primary text-white rounded-xl py-2.5 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
             >
-              Apply filters
+              {t("restaurantFilters.apply")}
             </button>
             <button
               type="button"
               onClick={handleClear}
               className="px-4 bg-background text-text rounded-xl py-2.5 text-sm font-medium hover:bg-gray-100 transition-colors"
             >
-              Clear
+              {t("restaurantFilters.clear")}
             </button>
           </div>
         </div>

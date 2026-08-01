@@ -369,6 +369,27 @@
     "tryDifferentSearch": "Try a different search term"
   },
 
+  "restaurantFilters": {
+    "filters": "Filters",
+    "clearFilters": "Clear filters",
+    "city": "City",
+    "cityPlaceholder": "e.g. Yaounde",
+    "type": "Type",
+    "radius": "Radius (km)",
+    "km": "{{km}} km",
+    "locationHint": "Set your location to filter by distance",
+    "apply": "Apply filters",
+    "clear": "Clear"
+  },
+
+  "restaurantHeader": {
+    "open": "Open",
+    "closed": "Closed",
+    "views_one": "{{count}} view",
+    "views_other": "{{count}} views",
+    "km": "{{distance}} km"
+  },
+
   "auth": {
     "signinTitle": "Sign in to your account",
     "signupTitle": "Sign up to Chopme",

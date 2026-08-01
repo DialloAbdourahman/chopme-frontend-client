@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   ArrowLeft,
@@ -38,15 +38,7 @@ import { setOrderStatusUpdate } from "../store/notification.slice";
 
 const OrderDetails = () => {
   const { orderId } = useParams<{ orderId: string }>();
-  const navigate = useNavigate();
   const { t } = useTranslation();
-
-  const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate("/orders");
-    }
-  };
-
   const dispatch = useDispatch();
 
   const { orderStatusUpdate } = useSelector(
@@ -312,13 +304,13 @@ const OrderDetails = () => {
       <div className="min-h-screen bg-background">
         <Navbar />
         <div className="max-w-3xl mx-auto px-4 pt-6">
-          <button
-            onClick={handleBack}
+          <Link
+            to={"/orders"}
             className="flex items-center gap-1 text-sm text-gray-500 hover:text-primary transition-colors mb-4"
           >
             <ArrowLeft size={18} />
             {t("common.back")}
-          </button>
+          </Link>
           <div className="bg-card rounded-2xl p-8 text-center shadow-sm">
             <p className="text-text font-semibold">
               {error ?? t("order.orderNotFound")}
@@ -333,13 +325,13 @@ const OrderDetails = () => {
     <div className="min-h-screen bg-background pb-16">
       <Navbar />
       <div className="max-w-3xl mx-auto px-4 pt-6">
-        <button
-          onClick={handleBack}
+        <Link
+          to={"/orders"}
           className="flex items-center gap-1 text-sm text-gray-500 hover:text-primary transition-colors mb-4"
         >
           <ArrowLeft size={18} />
           {t("common.back")}
-        </button>
+        </Link>
 
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-xl font-bold text-text flex items-center gap-2">

@@ -92,7 +92,7 @@
     "profile": "Profil",
     "logout": "Déconnexion",
     "signin": "Connexion",
-    "setLocation": "Définir votre position",
+    "setLocation": "Votre position",
     "cart": "Ouvrir le panier"
   },
 
@@ -233,11 +233,11 @@
   },
 
   "home": {
-    "restaurantsNearYou": "Restaurants près de chez vous",
-    "nearYouSubtitle": "De bonnes options près de votre emplacement",
+    "restaurantsNearYou": "Restaurants proches",
+    "nearYouSubtitle": "De bons choix près de vous",
     "popularRestaurants": "Restaurants populaires",
     "popularSubtitle": "De bonnes options rien que pour vous",
-    "heroBadge": "Vous avez une envie de quelque chose de délicieux ?",
+    "heroBadge": "Envie d'un bon repas ?",
     "heroTitle": "Commandez dans les meilleurs restaurants près de chez vous",
     "heroDescription": "Découvrez de bons plats préparés par des restaurants locaux et recevez-les rapidement. Frais, chauds et exactement comme vous les aimez.",
     "searchPlaceholder": "Rechercher des plats, des restaurants...",
@@ -367,6 +367,27 @@
     "searchPlaceholder": "Rechercher un restaurant...",
     "noRestaurantsFound": "Aucun restaurant trouvé",
     "tryDifferentSearch": "Essayez un autre terme de recherche"
+  },
+
+  "restaurantFilters": {
+    "filters": "Filtres",
+    "clearFilters": "Effacer les filtres",
+    "city": "Ville",
+    "cityPlaceholder": "ex. Yaoundé",
+    "type": "Type",
+    "radius": "Rayon (km)",
+    "km": "{{km}} km",
+    "locationHint": "Définissez votre position pour filtrer par distance",
+    "apply": "Appliquer les filtres",
+    "clear": "Effacer"
+  },
+
+  "restaurantHeader": {
+    "open": "Ouvert",
+    "closed": "Fermé",
+    "views_one": "{{count}} vue",
+    "views_other": "{{count}} vues",
+    "km": "{{distance}} km"
   },
 
   "auth": {

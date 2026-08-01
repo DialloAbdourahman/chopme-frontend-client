@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowLeft,
   Minus,
@@ -29,6 +29,8 @@ const MenuDetails = () => {
   const { t } = useTranslation();
   const { menuId } = useParams<{ menuId: string; slug: string }>();
   const navigate = useNavigate();
+  const navigationLocation = useLocation();
+
   const dispatch = useDispatch();
 
   const { cart } = useSelector((state: RootState) => state.cart);
@@ -92,7 +94,7 @@ const MenuDetails = () => {
   }, [menuId, location]);
 
   const handleBack = () => {
-    if (window.history.length > 1) {
+    if (navigationLocation.state?.from) {
       navigate(-1);
     } else if (menu?.restaurant?.slug) {
       navigate(`/restaurants/${menu.restaurant.slug}`);

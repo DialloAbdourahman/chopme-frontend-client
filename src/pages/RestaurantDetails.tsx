@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Store } from "lucide-react";
 import {
   EnumStatusCode,
@@ -22,7 +22,9 @@ import RestaurantRatings from "../components/RestaurantRatings";
 const RestaurantDetails = () => {
   const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
+
   const navigate = useNavigate();
+  const navigationLocation = useLocation();
 
   const [restaurant, setRestaurant] = useState<IRestaurantEntity | null>(null);
   const [loading, setLoading] = useState(true);
@@ -33,7 +35,7 @@ const RestaurantDetails = () => {
   const location = client?.address ?? userAddressLocalStorage;
 
   const handleBack = () => {
-    if (window.history.length > 1) {
+    if (navigationLocation.state?.from) {
       navigate(-1);
     } else {
       navigate("/");

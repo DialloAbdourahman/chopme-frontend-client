@@ -35,7 +35,7 @@ const RestaurantHeader = ({ restaurant }: Props) => {
             isClosed ? "bg-gray-800 text-white" : "bg-success/10 text-success"
           }`}
         >
-          {isClosed ? "Closed" : "Open"}
+          {isClosed ? t("restaurantHeader.closed") : t("restaurantHeader.open")}
         </span>
       </div>
 
@@ -54,14 +54,20 @@ const RestaurantHeader = ({ restaurant }: Props) => {
         {restaurant.totalViews > 0 && (
           <div className="flex items-center gap-1">
             <Eye size={13} className="text-primary" />
-            <span>{restaurant.totalViews} views</span>
+            <span>
+              {t("restaurantHeader.views", { count: restaurant.totalViews })}
+            </span>
           </div>
         )}
         {restaurant.distanceKm !== undefined && (
           <>
             <div className="flex items-center gap-1">
               <MapPin size={13} className="text-primary" />
-              <span>{restaurant.distanceKm.toFixed(1)} km</span>
+              <span>
+                {t("restaurantHeader.km", {
+                  distance: restaurant.distanceKm.toFixed(1),
+                })}
+              </span>
             </div>
             <div className="flex items-center gap-1">
               <Clock size={13} className="text-primary" />

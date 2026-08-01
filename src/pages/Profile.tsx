@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import {
@@ -37,6 +37,7 @@ type PhoneFormValues = z.infer<typeof phoneFormSchema>;
 const Profile = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const navigationLocation = useLocation();
   const dispatch = useDispatch();
   const { user, client } = useSelector((state: RootState) => state.user);
 
@@ -166,13 +167,21 @@ const Profile = () => {
     }
   };
 
+  const handleBack = () => {
+    if (navigationLocation.state?.from) {
+      navigate(-1);
+    } else {
+      navigate("/");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12">
         <button
-          onClick={() => navigate("/")}
+          onClick={handleBack}
           className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-primary transition-colors mb-4"
         >
           <ArrowLeft size={16} />
