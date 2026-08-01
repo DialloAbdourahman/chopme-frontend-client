@@ -44,6 +44,8 @@
     "restaurantPreparingOrder": "The restaurant is preparing your order.",
     "orderOutForDelivery": "Your order is out for delivery.",
     "orderDelivered": "Your order has been delivered.",
+    "paymentSuccessful": "Payment successful!",
+    "paymentFailed": "Payment failed. Please try again.",
     "orderHash": "Order #{{id}}",
     "restaurant": "Restaurant",
     "itemCount_one": "{{count}} item",

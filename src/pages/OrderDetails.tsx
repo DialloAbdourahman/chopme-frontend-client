@@ -266,6 +266,12 @@ const OrderDetails = () => {
     setOrder(orderStatusUpdate);
 
     switch (orderStatusUpdate.status) {
+      case EnumOrderStatus.PAID:
+        showSuccessToast(t("order.paymentSuccessful"));
+        break;
+      case EnumOrderStatus.PAYMENT_FAILED:
+        showErrorToast(t("order.paymentFailed"));
+        break;
       case EnumOrderStatus.CANCELLED_BY_RESTAURANT:
         showWarningToast(t("order.restaurantCancelledOrder"));
         break;
