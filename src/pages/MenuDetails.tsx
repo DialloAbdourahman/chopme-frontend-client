@@ -125,6 +125,8 @@ const MenuDetails = () => {
   const quantityInCart =
     cart?.items.find((item) => item.menuId === menuId)?.quantity ?? 0;
 
+  const hasCartForThisRestaurant = cart?.restaurantId === menu?.restaurant?.id;
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -267,6 +269,16 @@ const MenuDetails = () => {
               {t("menuDetails.addToCart")}
             </button>
           )}
+          {hasCartForThisRestaurant && (
+            <button
+              onClick={() => navigate("/checkout")}
+              className="w-full mb-3 bg-primary text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2"
+            >
+              <ShoppingBag size={18} />
+              {t("cartDrawer.checkout")}
+            </button>
+          )}
+
           {canAddToCart !== EnumCanOrderMenu.CAN_ORDER && (
             <p className="text-xs text-red-500 text-center leading-tight">
               {canAddToCart === EnumCanOrderMenu.RESTAURANT_CLOSED &&

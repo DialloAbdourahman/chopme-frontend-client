@@ -81,6 +81,7 @@
     "startingPayment": "Starting payment...",
     "payNow": "Pay for your order now",
     "finalizePayment": "Finalize payment",
+    "retryOrder": "Retry order",
     "cancelOrder": "Cancel order",
     "paidAtTitle": "Paid at",
     "orderHistory": "Order history",

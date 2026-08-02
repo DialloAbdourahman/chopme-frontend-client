@@ -1,5 +1,11 @@
 import type { ReactNode } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "./store";
 import Signin from "./pages/Signin";
@@ -25,29 +31,23 @@ const Router = () => {
         <Route path="/signin" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/" element={<Home />} />
-        <Route path="/restaurants" element={<RestaurantsList />} />
-        <Route path="/restaurants/:slug" element={<RestaurantDetails />} />
-        <Route
-          path="/restaurants/:slug/menu/:menuId"
-          element={<MenuDetails />}
-        />
+        <Route path="/restaurants" element={<Outlet />}>
+          <Route index element={<RestaurantsList />} />
+          <Route path=":slug" element={<RestaurantDetails />} />
+          <Route path=":slug/menu/:menuId" element={<MenuDetails />} />
+        </Route>
         <Route path="/checkout" element={<Checkout />} />
         <Route
           path="/orders"
           element={
             <ProtectedRoute>
-              <MyOrders />
+              <Outlet />
             </ProtectedRoute>
           }
-        />
-        <Route
-          path="/orders/:orderId"
-          element={
-            <ProtectedRoute>
-              <OrderDetails />
-            </ProtectedRoute>
-          }
-        />
+        >
+          <Route index element={<MyOrders />} />
+          <Route path=":orderId" element={<OrderDetails />} />
+        </Route>
         <Route
           path="/profile"
           element={

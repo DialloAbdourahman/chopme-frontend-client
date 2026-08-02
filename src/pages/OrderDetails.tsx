@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   ArrowLeft,
@@ -35,11 +35,13 @@ import { ComputeUtils } from "../utils/compute-utils";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store";
 import { setOrderStatusUpdate } from "../store/notification.slice";
+import { setCart } from "../store/cart";
 
 const OrderDetails = () => {
   const { orderId } = useParams<{ orderId: string }>();
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { orderStatusUpdate } = useSelector(
     (state: RootState) => state.notification,
@@ -155,6 +157,22 @@ const OrderDetails = () => {
       setLoading(false);
     }
   }, [orderId]);
+
+  const handleRetryOrder = () => {
+    if (!order || !restaurant) return;
+
+    dispatch(
+      setCart({
+        restaurantId: order.restaurantId,
+        restaurantName: restaurant.name,
+        items: order.items.map((item) => ({
+          menuId: item.productId,
+          quantity: item.quantity,
+        })),
+      }),
+    );
+    navigate("/checkout");
+  };
 
   const handlePay = async () => {
     if (!order || !orderId) return;
@@ -466,8 +484,13 @@ const OrderDetails = () => {
           </div>
         </div>
 
-        {(order.status === EnumOrderStatus.CREATED ||
-          order.status === EnumOrderStatus.PAYMENT_INITIATED) && (
+        {((order.status === EnumOrderStatus.CREATED &&
+          order.maxTimeToPayOrder &&
+          new Date(order.maxTimeToPayOrder) > new Date()) ||
+          (order.status === EnumOrderStatus.PAYMENT_INITIATED &&
+            order.paymentDetails?.link &&
+            order.paymentDetails?.validUntil &&
+            new Date(order.paymentDetails.validUntil) > new Date())) && (
           <button
             onClick={handlePay}
             disabled={isPaying || isCancelling}
@@ -491,6 +514,26 @@ const OrderDetails = () => {
             className="w-full mb-4 bg-red-500 text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
           >
             {t("order.cancelOrder")}
+          </button>
+        )}
+
+        {(order.status === EnumOrderStatus.PAYMENT_FAILED ||
+          order.status === EnumOrderStatus.CANCELLED_BY_RESTAURANT ||
+          order.status === EnumOrderStatus.CANCELLED_BY_CUSTOMER ||
+          (order.status === EnumOrderStatus.CREATED &&
+            order.maxTimeToPayOrder &&
+            new Date() > new Date(order.maxTimeToPayOrder)) ||
+          (order.status === EnumOrderStatus.PAYMENT_INITIATED &&
+            order.paymentDetails?.link &&
+            order.paymentDetails?.validUntil &&
+            new Date() > new Date(order.paymentDetails.validUntil))) && (
+          <button
+            onClick={handleRetryOrder}
+            disabled={isPaying || isCancelling}
+            className="w-full mb-3 bg-primary text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:animate-none animate-bounce"
+          >
+            <RefreshCw size={18} />
+            {t("order.retryOrder")}
           </button>
         )}
 

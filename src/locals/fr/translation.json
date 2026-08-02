@@ -81,6 +81,7 @@
     "startingPayment": "Démarrage du paiement...",
     "payNow": "Payer votre commande maintenant",
     "finalizePayment": "Finaliser le paiement",
+    "retryOrder": "Réessayer la commande",
     "cancelOrder": "Annuler la commande",
     "paidAtTitle": "Payée le",
     "orderHistory": "Historique de la commande",

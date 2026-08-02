@@ -158,7 +158,7 @@ const Navbar = () => {
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-red-600"
               >
                 <LogOut size={16} />
-                {t("navbar.logout")}
+                <span className="hidden lg:inline"> {t("navbar.logout")}</span>
               </button>
             ) : (
               <Link

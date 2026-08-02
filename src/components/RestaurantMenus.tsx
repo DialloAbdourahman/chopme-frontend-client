@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { UtensilsCrossed } from "lucide-react";
+import { UtensilsCrossed, ShoppingBag } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
   EnumStatusCode,
   EnumStatusResponse,
@@ -9,6 +11,7 @@ import {
 } from "chopme-frontend-common";
 import { CategoryService } from "../services/category.service";
 import CategoryMenus from "./CategoryMenus";
+import type { RootState } from "../store";
 
 type Props = {
   restaurant: IRestaurantEntity;
@@ -16,8 +19,12 @@ type Props = {
 
 const RestaurantMenus = ({ restaurant }: Props) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { cart } = useSelector((state: RootState) => state.cart);
   const [categories, setCategories] = useState<ICategoryEntity[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const hasCartForThisRestaurant = cart?.restaurantId === restaurant.id;
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -75,6 +82,16 @@ const RestaurantMenus = ({ restaurant }: Props) => {
           </div>
           <p className="text-sm text-gray-500">{t("restaurant.noMenusYet")}</p>
         </div>
+      )}
+
+      {hasCartForThisRestaurant && (
+        <button
+          onClick={() => navigate("/checkout")}
+          className="fixed bottom-4 right-4 z-50 px-4 py-3 bg-primary text-white rounded-full shadow-lg text-sm font-semibold hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2 animate-bounce"
+        >
+          <ShoppingBag size={18} />
+          {t("cartDrawer.checkout")}
+        </button>
       )}
     </div>
   );
