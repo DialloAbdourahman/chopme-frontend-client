@@ -38,7 +38,8 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      const response = await AuthService.logout();
+      const refreshToken = TokensService.getToken(KEYS.REFRESH_TOKEN_KEY);
+      const response = await AuthService.logout(refreshToken ?? undefined);
       if (
         response.data.code !== EnumStatusResponse.SUCCESS ||
         response.data.statusCode !== EnumStatusCode.LOGGED_OUT_SUCCESSFULLY

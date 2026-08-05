@@ -83,7 +83,11 @@ const Profile = () => {
     register: registerPassword,
     handleSubmit: handleSubmitPassword,
     reset: resetPassword,
-    formState: { errors: passwordErrors, isSubmitting: isSubmittingPassword },
+    formState: {
+      errors: passwordErrors,
+      isSubmitting: isSubmittingPassword,
+      isDirty: isPasswordDirty,
+    },
   } = useForm<UpdatePasswordDto>({
     resolver: zodResolver(updatePasswordSchema),
     defaultValues: {
@@ -273,7 +277,7 @@ const Profile = () => {
             <button
               type="submit"
               disabled={isSubmittingFullName || !isFullNameDirty}
-              className="bg-primary text-white text-sm font-semibold rounded-xl px-4 py-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
+              className="bg-primary text-white text-sm font-semibold rounded-xl px-4 py-2 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
             >
               {isSubmittingFullName
                 ? t("profile.saving")
@@ -317,7 +321,7 @@ const Profile = () => {
             <button
               type="submit"
               disabled={isSubmittingPhone || !isPhoneDirty}
-              className="bg-primary text-white text-sm font-semibold rounded-xl px-4 py-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
+              className="bg-primary text-white text-sm font-semibold rounded-xl px-4 py-2 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
             >
               {isSubmittingPhone
                 ? t("profile.saving")
@@ -430,8 +434,8 @@ const Profile = () => {
 
               <button
                 type="submit"
-                disabled={isSubmittingPassword}
-                className="bg-primary text-white text-sm font-semibold rounded-xl px-4 py-2 hover:opacity-90 disabled:opacity-50 transition-opacity"
+                disabled={isSubmittingPassword || !isPasswordDirty}
+                className="bg-primary text-white text-sm font-semibold rounded-xl px-4 py-2 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
               >
                 {isSubmittingPassword
                   ? t("profile.updating")
