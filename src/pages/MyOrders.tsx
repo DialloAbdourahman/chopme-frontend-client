@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
+  EnumNotificationType,
   EnumOrderStatus,
   EnumStatusCode,
   EnumStatusResponse,
+  type INotification,
   type IOrderEntity,
 } from "chopme-frontend-common";
 import { ArrowLeft, ChevronRight, ShoppingBag } from "lucide-react";
@@ -14,14 +16,9 @@ import Pagination from "../components/Pagination";
 import { OrderService } from "../services/order.service";
 import { RestaurantService } from "../services/restaurant.service";
 import { ComputeUtils } from "../utils/compute-utils";
-import {
-  showErrorToast,
-  showSuccessToast,
-  showWarningToast,
-} from "../utils/toasts";
+import { showErrorToast } from "../utils/toasts";
 import type { RootState } from "../store";
-import { useDispatch, useSelector } from "react-redux";
-import { setOrderStatusUpdate } from "../store/notification.slice";
+import { useSelector } from "react-redux";
 
 const LIMIT = 10;
 
@@ -38,11 +35,9 @@ const MyOrders = () => {
     })),
   ];
 
-  const { orderStatusUpdate } = useSelector(
+  const { newNotification } = useSelector(
     (state: RootState) => state.notification,
   );
-
-  const dispatch = useDispatch();
 
   const [orders, setOrders] = useState<IOrderEntity[]>([]);
   const [restaurantNames, setRestaurantNames] = useState<
@@ -120,33 +115,22 @@ const MyOrders = () => {
   }, [status, page]);
 
   useEffect(() => {
-    if (!orderStatusUpdate) return;
+    const notification = newNotification as INotification<IOrderEntity>;
+
+    if (
+      !notification ||
+      notification.type !== EnumNotificationType.ORDER_STATUS_CHANGED
+    )
+      return;
 
     setOrders((prev) =>
       prev.map((order) =>
-        order.id === orderStatusUpdate.id ? orderStatusUpdate : order,
+        order.id === notification.data.id ? notification.data : order,
       ),
     );
 
-    switch (orderStatusUpdate.status) {
-      case EnumOrderStatus.CANCELLED_BY_RESTAURANT:
-        showWarningToast(t("order.restaurantCancelledOrder"));
-        break;
-      case EnumOrderStatus.PREPARING_ORDER:
-        showSuccessToast(t("order.restaurantPreparingOrder"));
-        break;
-      case EnumOrderStatus.IN_DELIVERY:
-        showSuccessToast(t("order.orderOutForDelivery"));
-        break;
-      case EnumOrderStatus.DELIVERED:
-        showSuccessToast(t("order.orderDelivered"));
-        break;
-      default:
-        break;
-    }
-
-    dispatch(setOrderStatusUpdate(null));
-  }, [orderStatusUpdate]);
+    // dispatch(setOrderStatusUpdate(null));
+  }, [newNotification]);
 
   return (
     <div className="min-h-screen bg-background">

@@ -32,6 +32,15 @@
     "noMenusYet": "Aucun menu disponible pour l'instant"
   },
 
+  "notification": {
+    "paymentSuccessful": "Paiement réussi !",
+    "paymentFailed": "Le paiement a échoué. Veuillez réessayer.",
+    "restaurantCancelledOrder": "Le restaurant a annulé votre commande.",
+    "restaurantPreparingOrder": "Le restaurant prépare votre commande.",
+    "orderOutForDelivery": "Votre commande est en cours de livraison.",
+    "orderDelivered": "Votre commande a été livrée."
+  },
+
   "order": {
     "placeOrder": "Commander",
     "yourOrder": "Votre commande",
@@ -40,12 +49,6 @@
     "all": "Toutes",
     "couldNotLoadOrders": "Impossible de charger les commandes.",
     "noOrdersFound": "Aucune commande trouvée.",
-    "restaurantCancelledOrder": "Le restaurant a annulé votre commande.",
-    "restaurantPreparingOrder": "Le restaurant prépare votre commande.",
-    "orderOutForDelivery": "Votre commande est en cours de livraison.",
-    "orderDelivered": "Votre commande a été livrée.",
-    "paymentSuccessful": "Paiement réussi !",
-    "paymentFailed": "Le paiement a échoué. Veuillez réessayer.",
     "orderHash": "Commande #{{id}}",
     "restaurant": "Restaurant",
     "itemCount_one": "{{count}} article",

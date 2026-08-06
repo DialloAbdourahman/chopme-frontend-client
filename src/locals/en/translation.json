@@ -32,6 +32,15 @@
     "noMenusYet": "No menus available yet"
   },
 
+  "notification": {
+    "paymentSuccessful": "Payment successful!",
+    "paymentFailed": "Payment failed. Please try again.",
+    "restaurantCancelledOrder": "The restaurant cancelled your order.",
+    "restaurantPreparingOrder": "The restaurant is preparing your order.",
+    "orderOutForDelivery": "Your order is out for delivery.",
+    "orderDelivered": "Your order has been delivered."
+  },
+
   "order": {
     "placeOrder": "Place order",
     "yourOrder": "Your order",
@@ -40,12 +49,6 @@
     "all": "All",
     "couldNotLoadOrders": "Could not load orders.",
     "noOrdersFound": "No orders found.",
-    "restaurantCancelledOrder": "The restaurant cancelled your order.",
-    "restaurantPreparingOrder": "The restaurant is preparing your order.",
-    "orderOutForDelivery": "Your order is out for delivery.",
-    "orderDelivered": "Your order has been delivered.",
-    "paymentSuccessful": "Payment successful!",
-    "paymentFailed": "Payment failed. Please try again.",
     "orderHash": "Order #{{id}}",
     "restaurant": "Restaurant",
     "itemCount_one": "{{count}} item",

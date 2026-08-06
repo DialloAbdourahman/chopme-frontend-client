@@ -8,6 +8,7 @@ import {
   Utensils,
   CreditCard,
   RefreshCw,
+  XCircle,
 } from "lucide-react";
 import {
   EnumOrderStatus,
@@ -17,6 +18,8 @@ import {
   type IMenuEntity,
   type IRestaurantEntity,
   type IOrchestrationResult,
+  EnumNotificationType,
+  type INotification,
 } from "chopme-frontend-common";
 import { AxiosError } from "axios";
 import Navbar from "../components/Navbar";
@@ -34,7 +37,6 @@ import {
 import { ComputeUtils } from "../utils/compute-utils";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store";
-import { setOrderStatusUpdate } from "../store/notification.slice";
 import { setCart } from "../store/cart";
 
 const OrderDetails = () => {
@@ -43,7 +45,7 @@ const OrderDetails = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { orderStatusUpdate } = useSelector(
+  const { newNotification } = useSelector(
     (state: RootState) => state.notification,
   );
 
@@ -279,35 +281,19 @@ const OrderDetails = () => {
   }, [fetchOrder]);
 
   useEffect(() => {
-    if (!orderStatusUpdate || orderStatusUpdate.id !== order?.id) return;
+    const notification = newNotification as INotification<IOrderEntity>;
 
-    setOrder(orderStatusUpdate);
+    if (
+      !notification ||
+      notification.type !== EnumNotificationType.ORDER_STATUS_CHANGED ||
+      notification.data.id !== order?.id
+    )
+      return;
 
-    switch (orderStatusUpdate.status) {
-      case EnumOrderStatus.PAID:
-        showSuccessToast(t("order.paymentSuccessful"));
-        break;
-      case EnumOrderStatus.PAYMENT_FAILED:
-        showErrorToast(t("order.paymentFailed"));
-        break;
-      case EnumOrderStatus.CANCELLED_BY_RESTAURANT:
-        showWarningToast(t("order.restaurantCancelledOrder"));
-        break;
-      case EnumOrderStatus.PREPARING_ORDER:
-        showSuccessToast(t("order.restaurantPreparingOrder"));
-        break;
-      case EnumOrderStatus.IN_DELIVERY:
-        showSuccessToast(t("order.orderOutForDelivery"));
-        break;
-      case EnumOrderStatus.DELIVERED:
-        showSuccessToast(t("order.orderDelivered"));
-        break;
-      default:
-        break;
-    }
+    setOrder(notification.data);
 
-    dispatch(setOrderStatusUpdate(null));
-  }, [orderStatusUpdate]);
+    // dispatch(setNewNotification(null));
+  }, [newNotification]);
 
   if (loading) {
     return (
@@ -513,6 +499,7 @@ const OrderDetails = () => {
             disabled={isPaying || isCancelling}
             className="w-full mb-4 bg-red-500 text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-60"
           >
+            <XCircle size={18} />
             {t("order.cancelOrder")}
           </button>
         )}
