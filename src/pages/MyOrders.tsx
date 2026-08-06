@@ -10,7 +10,6 @@ import {
 import { ArrowLeft, ChevronRight, ShoppingBag } from "lucide-react";
 import Navbar from "../components/Navbar";
 import OrderStatusBadge from "../components/OrderStatusBadge";
-import RefundStatusBadge from "../components/RefundStatusBadge";
 import Pagination from "../components/Pagination";
 import { OrderService } from "../services/order.service";
 import { RestaurantService } from "../services/restaurant.service";
@@ -197,10 +196,6 @@ const MyOrders = () => {
                 (sum, item) => sum + item.quantity,
                 0,
               );
-              const isCancelled =
-                order.status === EnumOrderStatus.CANCELLED_BY_RESTAURANT ||
-                order.status === EnumOrderStatus.CANCELLED_BY_CUSTOMER;
-
               return (
                 <button
                   key={order.id}
@@ -244,9 +239,6 @@ const MyOrders = () => {
 
                       <div className="flex flex-col items-end gap-1 shrink-0">
                         <OrderStatusBadge status={order.status} />
-                        {isCancelled && order.refundStatus && (
-                          <RefundStatusBadge status={order.refundStatus} />
-                        )}
                       </div>
                     </div>
                   </div>
