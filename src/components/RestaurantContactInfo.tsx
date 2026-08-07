@@ -1,4 +1,4 @@
-import { Contact, Mail, MapPin, Phone } from "lucide-react";
+import { Contact, Mail, MapPin, Navigation, Phone } from "lucide-react";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import { useTranslation } from "react-i18next";
 import type {
@@ -77,6 +77,23 @@ const RestaurantContactInfo = ({ phone, email, address, location }: Props) => {
             <Marker position={mapLocation} />
           </GoogleMap>
         </div>
+      )}
+
+      {mapLocation && (
+        <button
+          type="button"
+          onClick={() => {
+            window.open(
+              `https://www.google.com/maps/dir/?api=1&destination=${mapLocation.lat},${mapLocation.lng}`,
+              "_blank",
+              "noopener,noreferrer",
+            );
+          }}
+          className="mt-4 w-full bg-primary text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2"
+        >
+          <Navigation size={18} />
+          {t("restaurant.showItinerary")}
+        </button>
       )}
     </div>
   );

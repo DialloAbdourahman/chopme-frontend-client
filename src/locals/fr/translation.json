@@ -25,6 +25,7 @@
     "menu": "Menu",
     "openingHours": "Horaires d'ouverture",
     "contactAndAddress": "Contact et adresse",
+    "showItinerary": "Voir l'itinéraire",
     "deliveryPricing": "Tarification de livraison",
     "tooFarAway": "Désolé, vous êtes trop loin ({{distance}} km). Ce restaurant ne peut pas livrer à votre emplacement.",
     "yourPrice": "Votre prix",

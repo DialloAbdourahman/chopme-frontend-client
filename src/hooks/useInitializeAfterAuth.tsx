@@ -19,6 +19,7 @@ import useSetupLocation from "./useSetupLocation";
 import { KEYS } from "../utils/keys";
 import { setCart } from "../store/cart";
 import type { ICart } from "../interfaces/cart-item";
+import { FirebaseService } from "../services/firebase.service";
 
 const useInitializeAfterAuth = ({
   initialLoadingState,
@@ -76,6 +77,8 @@ const useInitializeAfterAuth = ({
             // Silently ignore language sync failures
           }
         }
+
+        FirebaseService.registerForPushNotifications();
       }
 
       const clientData = clientResponse.data;
