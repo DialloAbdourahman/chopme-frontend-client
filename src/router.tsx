@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "./store";
+import WebSocket from "./components/WebSocket";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
@@ -27,6 +28,7 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
 const Router = () => {
   return (
     <BrowserRouter>
+      <WebSocket />
       <Routes>
         <Route path="/signin" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />

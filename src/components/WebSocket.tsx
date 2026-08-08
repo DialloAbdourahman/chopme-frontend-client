@@ -20,11 +20,14 @@ import {
   showSuccessToast,
   showWarningToast,
 } from "../utils/toasts";
+import { useNavigate } from "react-router-dom";
 
 const WebSocket = () => {
   const { user } = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
   const { t } = useTranslation();
+
+  const navigate = useNavigate();
 
   const handleReceivedNotification = (newNotification: INotification<any>) => {
     dispatch(setNewNotification(newNotification));
@@ -34,22 +37,46 @@ const WebSocket = () => {
       const notification = newNotification as INotification<IOrderEntity>;
       switch (notification.data.status) {
         case EnumOrderStatus.PAID:
-          showSuccessToast(t("notification.paymentSuccessful"));
+          showSuccessToast(t("notification.paymentSuccessful"), {
+            onClick: () => {
+              navigate(`/orders/${notification.data.id}`);
+            },
+          });
           break;
         case EnumOrderStatus.PAYMENT_FAILED:
-          showErrorToast(t("notification.paymentFailed"));
+          showErrorToast(t("notification.paymentFailed"), {
+            onClick: () => {
+              navigate(`/orders/${notification.data.id}`);
+            },
+          });
           break;
         case EnumOrderStatus.CANCELLED_BY_RESTAURANT:
-          showWarningToast(t("notification.restaurantCancelledOrder"));
+          showWarningToast(t("notification.restaurantCancelledOrder"), {
+            onClick: () => {
+              navigate(`/orders/${notification.data.id}`);
+            },
+          });
           break;
         case EnumOrderStatus.PREPARING_ORDER:
-          showSuccessToast(t("notification.restaurantPreparingOrder"));
+          showSuccessToast(t("notification.restaurantPreparingOrder"), {
+            onClick: () => {
+              navigate(`/orders/${notification.data.id}`);
+            },
+          });
           break;
         case EnumOrderStatus.IN_DELIVERY:
-          showSuccessToast(t("notification.orderOutForDelivery"));
+          showSuccessToast(t("notification.orderOutForDelivery"), {
+            onClick: () => {
+              navigate(`/orders/${notification.data.id}`);
+            },
+          });
           break;
         case EnumOrderStatus.DELIVERED:
-          showSuccessToast(t("notification.orderDelivered"));
+          showSuccessToast(t("notification.orderDelivered"), {
+            onClick: () => {
+              navigate(`/orders/${notification.data.id}`);
+            },
+          });
           break;
         default:
           break;

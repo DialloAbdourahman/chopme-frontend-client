@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { EmailPasswordLoginDto } from "chopme-frontend-common";
-import { Eye, EyeOff, Mail, Lock, ChefHat } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, ChefHat, ArrowLeft } from "lucide-react";
 import { AxiosError } from "axios";
 import type { IOrchestrationResult, IAuthEntity } from "chopme-frontend-common";
 import {
@@ -89,7 +89,15 @@ const Signin = () => {
 
   return (
     <div className="relative min-h-screen bg-background flex flex-col items-center justify-center px-4 py-10">
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 left-0 right-0 px-4 flex items-center justify-between">
+        <Link
+          to="/"
+          className="flex items-center gap-2 text-sm text-text hover:text-primary transition-colors"
+          aria-label={t("common.back")}
+        >
+          <ArrowLeft size={20} />
+          {t("common.back")}
+        </Link>
         <LanguageSwitcher />
       </div>
       <div className="w-full max-w-md">

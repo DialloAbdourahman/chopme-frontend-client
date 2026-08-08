@@ -34,7 +34,7 @@ messaging.onBackgroundMessage((payload) => {
     // icon: "/logo.png", // Must be a path in your public folder
     // badge: "/badge.png", // Small icon shown in Android status bars
     data: {
-      url: payload.data?.click_action || "/orders", // Store a redirect URL if needed
+      url: payload.data?.click_action || "/", // Store a redirect URL if needed
     },
   };
 

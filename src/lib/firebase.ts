@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getMessaging } from "firebase/messaging";
+import { getMessaging, isSupported, type Messaging } from "firebase/messaging";
 
 export const firebaseConfig = {
   apiKey: "AIzaSyA9JYNjAwWMxn4hyF_lpLhUrofPIkGCtuI",
@@ -13,4 +13,16 @@ export const firebaseConfig = {
 
 export const firebaseApp = initializeApp(firebaseConfig);
 
-export const messaging = getMessaging(firebaseApp);
+let messaging: Messaging | undefined;
+
+export async function getMessagingInstance(): Promise<Messaging | undefined> {
+  if (messaging) {
+    return messaging;
+  }
+
+  if (await isSupported()) {
+    messaging = getMessaging(firebaseApp);
+  }
+
+  return messaging;
+}
