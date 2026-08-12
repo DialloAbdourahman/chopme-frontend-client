@@ -5,10 +5,12 @@ import {
   Route,
   Navigate,
   Outlet,
+  useLocation,
 } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "./store";
 import WebSocket from "./components/WebSocket";
+import Footer from "./components/Footer";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import Home from "./pages/Home";
@@ -25,9 +27,12 @@ const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   return user ? <>{children}</> : <Navigate to="/" replace />;
 };
 
-const Router = () => {
+const AppContent = () => {
+  const { pathname } = useLocation();
+  const showFooter = pathname !== "/signin" && pathname !== "/signup";
+
   return (
-    <BrowserRouter>
+    <>
       <WebSocket />
       <Routes>
         <Route path="/signin" element={<Signin />} />
@@ -60,6 +65,15 @@ const Router = () => {
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      {showFooter && <Footer />}
+    </>
+  );
+};
+
+const Router = () => {
+  return (
+    <BrowserRouter>
+      <AppContent />
     </BrowserRouter>
   );
 };

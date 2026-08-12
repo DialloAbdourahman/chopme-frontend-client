@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   ArrowLeft,
+  Clock,
   MapPin,
   ShoppingBag,
   Utensils,
@@ -398,9 +399,19 @@ const OrderDetails = () => {
                 {restaurant.address.city}, {restaurant.address.country}
               </p>
             )}
-            <p className="text-xs text-primary mt-1">
-              {t("order.kmAway", { distance: order.distanceKm.toFixed(2) })}
-            </p>
+            <div className="flex flex-wrap items-center gap-3 mt-1">
+              <p className="text-xs text-primary">
+                {t("order.kmAway", { distance: order.distanceKm.toFixed(2) })}
+              </p>
+              {(order.status === EnumOrderStatus.PAID ||
+                order.status === EnumOrderStatus.PREPARING_ORDER ||
+                order.status === EnumOrderStatus.IN_DELIVERY) && (
+                <p className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
+                  <Clock size={12} />
+                  {ComputeUtils.estimateDeliveryTime(order.distanceKm)}
+                </p>
+              )}
+            </div>
           </div>
         )}
 

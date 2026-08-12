@@ -69,9 +69,9 @@ const RestaurantHeader = ({ restaurant }: Props) => {
                 })}
               </span>
             </div>
-            <div className="flex items-center gap-1">
-              <Clock size={13} className="text-primary" />
-              <span>
+            <div className="flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-primary">
+              <Clock size={14} className="shrink-0" />
+              <span className="text-xs font-semibold">
                 {ComputeUtils.estimateDeliveryTime(restaurant.distanceKm)}
               </span>
             </div>

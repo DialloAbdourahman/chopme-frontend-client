@@ -329,6 +329,7 @@
     "restaurantUnavailableTitle": "Restaurant indisponible",
     "restaurantUnavailableDesc": "Ce restaurant n'existe plus ou n'est plus disponible.",
     "title": "Panier",
+    "backToHome": "Continuer mes achats",
     "restaurantIsClosed": "Le restaurant est fermé",
     "tooFarCannotOrder": "Le restaurant est trop loin, impossible de commander",
     "clear": "Vider",

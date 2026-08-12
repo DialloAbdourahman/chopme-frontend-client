@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import { Minus, Plus, ShoppingBag, Trash2, Utensils } from "lucide-react";
+import {
+  ChevronLeft,
+  Clock,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Trash2,
+  Utensils,
+} from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   EnumStatusCode,
@@ -163,6 +171,12 @@ const Checkout = () => {
 
   const needsPhoneNumber = isLoggedIn && client ? !client.phoneNumber : false;
 
+  const menuIdsKey =
+    cart?.items
+      .map((item) => item.menuId)
+      .sort()
+      .join(",") ?? "";
+
   const isRestaurantClosed =
     restaurant && ComputeUtils.isRestaurantClosed(restaurant);
   const deliveryPricing =
@@ -183,16 +197,12 @@ const Checkout = () => {
     const fetchData = async () => {
       setLoading(true);
       setRestaurantNotFound(false);
-      setRestaurant(null);
-      setMenuDetails({});
 
       if (!cart.restaurantId) {
         setRestaurantNotFound(true);
         setLoading(false);
         return;
       }
-
-      let restaurantData: IRestaurantEntity | null = null;
 
       try {
         const restaurantResult = await RestaurantService.findOne(
@@ -211,8 +221,7 @@ const Checkout = () => {
             EnumStatusCode.RECOVERED_SUCCESSFULLY &&
           restaurantResult.data.data
         ) {
-          restaurantData = restaurantResult.data.data;
-          setRestaurant(restaurantData);
+          setRestaurant(restaurantResult.data.data);
         } else {
           setRestaurantNotFound(true);
           setLoading(false);
@@ -226,21 +235,26 @@ const Checkout = () => {
       }
 
       try {
-        const details: Record<string, IMenuEntity> = {};
-        await Promise.all(
-          cart.items.map(async (item) => {
-            const result = await MenuService.findOne(item.menuId);
-            if (
-              result.data.code === EnumStatusResponse.SUCCESS &&
-              result.data.statusCode ===
-                EnumStatusCode.RECOVERED_SUCCESSFULLY &&
-              result.data.data
-            ) {
-              details[item.menuId] = result.data.data;
-            }
-          }),
+        const missingItems = cart.items.filter(
+          (item) => !menuDetails[item.menuId],
         );
-        setMenuDetails(details);
+        if (missingItems.length > 0) {
+          const details: Record<string, IMenuEntity> = {};
+          await Promise.all(
+            missingItems.map(async (item) => {
+              const result = await MenuService.findOne(item.menuId);
+              if (
+                result.data.code === EnumStatusResponse.SUCCESS &&
+                result.data.statusCode ===
+                  EnumStatusCode.RECOVERED_SUCCESSFULLY &&
+                result.data.data
+              ) {
+                details[item.menuId] = result.data.data;
+              }
+            }),
+          );
+          setMenuDetails((prev) => ({ ...prev, ...details }));
+        }
       } catch (error) {
         console.error("Failed to fetch cart menu details:", error);
       } finally {
@@ -249,7 +263,8 @@ const Checkout = () => {
     };
 
     fetchData();
-  }, [cart, location]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cart?.restaurantId, menuIdsKey, location]);
 
   useEffect(() => {
     if (client && !client.address && userAddressLocalStorage) {
@@ -477,6 +492,13 @@ const Checkout = () => {
       <Navbar />
 
       <div className="max-w-3xl mx-auto px-4 pt-6">
+        <Link
+          to="/"
+          className="inline-flex items-center gap-1 text-sm font-medium text-text/70 hover:text-primary transition-colors mb-4"
+        >
+          <ChevronLeft size={18} />
+          {t("checkout.backToHome")}
+        </Link>
         <h1 className="text-xl font-bold text-text flex items-center gap-2 mb-6">
           <ShoppingBag size={22} className="text-primary" />
           {t("checkout.title")} ({totalItems})
@@ -509,9 +531,15 @@ const Checkout = () => {
               </p>
             )}
             {restaurant?.distanceKm !== undefined && (
-              <p className="text-xs text-primary mt-1">
-                {t("order.kmAway", { distance: restaurant.distanceKm })}
-              </p>
+              <div className="flex flex-wrap items-center gap-3 mt-1">
+                <p className="text-xs text-primary">
+                  {t("order.kmAway", { distance: restaurant.distanceKm })}
+                </p>
+                <p className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
+                  <Clock size={12} />
+                  {ComputeUtils.estimateDeliveryTime(restaurant.distanceKm)}
+                </p>
+              </div>
             )}
           </div>
         )}

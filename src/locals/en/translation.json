@@ -329,6 +329,7 @@
     "restaurantUnavailableTitle": "Restaurant unavailable",
     "restaurantUnavailableDesc": "This restaurant does not exist anymore or is no longer available.",
     "title": "Checkout",
+    "backToHome": "Continue shopping",
     "restaurantIsClosed": "Restaurant is closed",
     "tooFarCannotOrder": "Restaurant is too far, cannot order from it",
     "clear": "Clear",

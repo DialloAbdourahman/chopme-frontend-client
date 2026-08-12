@@ -82,7 +82,7 @@ const CartDrawer = ({ open, onClose }: Props) => {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex">
+    <div className="fixed inset-0 z-[60] flex">
       {/* Backdrop */}
       <div onClick={onClose} className="flex-1 bg-text/50 transition-opacity" />
 

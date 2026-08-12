@@ -140,14 +140,6 @@ const RestaurantDetails = () => {
           {/* Header */}
           <RestaurantHeader restaurant={restaurant} />
 
-          {/* Contact & address */}
-          <RestaurantContactInfo
-            phone={restaurant.phone}
-            email={restaurant.email}
-            address={restaurant.address}
-            location={restaurant.location}
-          />
-
           {/* Menus placeholder */}
           <RestaurantMenus restaurant={restaurant} />
 
@@ -159,6 +151,14 @@ const RestaurantDetails = () => {
 
           {/* Opening hours */}
           <RestaurantAvailability availability={restaurant.availability} />
+
+          {/* Contact & address */}
+          <RestaurantContactInfo
+            phone={restaurant.phone}
+            email={restaurant.email}
+            address={restaurant.address}
+            location={restaurant.location}
+          />
 
           {/* Ratings  */}
           <RestaurantRatings

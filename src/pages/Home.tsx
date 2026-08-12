@@ -7,6 +7,7 @@ import type { RootState } from "../store";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import type { FindRestaurantDto } from "chopme-frontend-common";
+import { KEYS } from "../utils/keys";
 
 import usePromptLocation from "../hooks/usePromptLocation";
 
@@ -162,7 +163,7 @@ const Home = () => {
                   {t("home.getStarted")}
                 </button>
                 <a
-                  href="tel:+237123456789"
+                  href={`tel:${KEYS.CONTACT_PHONE_NUMBER}`}
                   className="flex items-center justify-center gap-2 border border-gray-200 rounded-xl px-6 py-3 text-sm font-semibold text-text hover:bg-background transition-colors"
                 >
                   <Phone size={16} className="text-primary" />
