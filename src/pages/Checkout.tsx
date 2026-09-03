@@ -477,7 +477,10 @@ const Checkout = () => {
             {t("checkout.restaurantUnavailableDesc")}
           </p>
           <button
-            onClick={() => navigate("/")}
+            onClick={() => {
+              navigate("/");
+              dispatch(clearCart());
+            }}
             className="mt-6 bg-primary text-white rounded-xl px-6 py-2.5 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
           >
             {t("checkout.browseRestaurants")}

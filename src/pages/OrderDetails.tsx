@@ -28,7 +28,6 @@ import DeleteModal from "../components/DeleteModal";
 import OrderStatusBadge from "../components/OrderStatusBadge";
 import RefundStatusBadge from "../components/RefundStatusBadge";
 import { OrderService } from "../services/order.service";
-import { RestaurantService } from "../services/restaurant.service";
 import { MenuService } from "../services/menu.service";
 import {
   showErrorToast,
@@ -80,8 +79,8 @@ const OrderDetails = () => {
         setOrder(orderData);
 
         try {
-          const restaurantRes = await RestaurantService.findOne(
-            orderData.restaurantId,
+          const restaurantRes = await OrderService.getRestaurantOfOrder(
+            orderData.id,
           );
           if (
             restaurantRes.data.code === EnumStatusResponse.SUCCESS &&
@@ -92,7 +91,7 @@ const OrderDetails = () => {
             setRestaurant(restaurantRes.data.data);
           }
         } catch {
-          showErrorToast(t("order.failedToLoadRestaurantDetails"));
+          // showErrorToast(t("order.failedToLoadRestaurantDetails"));
         }
 
         const menusMap: Record<string, IMenuEntity> = {};

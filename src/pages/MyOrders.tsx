@@ -14,7 +14,6 @@ import Navbar from "../components/Navbar";
 import OrderStatusBadge from "../components/OrderStatusBadge";
 import Pagination from "../components/Pagination";
 import { OrderService } from "../services/order.service";
-import { RestaurantService } from "../services/restaurant.service";
 import { ComputeUtils } from "../utils/compute-utils";
 import { showErrorToast } from "../utils/toasts";
 import type { RootState } from "../store";
@@ -61,6 +60,56 @@ const MyOrders = () => {
   const status = searchParams.get("status") ?? "";
 
   useEffect(() => {
+    // const fetchOrders = async () => {
+    //   setLoading(true);
+    //   try {
+    //     const { data } = await OrderService.getMyOrders({
+    //       status: status || undefined,
+    //       page,
+    //       limit: LIMIT,
+    //     });
+
+    //     if (
+    //       data.code === EnumStatusResponse.SUCCESS &&
+    //       data.statusCode === EnumStatusCode.RECOVERED_SUCCESSFULLY &&
+    //       data.data
+    //     ) {
+    //       const orderItems = data.data.items;
+    //       setOrders(orderItems);
+    //       setTotalPages(data.data.totalPages);
+
+    //       const uniqueRestaurantIds = [
+    //         ...new Set(orderItems.map((order) => order.restaurantId)),
+    //       ];
+    //       const names: Record<string, string> = {};
+    //       await Promise.all(
+    //         uniqueRestaurantIds.map(async (id) => {
+    //           try {
+    //             const res = await OrderService.getRestaurantOfOrder(id);
+    //             if (
+    //               res.data.code === EnumStatusResponse.SUCCESS &&
+    //               res.data.statusCode ===
+    //                 EnumStatusCode.RECOVERED_SUCCESSFULLY &&
+    //               res.data.data
+    //             ) {
+    //               names[id] = res.data.data.name;
+    //             }
+    //           } catch {
+    //             // Ignore missing restaurant names
+    //           }
+    //         }),
+    //       );
+    //       setRestaurantNames(names);
+    //     } else {
+    //       showErrorToast(data.message ?? t("order.couldNotLoadOrders"));
+    //     }
+    //   } catch {
+    //     showErrorToast(t("common.somethingWentWrong"));
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
+
     const fetchOrders = async () => {
       setLoading(true);
       try {
@@ -79,26 +128,31 @@ const MyOrders = () => {
           setOrders(orderItems);
           setTotalPages(data.data.totalPages);
 
-          const uniqueRestaurantIds = [
-            ...new Set(orderItems.map((order) => order.restaurantId)),
-          ];
           const names: Record<string, string> = {};
+
+          const restaurantOrders = new Map(
+            orderItems.map((order) => [order.restaurantId, order.id]),
+          );
+
           await Promise.all(
-            uniqueRestaurantIds.map(async (id) => {
-              try {
-                const res = await RestaurantService.findOne(id);
-                if (
-                  res.data.code === EnumStatusResponse.SUCCESS &&
-                  res.data.statusCode ===
-                    EnumStatusCode.RECOVERED_SUCCESSFULLY &&
-                  res.data.data
-                ) {
-                  names[id] = res.data.data.name;
+            Array.from(restaurantOrders).map(
+              async ([restaurantId, orderId]) => {
+                try {
+                  const res = await OrderService.getRestaurantOfOrder(orderId);
+
+                  if (
+                    res.data.code === EnumStatusResponse.SUCCESS &&
+                    res.data.statusCode ===
+                      EnumStatusCode.RECOVERED_SUCCESSFULLY &&
+                    res.data.data
+                  ) {
+                    names[restaurantId] = res.data.data.name;
+                  }
+                } catch {
+                  // Ignore missing restaurant names
                 }
-              } catch {
-                // Ignore missing restaurant names
-              }
-            }),
+              },
+            ),
           );
           setRestaurantNames(names);
         } else {

@@ -2,6 +2,7 @@ import type {
   CreateOrderDto,
   IOrchestrationResult,
   IOrderEntity,
+  IRestaurantEntity,
   Pagination,
 } from "chopme-frontend-common";
 import { axiosBaseClient } from "../lib/axios";
@@ -15,6 +16,12 @@ export const OrderService = {
 
     return axiosBaseClient.get<IOrchestrationResult<Pagination<IOrderEntity>>>(
       `/orders/my-orders?${searchParams.toString()}`,
+    );
+  },
+
+  getRestaurantOfOrder: (id: string) => {
+    return axiosBaseClient.get<IOrchestrationResult<IRestaurantEntity>>(
+      `/orders/${id}/restaurant/client`,
     );
   },
 
