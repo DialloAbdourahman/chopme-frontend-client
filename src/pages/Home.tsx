@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import type { FindRestaurantDto } from "chopme-frontend-common";
 import { KEYS } from "../utils/keys";
+import { getRestaurantTypes } from "../utils/constants";
 
 import usePromptLocation from "../hooks/usePromptLocation";
 
@@ -84,19 +85,21 @@ const Home = () => {
 
               {/* Quick tags */}
               <div className="flex flex-wrap gap-2 mt-5">
-                {[
-                  { key: "pizza", label: t("home.tagsPizza") },
-                  { key: "local", label: t("home.tagsLocal") },
-                  { key: "sushi", label: t("home.tagsSushi") },
-                  { key: "desserts", label: t("home.tagsDesserts") },
-                ].map((tag) => (
-                  <span
-                    key={tag.key}
-                    className="bg-white/20 hover:bg-white/30 transition-colors text-xs font-medium px-3 py-1.5 rounded-full cursor-pointer"
-                  >
-                    {tag.label}
-                  </span>
-                ))}
+                {getRestaurantTypes(t)
+                  .slice(0, 5)
+                  .map((tag) => (
+                    <Link
+                      key={tag.type}
+                      to={`/restaurants?page=1&filter=${JSON.stringify({
+                        ...filters,
+                        type: tag.type,
+                        search: undefined,
+                      })}`}
+                      className="bg-white/20 hover:bg-white/30 transition-colors text-xs font-medium px-3 py-1.5 rounded-full cursor-pointer"
+                    >
+                      {tag.title}
+                    </Link>
+                  ))}
               </div>
             </div>
           </div>
@@ -159,9 +162,12 @@ const Home = () => {
                 {t("home.registerDesc")}
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-                <button className="bg-primary text-white rounded-xl px-6 py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all">
+                <a
+                  href={`mailto:${KEYS.CONTACT_EMAIL}`}
+                  className="bg-primary text-white rounded-xl px-6 py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
+                >
                   {t("home.getStarted")}
-                </button>
+                </a>
                 <a
                   href={`tel:${KEYS.CONTACT_PHONE_NUMBER}`}
                   className="flex items-center justify-center gap-2 border border-gray-200 rounded-xl px-6 py-3 text-sm font-semibold text-text hover:bg-background transition-colors"

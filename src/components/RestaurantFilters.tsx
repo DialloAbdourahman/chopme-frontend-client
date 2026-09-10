@@ -6,6 +6,7 @@ import type {
   FindRestaurantDto,
   IAddressEntity,
 } from "chopme-frontend-common";
+import { useIsMobile } from "../hooks/useIsMobile";
 import { getRestaurantTypes } from "../utils/constants";
 
 type Props = {
@@ -22,6 +23,8 @@ const RestaurantFilters = ({ filters, location, onApply, onClear }: Props) => {
   const [typeDraft, setTypeDraft] = useState<EnumRestaurantType | undefined>(
     filters?.type,
   );
+  const [showAllTypes, setShowAllTypes] = useState(false);
+  const isMobile = useIsMobile();
 
   const restaurantTypes = getRestaurantTypes(t);
   const [radiusDraft, setRadiusDraft] = useState<string>(
@@ -108,7 +111,10 @@ const RestaurantFilters = ({ filters, location, onApply, onClear }: Props) => {
               {t("restaurantFilters.type")}
             </label>
             <div className="flex flex-wrap gap-2">
-              {restaurantTypes.map((r) => (
+              {(isMobile && !showAllTypes
+                ? restaurantTypes.slice(0, 10)
+                : restaurantTypes
+              ).map((r) => (
                 <button
                   key={r.type}
                   type="button"
@@ -126,6 +132,26 @@ const RestaurantFilters = ({ filters, location, onApply, onClear }: Props) => {
                   {r.title}
                 </button>
               ))}
+              {isMobile && restaurantTypes.length > 10 && !showAllTypes && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllTypes(true)}
+                  className="px-4 py-2 rounded-full text-xs font-medium transition-colors bg-background text-primary border border-primary hover:bg-primary/10"
+                >
+                  {t("restaurantFilters.more", {
+                    count: restaurantTypes.length - 10,
+                  })}
+                </button>
+              )}
+              {isMobile && showAllTypes && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllTypes(false)}
+                  className="px-4 py-2 rounded-full text-xs font-medium transition-colors bg-background text-primary border border-primary hover:bg-primary/10"
+                >
+                  {t("restaurantFilters.less")}
+                </button>
+              )}
             </div>
           </div>
 

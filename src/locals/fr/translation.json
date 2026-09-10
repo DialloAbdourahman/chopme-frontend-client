@@ -188,8 +188,32 @@
   },
 
   "restaurantTypes": {
+    "restaurant": "Restaurant",
     "fastFood": "Fast Food",
-    "cafe": "Café"
+    "snack": "Snack",
+    "cafe": "Café",
+    "cameroonian": "Camerounais",
+    "african": "Africain",
+    "maquis": "Maquis",
+    "gargote": "Gargote",
+    "grill": "Grill",
+    "rotisserie": "Rôtisserie",
+    "pizzeria": "Pizzeria",
+    "burger": "Burger",
+    "shawarma": "Shawarma",
+    "chinese": "Chinois",
+    "indian": "Indien",
+    "lebanese": "Libanais",
+    "french": "Français",
+    "italian": "Italien",
+    "bakery": "Boulangerie",
+    "dessert": "Dessert",
+    "juiceBar": "Bar à jus",
+    "bar": "Bar",
+    "lounge": "Lounge",
+    "fineDining": "Gastronomie",
+    "hotelRestaurant": "Restaurant d'hôtel",
+    "homeCook": "Cuisine maison"
   },
 
   "days": {
@@ -387,7 +411,9 @@
     "km": "{{km}} km",
     "locationHint": "Définissez votre position pour filtrer par distance",
     "apply": "Appliquer les filtres",
-    "clear": "Effacer"
+    "clear": "Effacer",
+    "more": "+{{count}} de plus",
+    "less": "Montrer moins"
   },
 
   "restaurantHeader": {
@@ -426,5 +452,9 @@
     "emailPlaceholder": "vous@exemple.com",
     "fullNamePlaceholder": "Eren Yager",
     "passwordPlaceholder": "••••••••"
+  },
+
+  "footer": {
+    "allRightsReserved": "ChopMe. Tous droits réservés."
   }
 }
