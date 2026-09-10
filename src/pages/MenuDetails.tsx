@@ -34,10 +34,10 @@ const MenuDetails = () => {
   const dispatch = useDispatch();
 
   const { cart } = useSelector((state: RootState) => state.cart);
-  const { client, userAddressLocalStorage } = useSelector(
+  const { userAddressLocalStorage } = useSelector(
     (state: RootState) => state.user,
   );
-  const location = client?.address ?? userAddressLocalStorage;
+  const location = userAddressLocalStorage;
 
   const [menu, setMenu] = useState<IMenuEntity | null>(null);
   const [restaurantWithLocation, setRestaurantWithLocation] =

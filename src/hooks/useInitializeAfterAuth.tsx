@@ -87,40 +87,7 @@ const useInitializeAfterAuth = ({
         clientData.statusCode === EnumStatusCode.RECOVERED_SUCCESSFULLY &&
         clientData.data
       ) {
-        const address = clientData.data.address;
-
-        const locationChanged =
-          address &&
-          locationInLocalStorage &&
-          (address.latitude !== locationInLocalStorage.latitude ||
-            address.longitude !== locationInLocalStorage.longitude ||
-            address.city !== locationInLocalStorage.city ||
-            address.country !== locationInLocalStorage.country);
-
-        const shouldUpdateLocation =
-          locationInLocalStorage && (!address || locationChanged);
-
-        if (shouldUpdateLocation) {
-          try {
-            const { data } = await ClientService.updateMyAddress({
-              longitude: locationInLocalStorage.longitude,
-              latitude: locationInLocalStorage.latitude,
-              country: locationInLocalStorage.country,
-              city: locationInLocalStorage.city,
-            });
-
-            if (data?.data) {
-              dispatch(setClient(data.data));
-            }
-          } catch (error) {
-            console.error("Failed to update client address", error);
-
-            // Continue using the original client data
-            dispatch(setClient(clientData.data));
-          }
-        } else {
-          dispatch(setClient(clientData.data));
-        }
+        dispatch(setClient(clientData.data));
       }
     } catch (error) {
       const err = error as AxiosError<IOrchestrationResult<string>>;

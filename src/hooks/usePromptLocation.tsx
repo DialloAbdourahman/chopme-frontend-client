@@ -4,12 +4,12 @@ import { setOpenAddUserLocationModal } from "../store/user.slice";
 import type { RootState } from "../store";
 
 const usePromptLocation = () => {
-  const { client, userAddressLocalStorage } = useSelector(
+  const { userAddressLocalStorage } = useSelector(
     (state: RootState) => state.user,
   );
   const dispatch = useDispatch();
 
-  const location = client?.address ?? userAddressLocalStorage;
+  const location = userAddressLocalStorage;
 
   const promptLocation = () => {
     const numberOfTimes = Number(

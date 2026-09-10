@@ -12,12 +12,12 @@ import { KEYS } from "../utils/keys";
 const DeliveryAddressSection = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { client, userAddressLocalStorage } = useSelector(
+  const { userAddressLocalStorage } = useSelector(
     (state: RootState) => state.user,
   );
   const { updateLocationFromCoordinates } = useSetupLocation();
 
-  const location = client?.address ?? userAddressLocalStorage;
+  const location = userAddressLocalStorage;
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: KEYS.GOOGLE_PLACE_API_KEY,

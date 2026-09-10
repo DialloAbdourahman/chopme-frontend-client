@@ -27,7 +27,7 @@ const Navbar = () => {
   const { t } = useTranslation();
 
   const [isOpen, setIsOpen] = useState(false);
-  const { client, userAddressLocalStorage, user } = useSelector(
+  const { userAddressLocalStorage, user } = useSelector(
     (state: RootState) => state.user,
   );
   const { cart } = useSelector((state: RootState) => state.cart);
@@ -63,7 +63,7 @@ const Navbar = () => {
     }
   };
 
-  const location = client?.address ?? userAddressLocalStorage;
+  const location = userAddressLocalStorage;
   const filters: FindRestaurantDto = {};
   if (location) {
     filters.latitude = location.latitude;

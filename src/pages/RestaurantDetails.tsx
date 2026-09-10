@@ -29,10 +29,10 @@ const RestaurantDetails = () => {
   const [restaurant, setRestaurant] = useState<IRestaurantEntity | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const { client, userAddressLocalStorage } = useSelector(
+  const { userAddressLocalStorage } = useSelector(
     (state: RootState) => state.user,
   );
-  const location = client?.address ?? userAddressLocalStorage;
+  const location = userAddressLocalStorage;
 
   const handleBack = () => {
     if (navigationLocation.state?.from) {

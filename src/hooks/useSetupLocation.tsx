@@ -1,19 +1,12 @@
-import { useDispatch, useSelector } from "react-redux";
-import {
-  EnumStatusCode,
-  EnumStatusResponse,
-  type IAddressEntity,
-} from "chopme-frontend-common";
-import { ClientService } from "../services/client.service";
-import { setClient, setUserAddressLocalStorage } from "../store/user.slice";
+import { useDispatch } from "react-redux";
+import { type IAddressEntity } from "chopme-frontend-common";
+import { setUserAddressLocalStorage } from "../store/user.slice";
 import { geocodeService } from "../utils/geocode";
 import { KEYS } from "../utils/keys";
-import type { RootState } from "../store";
 import { useState } from "react";
 
 const useSetupLocation = () => {
   const dispatch = useDispatch();
-  const { user, client } = useSelector((state: RootState) => state.user);
 
   const [loadingSetupLocation, setLoadingSetupLocation] = useState(false);
 
@@ -79,27 +72,6 @@ const useSetupLocation = () => {
     );
 
     dispatch(setUserAddressLocalStorage(location));
-
-    if (user && client) {
-      try {
-        const { data } = await ClientService.updateMyAddress({
-          longitude: location.longitude,
-          latitude: location.latitude,
-          country: location.country,
-          city: location.city,
-        });
-
-        if (
-          data.code === EnumStatusResponse.SUCCESS &&
-          data.statusCode === EnumStatusCode.UPDATED_SUCCESSFULLY &&
-          data.data
-        ) {
-          dispatch(setClient(data.data));
-        }
-      } catch (error) {
-        console.error("Failed to update client address", error);
-      }
-    }
   };
 
   const setupLocation = async (): Promise<IAddressEntity> => {

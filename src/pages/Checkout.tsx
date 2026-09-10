@@ -140,7 +140,7 @@ const Checkout = () => {
   const { client, userAddressLocalStorage, user } = useSelector(
     (state: RootState) => state.user,
   );
-  const location = client?.address ?? userAddressLocalStorage;
+  const location = userAddressLocalStorage;
   const isLoggedIn = !!user;
 
   const { promptLocation } = usePromptLocation();
@@ -266,24 +266,6 @@ const Checkout = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cart?.restaurantId, menuIdsKey, location]);
 
-  useEffect(() => {
-    if (client && !client.address && userAddressLocalStorage) {
-      const populateAddress = async () => {
-        const { data } = await ClientService.updateMyAddress({
-          longitude: userAddressLocalStorage.longitude,
-          latitude: userAddressLocalStorage.latitude,
-          country: userAddressLocalStorage.country,
-          city: userAddressLocalStorage.city,
-        });
-
-        if (data?.data) {
-          dispatch(setClient(data.data));
-        }
-      };
-      populateAddress();
-    }
-  }, [client, userAddressLocalStorage]);
-
   const handleIncrement = (menuId: string) => {
     dispatch(incrementCartItemQuantity({ menuId }));
   };
@@ -334,6 +316,11 @@ const Checkout = () => {
   const handlePlaceOrder = async () => {
     if (!cart) return;
 
+    if (!location) {
+      dispatch(setOpenAddUserLocationModal(true));
+      return;
+    }
+
     setIsPlacingOrder(true);
     try {
       const payload: CreateOrderDto = {
@@ -342,6 +329,10 @@ const Checkout = () => {
           productId: item.menuId,
           quantity: item.quantity,
         })),
+        clientLocation: {
+          type: "Point",
+          coordinates: [location.longitude, location.latitude],
+        },
       };
 
       const { data } = await OrderService.create(payload);

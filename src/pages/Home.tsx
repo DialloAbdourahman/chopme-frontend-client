@@ -15,12 +15,12 @@ import usePromptLocation from "../hooks/usePromptLocation";
 const Home = () => {
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
-  const { client, userAddressLocalStorage } = useSelector(
+  const { userAddressLocalStorage } = useSelector(
     (state: RootState) => state.user,
   );
   const { promptLocation } = usePromptLocation();
 
-  const location = client?.address ?? userAddressLocalStorage;
+  const location = userAddressLocalStorage;
 
   const filters: FindRestaurantDto = {};
   if (location) {
