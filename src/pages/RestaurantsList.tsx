@@ -49,7 +49,7 @@ const RestaurantsList = () => {
 
   const [search, setSearch] = useState(filters?.search ?? "");
 
-  const { client, userAddressLocalStorage } = useSelector(
+  const { userAddressLocalStorage } = useSelector(
     (state: RootState) => state.user,
   );
 
