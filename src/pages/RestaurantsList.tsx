@@ -49,11 +49,11 @@ const RestaurantsList = () => {
 
   const [search, setSearch] = useState(filters?.search ?? "");
 
-  const { client, userAddressLocalStorage } = useSelector(
+  const { userAddressLocalStorage } = useSelector(
     (state: RootState) => state.user,
   );
 
-  const location = client?.address ?? userAddressLocalStorage;
+  const location = userAddressLocalStorage;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
