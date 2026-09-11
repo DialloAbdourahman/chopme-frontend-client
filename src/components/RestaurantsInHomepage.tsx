@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Store } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { RestaurantService } from "../services/restaurant.service";
@@ -100,6 +100,18 @@ const RestaurantsInHomepage = ({ location }: Props) => {
     fetchRestaurants();
   }, [location]);
 
+  const EmptyRestaurants = () => (
+    <div className="col-span-full flex flex-col items-center justify-center py-10 text-center bg-white rounded-xl shadow-sm">
+      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+        <Store className="w-5 h-5 text-primary/60" />
+      </div>
+      <p className="text-sm font-medium text-text">{t("home.noRestaurants")}</p>
+      <p className="text-xs text-gray-500 mt-1">
+        {t("home.noRestaurantsHint")}
+      </p>
+    </div>
+  );
+
   if (loading) {
     return (
       <section className="px-4 pb-16">
@@ -147,13 +159,17 @@ const RestaurantsInHomepage = ({ location }: Props) => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {restaurants.map((restaurant) => (
-            <RestaurantCard
-              key={restaurant.id}
-              restaurant={restaurant}
-              location={location}
-            />
-          ))}
+          {restaurants.length === 0 ? (
+            <EmptyRestaurants />
+          ) : (
+            restaurants.map((restaurant) => (
+              <RestaurantCard
+                key={restaurant.id}
+                restaurant={restaurant}
+                location={location}
+              />
+            ))
+          )}
         </div>
       </div>
     </section>
