@@ -53,7 +53,7 @@ const RestaurantsList = () => {
     (state: RootState) => state.user,
   );
 
-  const location = client?.address ?? userAddressLocalStorage;
+  const location = userAddressLocalStorage;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
