@@ -103,7 +103,10 @@ const Navbar = () => {
           </Link>
 
           {location ? (
-            <div className="flex items-center gap-1.5 bg-background px-3 py-1.5 rounded-full text-xs font-medium text-text">
+            <div
+              onClick={() => dispatch(setOpenAddUserLocationModal(true))}
+              className="flex items-center gap-1.5 bg-background px-3 py-1.5 rounded-full text-xs font-medium text-text hover:scale-105 cursor-pointer"
+            >
               <MapPin size={14} className="text-primary" />
               <span>
                 {/* {location.city}, {location.country} */}
