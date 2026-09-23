@@ -39,7 +39,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-
+      Helloooooo
       {/* Hero */}
       <section className="px-4 pt-8 pb-12 md:pt-14 md:pb-16">
         <div className="max-w-5xl mx-auto">
@@ -105,9 +105,7 @@ const Home = () => {
           </div>
         </div>
       </section>
-
       <RestaurantsInHomepage location={location ?? undefined} />
-
       {/* How it works */}
       <section className="px-4 pb-16">
         <div className="max-w-5xl mx-auto">
@@ -145,7 +143,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-
       {/* Register your restaurant */}
       <section className="px-4 pb-16">
         <div className="max-w-5xl mx-auto">
