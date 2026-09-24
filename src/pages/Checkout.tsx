@@ -539,7 +539,7 @@ const Checkout = () => {
           </div>
         )}
 
-        {!loading && location && (
+        {!loading && (
           <div className="mt-8">
             <DeliveryAddressSection />
           </div>

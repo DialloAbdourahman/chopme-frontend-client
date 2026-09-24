@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 import { MapPin, Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { RootState } from "../store";
@@ -8,8 +9,6 @@ import { setOpenAddUserLocationModal } from "../store/user.slice";
 import useSetupLocation from "../hooks/useSetupLocation";
 import { showErrorToast, showSuccessToast } from "../utils/toasts";
 import { KEYS } from "../utils/keys";
-
-const libraries: "places"[] = ["places"];
 
 const DeliveryAddressSection = () => {
   const { t } = useTranslation();
@@ -23,7 +22,6 @@ const DeliveryAddressSection = () => {
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: KEYS.GOOGLE_PLACE_API_KEY,
-    libraries,
   });
 
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -105,23 +103,36 @@ const DeliveryAddressSection = () => {
       return;
     }
 
-    autocompleteRef.current = new google.maps.places.Autocomplete(
-      searchInputRef.current,
-      { fields: ["geometry", "formatted_address"] },
-    );
+    let cancelled = false;
 
-    const listener = autocompleteRef.current.addListener(
-      "place_changed",
-      () => {
+    const initAutocomplete = async () => {
+      // Maps may already be loaded by geocode.ts via the v2 js-api-loader
+      // without the places library — import it explicitly.
+      setOptions({ key: KEYS.GOOGLE_PLACE_API_KEY as string });
+      await importLibrary("places");
+
+      if (cancelled || !searchInputRef.current || autocompleteRef.current) {
+        return;
+      }
+
+      autocompleteRef.current = new google.maps.places.Autocomplete(
+        searchInputRef.current,
+        { fields: ["geometry", "formatted_address"] },
+      );
+
+      autocompleteRef.current.addListener("place_changed", () => {
         const place = autocompleteRef.current?.getPlace();
         const placeLocation = place?.geometry?.location;
         if (!placeLocation) return;
         handlePlaceSelect(placeLocation.lat(), placeLocation.lng());
-      },
-    );
+      });
+    };
+
+    initAutocomplete();
 
     return () => {
-      if (autocompleteRef.current && listener) {
+      cancelled = true;
+      if (autocompleteRef.current) {
         google.maps.event.clearInstanceListeners(autocompleteRef.current);
       }
     };
