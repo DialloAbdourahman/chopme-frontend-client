@@ -158,7 +158,8 @@
     "updateAddress": "Mettre à jour l'adresse",
     "setYourLocation": "Définir votre emplacement",
     "locationUpdated": "Adresse mise à jour avec succès.",
-    "locationUpdateFailed": "Impossible de mettre à jour l'adresse. Veuillez réessayer."
+    "locationUpdateFailed": "Impossible de mettre à jour l'adresse. Veuillez réessayer.",
+    "searchPlaceholder": "Rechercher une adresse..."
   },
 
   "orderStatus": {
