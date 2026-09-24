@@ -41,6 +41,7 @@ import {
   showWarningToast,
 } from "../utils/toasts";
 import usePromptLocation from "../hooks/usePromptLocation";
+import DeliveryAddressSection from "../components/DeliveryAddressSection";
 
 type CartMenuItemProps = {
   item: ICartItem;
@@ -538,6 +539,12 @@ const Checkout = () => {
           </div>
         )}
 
+        {!loading && location && (
+          <div className="mt-8">
+            <DeliveryAddressSection />
+          </div>
+        )}
+
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
@@ -545,7 +552,7 @@ const Checkout = () => {
             ))}
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-4 mt-8">
             {cart.items.map((item) => (
               <CartMenuItem
                 key={item.menuId}
@@ -601,116 +608,118 @@ const Checkout = () => {
         )}
 
         {!loading && (
-          <div className="mt-8 bg-card rounded-2xl p-4 shadow-sm space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-500">
-                  {t("order.subtotal")}
-                </span>
-                <span className="text-base font-medium text-text">
-                  {totalPrice?.toLocaleString()} FCFA
-                </span>
-              </div>
-              {deliveryPricing && (
+          <>
+            <div className="mt-8 bg-card rounded-2xl p-4 shadow-sm space-y-4">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-500">
-                    {t("order.delivery")}
+                    {t("order.subtotal")}
                   </span>
                   <span className="text-base font-medium text-text">
-                    {deliveryPricing.priceWithPlatformPercentage.toLocaleString()}{" "}
+                    {totalPrice?.toLocaleString()} FCFA
+                  </span>
+                </div>
+                {deliveryPricing && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-gray-500">
+                      {t("order.delivery")}
+                    </span>
+                    <span className="text-base font-medium text-text">
+                      {deliveryPricing.priceWithPlatformPercentage.toLocaleString()}{" "}
+                      FCFA
+                    </span>
+                  </div>
+                )}
+                <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+                  <span className="text-sm text-gray-500">
+                    {t("order.total")}
+                  </span>
+                  <span className="text-lg font-bold text-text">
+                    {(
+                      (totalPrice ?? 0) +
+                      (deliveryPricing
+                        ? deliveryPricing.priceWithPlatformPercentage
+                        : 0)
+                    ).toLocaleString()}{" "}
                     FCFA
                   </span>
                 </div>
-              )}
-              <div className="flex items-center justify-between pt-2 border-t border-gray-200">
-                <span className="text-sm text-gray-500">
-                  {t("order.total")}
-                </span>
-                <span className="text-lg font-bold text-text">
-                  {(
-                    (totalPrice ?? 0) +
-                    (deliveryPricing
-                      ? deliveryPricing.priceWithPlatformPercentage
-                      : 0)
-                  ).toLocaleString()}{" "}
-                  FCFA
-                </span>
               </div>
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={() => dispatch(clearCart())}
-                className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-background transition-colors"
-              >
-                <Trash2 size={16} />
-                {t("checkout.clear")}
-              </button>
-              {!isLoggedIn ? (
-                <Link
-                  to={`/signin?redirect_url=${encodeURIComponent("/checkout")}`}
-                  className="flex-1 bg-primary text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all text-center"
-                >
-                  {t("checkout.loginToOrder")}
-                </Link>
-              ) : !location ? (
+              <div className="flex gap-3">
                 <button
-                  onClick={() => dispatch(setOpenAddUserLocationModal(true))}
-                  className="flex-1 bg-primary text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
+                  onClick={() => dispatch(clearCart())}
+                  className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-background transition-colors"
                 >
-                  {t("checkout.addLocation")}
+                  <Trash2 size={16} />
+                  {t("checkout.clear")}
                 </button>
-              ) : (
-                <button
-                  onClick={handlePlaceOrder}
-                  disabled={
-                    isPlacingOrder ||
-                    isRestaurantClosed ||
-                    !deliveryPricing ||
-                    hasUnavailableItem ||
-                    needsPhoneNumber
-                  }
-                  className={`flex-1 rounded-xl py-3 text-sm font-semibold transition-all ${
-                    isPlacingOrder ||
-                    isRestaurantClosed ||
-                    !deliveryPricing ||
-                    hasUnavailableItem ||
-                    needsPhoneNumber
-                      ? "bg-gray-400 text-white cursor-not-allowed"
-                      : "bg-primary text-white hover:opacity-90 active:scale-95"
-                  }`}
-                >
-                  {isPlacingOrder
-                    ? t("checkout.processing")
-                    : t("checkout.payOrder")}
-                </button>
+                {!isLoggedIn ? (
+                  <Link
+                    to={`/signin?redirect_url=${encodeURIComponent("/checkout")}`}
+                    className="flex-1 bg-primary text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all text-center"
+                  >
+                    {t("checkout.loginToOrder")}
+                  </Link>
+                ) : !location ? (
+                  <button
+                    onClick={() => dispatch(setOpenAddUserLocationModal(true))}
+                    className="flex-1 bg-primary text-white rounded-xl py-3 text-sm font-semibold hover:opacity-90 active:scale-95 transition-all"
+                  >
+                    {t("checkout.addLocation")}
+                  </button>
+                ) : (
+                  <button
+                    onClick={handlePlaceOrder}
+                    disabled={
+                      isPlacingOrder ||
+                      isRestaurantClosed ||
+                      !deliveryPricing ||
+                      hasUnavailableItem ||
+                      needsPhoneNumber
+                    }
+                    className={`flex-1 rounded-xl py-3 text-sm font-semibold transition-all ${
+                      isPlacingOrder ||
+                      isRestaurantClosed ||
+                      !deliveryPricing ||
+                      hasUnavailableItem ||
+                      needsPhoneNumber
+                        ? "bg-gray-400 text-white cursor-not-allowed"
+                        : "bg-primary text-white hover:opacity-90 active:scale-95"
+                    }`}
+                  >
+                    {isPlacingOrder
+                      ? t("checkout.processing")
+                      : t("checkout.payOrder")}
+                  </button>
+                )}
+              </div>
+              {!location && (
+                <p className="text-xs text-red-500 text-center leading-tight">
+                  {t("checkout.pleaseAddLocation")}
+                </p>
+              )}
+              {isRestaurantClosed && (
+                <p className="text-xs text-red-500 text-center leading-tight">
+                  {t("checkout.restaurantClosedMessage")}
+                </p>
+              )}
+              {restaurant?.distanceKm && !deliveryPricing && (
+                <p className="text-xs text-red-500 text-center leading-tight">
+                  {t("checkout.tooFarDelivery")}
+                </p>
+              )}
+              {hasUnavailableItem && (
+                <p className="text-xs text-red-500 text-center leading-tight">
+                  {t("checkout.unavailableItems")}
+                </p>
+              )}
+              {needsPhoneNumber && (
+                <p className="text-xs text-red-500 text-center leading-tight">
+                  {t("checkout.addPhoneToOrder")}
+                </p>
               )}
             </div>
-            {!location && (
-              <p className="text-xs text-red-500 text-center leading-tight">
-                {t("checkout.pleaseAddLocation")}
-              </p>
-            )}
-            {isRestaurantClosed && (
-              <p className="text-xs text-red-500 text-center leading-tight">
-                {t("checkout.restaurantClosedMessage")}
-              </p>
-            )}
-            {restaurant?.distanceKm && !deliveryPricing && (
-              <p className="text-xs text-red-500 text-center leading-tight">
-                {t("checkout.tooFarDelivery")}
-              </p>
-            )}
-            {hasUnavailableItem && (
-              <p className="text-xs text-red-500 text-center leading-tight">
-                {t("checkout.unavailableItems")}
-              </p>
-            )}
-            {needsPhoneNumber && (
-              <p className="text-xs text-red-500 text-center leading-tight">
-                {t("checkout.addPhoneToOrder")}
-              </p>
-            )}
-          </div>
+          </>
         )}
       </div>
     </div>

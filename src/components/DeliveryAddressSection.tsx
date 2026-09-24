@@ -1,13 +1,15 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
-import { MapPin } from "lucide-react";
+import { MapPin, Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { RootState } from "../store";
 import { setOpenAddUserLocationModal } from "../store/user.slice";
 import useSetupLocation from "../hooks/useSetupLocation";
 import { showErrorToast, showSuccessToast } from "../utils/toasts";
 import { KEYS } from "../utils/keys";
+
+const libraries: "places"[] = ["places"];
 
 const DeliveryAddressSection = () => {
   const { t } = useTranslation();
@@ -21,7 +23,11 @@ const DeliveryAddressSection = () => {
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: KEYS.GOOGLE_PLACE_API_KEY,
+    libraries,
   });
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   const mapLocation = useMemo(
     () =>
@@ -67,6 +73,21 @@ const DeliveryAddressSection = () => {
     }
   };
 
+  const handlePlaceSelect = async (lat: number, lng: number) => {
+    setIsUpdatingLocation(true);
+    const updatedLocation = await updateLocationFromCoordinates(lat, lng);
+    setIsUpdatingLocation(false);
+
+    if (updatedLocation) {
+      showSuccessToast(t("deliveryAddress.locationUpdated"));
+      if (searchInputRef.current) {
+        searchInputRef.current.value = "";
+      }
+    } else {
+      showErrorToast(t("deliveryAddress.locationUpdateFailed"));
+    }
+  };
+
   const hasPendingPosition =
     markerPosition &&
     mapLocation &&
@@ -79,11 +100,54 @@ const DeliveryAddressSection = () => {
     }
   }, [mapLocation]);
 
+  useEffect(() => {
+    if (!isLoaded || !searchInputRef.current || autocompleteRef.current) {
+      return;
+    }
+
+    autocompleteRef.current = new google.maps.places.Autocomplete(
+      searchInputRef.current,
+      { fields: ["geometry", "formatted_address"] },
+    );
+
+    const listener = autocompleteRef.current.addListener(
+      "place_changed",
+      () => {
+        const place = autocompleteRef.current?.getPlace();
+        const placeLocation = place?.geometry?.location;
+        if (!placeLocation) return;
+        handlePlaceSelect(placeLocation.lat(), placeLocation.lng());
+      },
+    );
+
+    return () => {
+      if (autocompleteRef.current && listener) {
+        google.maps.event.clearInstanceListeners(autocompleteRef.current);
+      }
+    };
+  }, [isLoaded]);
+
   return (
     <div className="bg-card rounded-2xl p-4 shadow-sm space-y-4">
       <h2 className="text-sm font-semibold text-text">
         {t("deliveryAddress.deliveryAddressTitle")}
       </h2>
+
+      {isLoaded && (
+        <div className="relative">
+          <Search
+            size={16}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+          />
+          <input
+            ref={searchInputRef}
+            type="text"
+            placeholder={t("deliveryAddress.searchPlaceholder")}
+            disabled={isUpdatingLocation}
+            className="w-full rounded-xl border border-gray-200 bg-background pl-9 pr-3 py-2 text-sm text-text placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          />
+        </div>
+      )}
 
       {location ? (
         <>
@@ -153,31 +217,10 @@ const DeliveryAddressSection = () => {
         className="flex items-center gap-1.5 bg-background px-3 py-1.5 rounded-full text-xs font-medium text-text hover:scale-105 transition-transform"
       >
         <MapPin size={14} className="text-primary" />
-        <span>
-          {location
-            ? t("deliveryAddress.updateAddress")
-            : t("deliveryAddress.setYourLocation")}
-        </span>
+        <span>{t("addUserLocation.useMyLocation")}</span>
       </button>
     </div>
   );
 };
 
 export default DeliveryAddressSection;
-
-{
-  /* <Autocomplete
-  onLoad={(autocomplete) => {
-    autocompleteRef.current = autocomplete;
-  }}
-  onPlaceChanged={() => {
-    const place = autocompleteRef.current?.getPlace();
-    const location = place?.geometry?.location;
-    if (!location) return;
-    setPosition({ lat: location.lat(), lng: location.lng() });
-  }}
->
-  {" "}
-  <input type="text" placeholder="Search your address..." />{" "}
-</Autocomplete>; */
-}

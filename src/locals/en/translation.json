@@ -158,7 +158,8 @@
     "updateAddress": "Update address",
     "setYourLocation": "Set your location",
     "locationUpdated": "Location updated successfully.",
-    "locationUpdateFailed": "Could not update location. Please try again."
+    "locationUpdateFailed": "Could not update location. Please try again.",
+    "searchPlaceholder": "Search for an address..."
   },
 
   "orderStatus": {
