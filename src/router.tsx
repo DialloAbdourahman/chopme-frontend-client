@@ -21,6 +21,7 @@ import Checkout from "./pages/Checkout";
 import OrderDetails from "./pages/OrderDetails";
 import MyOrders from "./pages/MyOrders";
 import Profile from "./pages/Profile";
+import ScrollToTop from "./components/ScrollToTop";
 
 const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const { user } = useSelector((state: RootState) => state.user);
@@ -73,6 +74,7 @@ const AppContent = () => {
 const Router = () => {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <AppContent />
     </BrowserRouter>
   );

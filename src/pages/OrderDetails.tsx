@@ -11,6 +11,7 @@ import {
   RefreshCw,
   XCircle,
 } from "lucide-react";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import {
   EnumOrderStatus,
   EnumStatusCode,
@@ -38,6 +39,7 @@ import { ComputeUtils } from "../utils/compute-utils";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store";
 import { setCart } from "../store/cart";
+import { KEYS } from "../utils/keys";
 
 const OrderDetails = () => {
   const { orderId } = useParams<{ orderId: string }>();
@@ -57,6 +59,10 @@ const OrderDetails = () => {
   const [isPaying, setIsPaying] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: KEYS.GOOGLE_PLACE_API_KEY,
+  });
 
   const fetchOrder = useCallback(async (): Promise<boolean> => {
     if (!orderId) {
@@ -542,6 +548,37 @@ const OrderDetails = () => {
             <p className="text-xs text-gray-500 mt-0.5">
               {ComputeUtils.formatDate(order.paidAt)}
             </p>
+          </div>
+        )}
+
+        {order.clientLocation?.coordinates?.length === 2 && (
+          <div className="bg-card rounded-2xl p-4 shadow-sm mb-4">
+            <div className="flex items-center gap-2 mb-3">
+              <MapPin size={18} className="text-primary" />
+              <h2 className="font-semibold text-text">
+                {t("deliveryAddress.deliveryAddressTitle")}
+              </h2>
+            </div>
+
+            {isLoaded && (
+              <div className="h-64 sm:h-80 rounded-2xl overflow-hidden">
+                <GoogleMap
+                  mapContainerStyle={{ width: "100%", height: "100%" }}
+                  center={{
+                    lat: order.clientLocation.coordinates[1],
+                    lng: order.clientLocation.coordinates[0],
+                  }}
+                  zoom={15}
+                >
+                  <Marker
+                    position={{
+                      lat: order.clientLocation.coordinates[1],
+                      lng: order.clientLocation.coordinates[0],
+                    }}
+                  />
+                </GoogleMap>
+              </div>
+            )}
           </div>
         )}
 
