@@ -6,7 +6,6 @@ import {
   Minus,
   Plus,
   ShoppingBag,
-  Clock,
   UtensilsCrossed,
 } from "lucide-react";
 import {
@@ -193,18 +192,18 @@ const MenuDetails = () => {
             <div>
               <h1 className="text-xl font-bold text-text">{menu.name}</h1>
               {menu.category && (
-                <p className="text-sm text-gray-500 mt-0.5">
+                <span className="inline-flex items-center mt-1 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-medium">
                   {menu.category.name}
-                </p>
+                </span>
               )}
             </div>
             <div className="flex items-center gap-1 bg-background px-2.5 py-1 rounded-lg text-sm font-semibold text-text shrink-0">
               <ShoppingBag size={14} className="text-primary" />
-              {totalOrders}
+              {t("menuDetails.sold", { count: totalOrders })}
             </div>
           </div>
 
-          <div className="flex items-center gap-4 text-sm text-gray-500">
+          {/* <div className="flex items-center gap-4 text-sm text-gray-500">
             <div className="flex items-center gap-1">
               <Clock size={14} className="text-primary" />
               <span>
@@ -214,7 +213,7 @@ const MenuDetails = () => {
               </span>
             </div>
             <span>{t("menuDetails.orders", { count: totalOrders })}</span>
-          </div>
+          </div> */}
 
           {menu.description && (
             <p className="text-sm text-gray-600 leading-relaxed">

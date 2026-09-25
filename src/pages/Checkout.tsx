@@ -42,6 +42,7 @@ import {
 } from "../utils/toasts";
 import usePromptLocation from "../hooks/usePromptLocation";
 import DeliveryAddressSection from "../components/DeliveryAddressSection";
+import DeleteModal from "../components/DeleteModal";
 
 type CartMenuItemProps = {
   item: ICartItem;
@@ -158,6 +159,7 @@ const Checkout = () => {
   const [phoneNumberError, setPhoneNumberError] = useState<string | null>(null);
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [showClearCartModal, setShowClearCartModal] = useState(false);
 
   const totalItems =
     cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
@@ -647,7 +649,7 @@ const Checkout = () => {
               </div>
               <div className="flex gap-3">
                 <button
-                  onClick={() => dispatch(clearCart())}
+                  onClick={() => setShowClearCartModal(true)}
                   className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-gray-200 text-sm font-medium text-gray-600 hover:bg-background transition-colors"
                 >
                   <Trash2 size={16} />
@@ -722,6 +724,18 @@ const Checkout = () => {
           </>
         )}
       </div>
+
+      <DeleteModal
+        open={showClearCartModal}
+        setOpen={setShowClearCartModal}
+        title={t("checkout.clearCartTitle")}
+        description={t("checkout.clearCartDescription")}
+        confirmText={t("checkout.clear")}
+        onConfirm={() => {
+          dispatch(clearCart());
+          setShowClearCartModal(false);
+        }}
+      />
     </div>
   );
 };
