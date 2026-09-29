@@ -24,6 +24,7 @@ import Pagination from "./Pagination";
 import RestaurantRatingForm from "./RestaurantRatingForm";
 import RestaurantRatingSummary from "./RestaurantRatingSummary";
 import RatingCard from "./RatingCard";
+import { KEYS } from "../utils/keys";
 
 type Props = {
   restaurant: IRestaurantEntity;
@@ -347,7 +348,8 @@ const RestaurantRatings = ({ restaurant, setRestaurant }: Props) => {
               />
             ))}
           </div>
-        ) : displayedRatings.length ? (
+        ) : displayedRatings.length >=
+          Number(KEYS.MIN_RATINGS_BEFORE_SHOWING_REAL_RATINGS) ? (
           <div className="space-y-3">
             {displayedRatings.map((rating) => (
               <RatingCard key={rating.id} rating={rating} />
