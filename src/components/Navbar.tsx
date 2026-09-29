@@ -1,6 +1,6 @@
 import { ChefHat, LogOut, MapPin, Menu, ShoppingCart, X } from "lucide-react";
 import { useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import type { RootState } from "../store";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -22,7 +22,6 @@ import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 const Navbar = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -56,7 +55,6 @@ const Navbar = () => {
       dispatch(setClient(null));
       setIsOpen(false);
       showSuccessToast("You have been logged out.");
-      navigate("/");
     } catch (error) {
       console.error("Failed to log out:", error);
       showErrorToast("Unable to log out. Please try again.");
