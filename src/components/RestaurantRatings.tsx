@@ -39,7 +39,7 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
   {
     id: "sample-rating-1",
     publicUserName: "Nkem A.",
-    rating: 5,
+    rating: 4,
     comment: "Excellent food, generous portions, and very friendly service.",
     createdAt: new Date("2025-02-18"),
     updatedAt: new Date("2025-02-18"),
@@ -47,7 +47,7 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
   {
     id: "sample-rating-2",
     publicUserName: "Kamga J.",
-    rating: 5,
+    rating: 4,
     comment: "Everything arrived fresh and well packaged. I will order again.",
     createdAt: new Date("2025-02-12"),
     updatedAt: new Date("2025-02-12"),
@@ -64,7 +64,7 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
   {
     id: "sample-rating-4",
     publicUserName: "Mbarga S.",
-    rating: 5,
+    rating: 3,
     comment: "The ndolé was delicious and still hot when it arrived.",
     createdAt: new Date("2025-01-28"),
     updatedAt: new Date("2025-01-28"),
@@ -72,7 +72,7 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
   {
     id: "sample-rating-5",
     publicUserName: "Fotso L.",
-    rating: 5,
+    rating: 4,
     comment: "Fast delivery and the portions are honest. Highly recommended.",
     createdAt: new Date("2025-01-25"),
     updatedAt: new Date("2025-01-25"),
@@ -80,7 +80,7 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
   {
     id: "sample-rating-6",
     publicUserName: "Ngo Bassa M.",
-    rating: 4,
+    rating: 3,
     comment: "Tasty food and good prices. Will definitely come back.",
     createdAt: new Date("2025-01-20"),
     updatedAt: new Date("2025-01-20"),
@@ -88,7 +88,7 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
   {
     id: "sample-rating-7",
     publicUserName: "Tchoupo E.",
-    rating: 5,
+    rating: 4,
     comment:
       "Best eru I've had in a while. The spices were perfectly balanced.",
     createdAt: new Date("2025-01-15"),
@@ -97,7 +97,7 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
   {
     id: "sample-rating-8",
     publicUserName: "Eyango C.",
-    rating: 5,
+    rating: 4,
     comment: "Ordered for the whole family, everyone loved it.",
     createdAt: new Date("2025-01-10"),
     updatedAt: new Date("2025-01-10"),
@@ -105,7 +105,7 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
   {
     id: "sample-rating-9",
     publicUserName: "Bekono F.",
-    rating: 4,
+    rating: 3,
     comment: "Good quality food, delivery took a bit long but worth the wait.",
     createdAt: new Date("2025-01-05"),
     updatedAt: new Date("2025-01-05"),
@@ -113,7 +113,7 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
   {
     id: "sample-rating-10",
     publicUserName: "Essono V.",
-    rating: 5,
+    rating: 4,
     comment: "Amazing poulet DG! The plantains were perfectly cooked.",
     createdAt: new Date("2024-12-28"),
     updatedAt: new Date("2024-12-28"),
@@ -121,7 +121,7 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
   {
     id: "sample-rating-11",
     publicUserName: "Onana S.",
-    rating: 5,
+    rating: 4,
     comment: "Very professional service and the food was top notch.",
     createdAt: new Date("2024-12-22"),
     updatedAt: new Date("2024-12-22"),
@@ -129,7 +129,7 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
   {
     id: "sample-rating-12",
     publicUserName: "Mbida A.",
-    rating: 5,
+    rating: 3,
     comment: "The okok was authentic and the fried fish crispy. Bravo!",
     createdAt: new Date("2024-12-18"),
     updatedAt: new Date("2024-12-18"),
@@ -145,7 +145,7 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
   {
     id: "sample-rating-14",
     publicUserName: "Wanko B.",
-    rating: 5,
+    rating: 3,
     comment: "My go-to spot now. The koki is always consistent and delicious.",
     createdAt: new Date("2024-12-05"),
     updatedAt: new Date("2024-12-05"),
@@ -153,7 +153,7 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
   {
     id: "sample-rating-15",
     publicUserName: "Ebongue N.",
-    rating: 5,
+    rating: 4,
     comment: "Great value for money. The soya was perfectly grilled.",
     createdAt: new Date("2024-11-28"),
     updatedAt: new Date("2024-11-28"),
@@ -161,7 +161,7 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
   {
     id: "sample-rating-16",
     publicUserName: "Takam D.",
-    rating: 4,
+    rating: 3,
     comment: "Pleasant surprise. Clean packaging and friendly delivery guy.",
     createdAt: new Date("2024-11-20"),
     updatedAt: new Date("2024-11-20"),
@@ -169,15 +169,15 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
   {
     id: "sample-rating-17",
     publicUserName: "Youmbi G.",
-    rating: 5,
-    comment: "The achu was exceptional, just like back home. Five stars!",
+    rating: 4,
+    comment: "The achu was exceptional, just like back home. Four stars!",
     createdAt: new Date("2024-11-15"),
     updatedAt: new Date("2024-11-15"),
   },
   {
     id: "sample-rating-18",
     publicUserName: "Ndoumbe H.",
-    rating: 5,
+    rating: 4,
     comment: "Quick service, hot food, and generous servings. Perfect.",
     createdAt: new Date("2024-11-08"),
     updatedAt: new Date("2024-11-08"),
@@ -185,7 +185,7 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
   {
     id: "sample-rating-19",
     publicUserName: "Kenfack O.",
-    rating: 4,
+    rating: 3,
     comment: "Really enjoyed the meal. The sauce had a great homemade taste.",
     createdAt: new Date("2024-11-01"),
     updatedAt: new Date("2024-11-01"),
@@ -193,7 +193,7 @@ const FAKE_RATINGS: IRestaurantRatingEntity[] = [
   {
     id: "sample-rating-20",
     publicUserName: "Ndjeng R.",
-    rating: 5,
+    rating: 4,
     comment:
       "Impressed by the quality. The poisson braisé was fresh and tasty.",
     createdAt: new Date("2024-10-26"),
