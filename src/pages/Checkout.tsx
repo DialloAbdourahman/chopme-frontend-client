@@ -417,6 +417,12 @@ const Checkout = () => {
     promptLocation();
   }, []);
 
+  useEffect(() => {
+    if (isRedirecting) {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [isRedirecting]);
+
   if (isRedirecting) {
     return (
       <div className="min-h-screen bg-background">
