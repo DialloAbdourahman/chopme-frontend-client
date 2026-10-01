@@ -350,6 +350,7 @@
     "itemsNotAvailable": "One or more items are no longer available.",
     "checkCart": "Please check your cart and try again.",
     "redirectingToPayment": "Redirecting to payment...",
+    "redirectingToPaymentDesc": "Please wait while we take you to the secure payment page",
     "cartEmptyTitle": "Your cart is empty",
     "cartEmptySubtitle": "Add items from a restaurant to get started",
     "browseRestaurants": "Browse restaurants",
