@@ -350,6 +350,7 @@
     "itemsNotAvailable": "Un ou plusieurs articles ne sont plus disponibles.",
     "checkCart": "Veuillez vérifier votre panier et réessayer.",
     "redirectingToPayment": "Redirection vers le paiement...",
+    "redirectingToPaymentDesc": "Veuillez patienter pendant que nous vous redirigeons vers la page de paiement sécurisée",
     "cartEmptyTitle": "Votre panier est vide",
     "cartEmptySubtitle": "Ajoutez des articles d'un restaurant pour commencer",
     "browseRestaurants": "Parcourir les restaurants",

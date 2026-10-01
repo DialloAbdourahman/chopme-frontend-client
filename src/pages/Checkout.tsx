@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   ChevronLeft,
   Clock,
+  CreditCard,
   Minus,
   Plus,
   ShoppingBag,
@@ -427,11 +428,23 @@ const Checkout = () => {
     return (
       <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="flex flex-col items-center justify-center py-24">
-          <div className="h-12 w-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
-          <p className="text-sm font-semibold text-text">
+        <div className="flex flex-col items-center justify-center px-4 min-h-[calc(100vh-4rem)]">
+          <div className="relative flex items-center justify-center mb-6">
+            <div className="h-24 w-24 border-[6px] border-primary/20 rounded-full" />
+            <div className="absolute h-24 w-24 border-[6px] border-primary border-t-transparent rounded-full animate-spin" />
+            <CreditCard size={34} className="absolute text-primary" />
+          </div>
+          <h2 className="text-xl font-bold text-text">
             {t("checkout.redirectingToPayment")}
+          </h2>
+          <p className="text-sm text-text/60 mt-2 text-center max-w-xs">
+            {t("checkout.redirectingToPaymentDesc")}
           </p>
+          <div className="flex gap-1.5 mt-6">
+            <span className="h-2 w-2 rounded-full bg-primary animate-bounce" />
+            <span className="h-2 w-2 rounded-full bg-primary animate-bounce [animation-delay:150ms]" />
+            <span className="h-2 w-2 rounded-full bg-primary animate-bounce [animation-delay:300ms]" />
+          </div>
         </div>
       </div>
     );
