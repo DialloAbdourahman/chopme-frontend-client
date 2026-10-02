@@ -15,13 +15,19 @@ import { TokensService } from "../services/tokens.service";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState } from "react";
 
-const GoogleAuthButton = () => {
+const GoogleAuthButton = ({
+  disabled = false,
+  onLoadingChange,
+}: {
+  disabled?: boolean;
+  onLoadingChange?: (loading: boolean) => void;
+}) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
 
-  const { initialize, loading: loadingInitialize } = useInitializeAfterAuth({
+  const { initialize } = useInitializeAfterAuth({
     initialLoadingState: false,
   });
 
@@ -30,6 +36,7 @@ const GoogleAuthButton = () => {
     onSuccess: async ({ code }: { code: string }) => {
       try {
         setIsLoading(true);
+        onLoadingChange?.(true);
         const { data } = await AuthService.googleLogin(code);
         if (
           data.code === EnumStatusResponse.SUCCESS &&
@@ -70,6 +77,7 @@ const GoogleAuthButton = () => {
         }
       } finally {
         setIsLoading(false);
+        onLoadingChange?.(false);
       }
     },
     onError: () => {
@@ -80,10 +88,10 @@ const GoogleAuthButton = () => {
   return (
     <button
       onClick={initiateGooglePopup}
-      disabled={loadingInitialize || isLoading}
+      disabled={disabled || isLoading}
       className="w-full flex items-center justify-center gap-3 border border-gray-200 rounded-xl py-3.5 text-sm font-semibold text-text bg-card hover:bg-background active:scale-95 transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
     >
-      {loadingInitialize || isLoading ? (
+      {isLoading ? (
         <div className="w-5 h-5 border-2 border-gray-300 border-t-gray-700 rounded-full animate-spin" />
       ) : (
         <>

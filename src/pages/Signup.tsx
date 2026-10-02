@@ -27,11 +27,12 @@ import useInitializeAfterAuth from "../hooks/useInitializeAfterAuth";
 const Signup = () => {
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectUrl = searchParams.get("redirect_url");
 
-  const { initialize, loading: loadingInitialize } = useInitializeAfterAuth({
+  const { initialize } = useInitializeAfterAuth({
     initialLoadingState: false,
   });
 
@@ -248,12 +249,10 @@ const Signup = () => {
             {/* Submit */}
             <button
               type="submit"
-              disabled={isSubmitting || loadingInitialize}
+              disabled={isSubmitting || isGoogleLoading}
               className="w-full bg-primary text-white font-semibold rounded-xl py-3.5 text-sm shadow-sm hover:opacity-90 active:scale-95 transition-all disabled:opacity-60 disabled:cursor-not-allowed mt-1"
             >
-              {isSubmitting || loadingInitialize
-                ? t("auth.signingUp")
-                : t("auth.signUp")}
+              {isSubmitting ? t("auth.signingUp") : t("auth.signUp")}
             </button>
           </form>
 
@@ -267,7 +266,10 @@ const Signup = () => {
           </div>
 
           {/* Google */}
-          <GoogleAuthButton />
+          <GoogleAuthButton
+            disabled={isSubmitting}
+            onLoadingChange={setIsGoogleLoading}
+          />
         </div>
 
         {/* Sign in link */}
