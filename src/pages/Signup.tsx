@@ -10,6 +10,7 @@ import {
   createClientSchema,
   EnumStatusCode,
   EnumStatusResponse,
+  EnumUserRole,
 } from "chopme-frontend-common";
 import { AuthService } from "../services/auth.service";
 import { TokensService } from "../services/tokens.service";
@@ -57,6 +58,7 @@ const Signup = () => {
         const { data: signinData } = await AuthService.emailPasswordLogin({
           email: values.email,
           password: values.password,
+          role: EnumUserRole.CLIENT,
         });
         if (
           signinData.code === EnumStatusResponse.SUCCESS &&
