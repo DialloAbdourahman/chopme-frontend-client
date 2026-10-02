@@ -1,4 +1,12 @@
-import { ChefHat, LogOut, MapPin, Menu, ShoppingCart, X } from "lucide-react";
+import {
+  ChefHat,
+  Loader2,
+  LogOut,
+  MapPin,
+  Menu,
+  ShoppingCart,
+  X,
+} from "lucide-react";
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import type { RootState } from "../store";
@@ -26,6 +34,7 @@ const Navbar = () => {
   const { t } = useTranslation();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { userAddressLocalStorage, user } = useSelector(
     (state: RootState) => state.user,
   );
@@ -36,6 +45,7 @@ const Navbar = () => {
     cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
 
   const handleLogout = async () => {
+    setIsLoggingOut(true);
     try {
       const refreshToken = TokensService.getToken(KEYS.REFRESH_TOKEN_KEY);
       const response = await AuthService.logout(refreshToken ?? undefined);
@@ -58,6 +68,8 @@ const Navbar = () => {
     } catch (error) {
       console.error("Failed to log out:", error);
       showErrorToast("Unable to log out. Please try again.");
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
@@ -157,9 +169,14 @@ const Navbar = () => {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-red-600"
+                disabled={isLoggingOut}
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <LogOut size={16} />
+                {isLoggingOut ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <LogOut size={16} />
+                )}
                 <span className="hidden lg:inline"> {t("navbar.logout")}</span>
               </button>
             ) : (
@@ -225,9 +242,14 @@ const Navbar = () => {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100"
+                  disabled={isLoggingOut}
+                  className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <LogOut size={17} />
+                  {isLoggingOut ? (
+                    <Loader2 size={17} className="animate-spin" />
+                  ) : (
+                    <LogOut size={17} />
+                  )}
                   {t("navbar.logout")}
                 </button>
               ) : (
