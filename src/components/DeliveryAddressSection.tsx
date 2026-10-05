@@ -117,7 +117,10 @@ const DeliveryAddressSection = () => {
 
       autocompleteRef.current = new google.maps.places.Autocomplete(
         searchInputRef.current,
-        { fields: ["geometry", "formatted_address"] },
+        {
+          fields: ["geometry", "formatted_address"],
+          componentRestrictions: { country: "cm" },
+        },
       );
 
       autocompleteRef.current.addListener("place_changed", () => {
