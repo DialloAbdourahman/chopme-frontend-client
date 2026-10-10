@@ -1,6 +1,7 @@
 import { Pencil, Star, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { IRestaurantRatingEntity } from "chopme-frontend-common";
+import { ComputeUtils } from "../utils/compute-utils";
 
 type RatingCardProps = {
   rating: IRestaurantRatingEntity;
@@ -36,7 +37,7 @@ const RatingCard = ({
               />
             ))}
             <span className="ml-1 text-xs text-gray-500">
-              {new Date(rating.createdAt).toLocaleDateString()}
+              {ComputeUtils.formatDateOnly(rating.createdAt)}
             </span>
           </div>
         </div>
