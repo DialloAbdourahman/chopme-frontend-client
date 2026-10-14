@@ -281,7 +281,9 @@ const OrderDetails = () => {
 
     if (
       !notification ||
-      notification.type !== EnumNotificationType.ORDER_STATUS_CHANGED ||
+      (notification.type !== EnumNotificationType.ORDER_STATUS_CHANGED &&
+        notification.type !==
+          EnumNotificationType.ORDER_REFUND_STATUS_CHANGED) ||
       notification.data.id !== order?.id
     )
       return;
