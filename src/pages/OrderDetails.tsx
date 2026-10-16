@@ -550,23 +550,27 @@ const OrderDetails = () => {
           </h2>
           <div className="relative pl-4 space-y-6">
             <div className="absolute left-[5px] top-2 bottom-2 w-0.5 bg-gray-200" />
-            {order.statusTransitions.map((transition, index) => (
-              <div key={index} className="relative">
-                <span
-                  className={`absolute -left-[11px] top-1.5 w-3 h-3 rounded-full border-2 border-white ${
-                    index === order.statusTransitions.length - 1
-                      ? "bg-primary"
-                      : "bg-gray-300"
-                  }`}
-                />
-                <p className="text-sm font-medium text-text">
-                  {ComputeUtils.formatStatus(t, transition.status)}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {ComputeUtils.formatDate(transition.timestamp)}
-                </p>
-              </div>
-            ))}
+            {order.statusTransitions
+              .filter(
+                (transition) => transition.status !== EnumOrderStatus.DISBURSED,
+              )
+              .map((transition, index, filtered) => (
+                <div key={index} className="relative">
+                  <span
+                    className={`absolute -left-[11px] top-1.5 w-3 h-3 rounded-full border-2 border-white ${
+                      index === filtered.length - 1
+                        ? "bg-primary"
+                        : "bg-gray-300"
+                    }`}
+                  />
+                  <p className="text-sm font-medium text-text">
+                    {ComputeUtils.formatStatus(t, transition.status)}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {ComputeUtils.formatDate(transition.timestamp)}
+                  </p>
+                </div>
+              ))}
           </div>
         </div>
       </div>

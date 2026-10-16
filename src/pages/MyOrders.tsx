@@ -28,10 +28,12 @@ const MyOrders = () => {
 
   const statusOptions = [
     { value: "", label: t("common.all") },
-    ...Object.values(EnumOrderStatus).map((status) => ({
-      value: status,
-      label: ComputeUtils.formatStatus(t, status),
-    })),
+    ...Object.values(EnumOrderStatus)
+      .filter((status) => status !== EnumOrderStatus.DISBURSED)
+      .map((status) => ({
+        value: status,
+        label: ComputeUtils.formatStatus(t, status),
+      })),
   ];
 
   const { newNotification } = useSelector(
