@@ -5,6 +5,7 @@ import type { RootState } from "../store";
 import {
   EnumNotificationType,
   EnumOrderStatus,
+  EnumRefundStatus,
   EnumWebSocketEventType,
   playNotificationSound,
   type INotification,
@@ -73,6 +74,21 @@ const WebSocket = () => {
           break;
         case EnumOrderStatus.DELIVERED:
           showSuccessToast(t("notification.orderDelivered"), {
+            onClick: () => {
+              navigate(`/orders/${notification.data.id}`);
+            },
+          });
+          break;
+        default:
+          break;
+      }
+    } else if (
+      newNotification.type === EnumNotificationType.ORDER_REFUND_STATUS_CHANGED
+    ) {
+      const notification = newNotification as INotification<IOrderEntity>;
+      switch (notification.data.refundStatus) {
+        case EnumRefundStatus.SUCCESSFUL:
+          showSuccessToast(t("notification.refundSuccessful"), {
             onClick: () => {
               navigate(`/orders/${notification.data.id}`);
             },
