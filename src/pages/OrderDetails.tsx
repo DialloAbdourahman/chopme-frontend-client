@@ -11,7 +11,6 @@ import {
   RefreshCw,
   XCircle,
 } from "lucide-react";
-import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import {
   EnumOrderStatus,
   EnumStatusCode,
@@ -39,7 +38,6 @@ import { ComputeUtils } from "../utils/compute-utils";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../store";
 import { setCart } from "../store/cart";
-import { KEYS } from "../utils/keys";
 
 const OrderDetails = () => {
   const { orderId } = useParams<{ orderId: string }>();
@@ -59,10 +57,6 @@ const OrderDetails = () => {
   const [isPaying, setIsPaying] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
-
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: KEYS.GOOGLE_PLACE_API_KEY,
-  });
 
   const fetchOrder = useCallback(async (): Promise<boolean> => {
     if (!orderId) {
@@ -185,11 +179,7 @@ const OrderDetails = () => {
   const handlePay = async () => {
     if (!order || !orderId) return;
 
-    if (
-      order.paymentDetails?.link &&
-      order.paymentDetails?.validUntil &&
-      new Date(order.paymentDetails.validUntil) > new Date()
-    ) {
+    if (order.paymentDetails?.link) {
       window.location.href = order.paymentDetails.link;
       return;
     }
@@ -291,7 +281,9 @@ const OrderDetails = () => {
 
     if (
       !notification ||
-      notification.type !== EnumNotificationType.ORDER_STATUS_CHANGED ||
+      (notification.type !== EnumNotificationType.ORDER_STATUS_CHANGED &&
+        notification.type !==
+          EnumNotificationType.ORDER_REFUND_STATUS_CHANGED) ||
       notification.data.id !== order?.id
     )
       return;
@@ -394,7 +386,7 @@ const OrderDetails = () => {
 
         {restaurant && (
           <div className="bg-card rounded-2xl p-4 shadow-sm mb-4">
-            <div className="flex items-start justify-between gap-2 mb-1">
+            <div className="flex items-start justify-between mb-1">
               <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">
                 {t("order.from")}
               </p>
@@ -495,9 +487,7 @@ const OrderDetails = () => {
           order.maxTimeToPayOrder &&
           new Date(order.maxTimeToPayOrder) > new Date()) ||
           (order.status === EnumOrderStatus.PAYMENT_INITIATED &&
-            order.paymentDetails?.link &&
-            order.paymentDetails?.validUntil &&
-            new Date(order.paymentDetails.validUntil) > new Date())) && (
+            order.paymentDetails?.link)) && (
           <button
             onClick={handlePay}
             disabled={isPaying || isCancelling}
@@ -532,9 +522,7 @@ const OrderDetails = () => {
             order.maxTimeToPayOrder &&
             new Date() > new Date(order.maxTimeToPayOrder)) ||
           (order.status === EnumOrderStatus.PAYMENT_INITIATED &&
-            order.paymentDetails?.link &&
-            order.paymentDetails?.validUntil &&
-            new Date() > new Date(order.paymentDetails.validUntil))) && (
+            !order.paymentDetails?.link)) && (
           <button
             onClick={handleRetryOrder}
             disabled={isPaying || isCancelling}
@@ -556,60 +544,33 @@ const OrderDetails = () => {
           </div>
         )}
 
-        {order.clientLocation?.coordinates?.length === 2 && (
-          <div className="bg-card rounded-2xl p-4 shadow-sm mb-4">
-            <div className="flex items-center gap-2 mb-3">
-              <MapPin size={18} className="text-primary" />
-              <h2 className="font-semibold text-text">
-                {t("deliveryAddress.deliveryAddressTitle")}
-              </h2>
-            </div>
-
-            {isLoaded && (
-              <div className="h-64 sm:h-80 rounded-2xl overflow-hidden">
-                <GoogleMap
-                  mapContainerStyle={{ width: "100%", height: "100%" }}
-                  center={{
-                    lat: order.clientLocation.coordinates[1],
-                    lng: order.clientLocation.coordinates[0],
-                  }}
-                  zoom={15}
-                >
-                  <Marker
-                    position={{
-                      lat: order.clientLocation.coordinates[1],
-                      lng: order.clientLocation.coordinates[0],
-                    }}
-                  />
-                </GoogleMap>
-              </div>
-            )}
-          </div>
-        )}
-
         <div className="bg-card rounded-2xl p-4 shadow-sm">
           <h2 className="text-sm font-semibold text-text mb-4">
             {t("order.orderHistory")}
           </h2>
           <div className="relative pl-4 space-y-6">
             <div className="absolute left-[5px] top-2 bottom-2 w-0.5 bg-gray-200" />
-            {order.statusTransitions.map((transition, index) => (
-              <div key={index} className="relative">
-                <span
-                  className={`absolute -left-[11px] top-1.5 w-3 h-3 rounded-full border-2 border-white ${
-                    index === order.statusTransitions.length - 1
-                      ? "bg-primary"
-                      : "bg-gray-300"
-                  }`}
-                />
-                <p className="text-sm font-medium text-text">
-                  {ComputeUtils.formatStatus(t, transition.status)}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {ComputeUtils.formatDate(transition.timestamp)}
-                </p>
-              </div>
-            ))}
+            {order.statusTransitions
+              .filter(
+                (transition) => transition.status !== EnumOrderStatus.DISBURSED,
+              )
+              .map((transition, index, filtered) => (
+                <div key={index} className="relative">
+                  <span
+                    className={`absolute -left-[11px] top-1.5 w-3 h-3 rounded-full border-2 border-white ${
+                      index === filtered.length - 1
+                        ? "bg-primary"
+                        : "bg-gray-300"
+                    }`}
+                  />
+                  <p className="text-sm font-medium text-text">
+                    {ComputeUtils.formatStatus(t, transition.status)}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {ComputeUtils.formatDate(transition.timestamp)}
+                  </p>
+                </div>
+              ))}
           </div>
         </div>
       </div>

@@ -70,5 +70,5 @@ export const getOrderStatusLabels = (t: TFunction) => [
   },
   { value: EnumOrderStatus.IN_DELIVERY, label: t("orderStatus.inDelivery") },
   { value: EnumOrderStatus.DELIVERED, label: t("orderStatus.delivered") },
-  { value: EnumOrderStatus.DISBURSED, label: t("orderStatus.disbursed") },
+  { value: EnumOrderStatus.DISBURSED, label: t("orderStatus.delivered") },
 ];
