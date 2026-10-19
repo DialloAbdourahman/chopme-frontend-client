@@ -10,6 +10,7 @@ import {
   playNotificationSound,
   type INotification,
   type IOrderEntity,
+  type IRefundEntity,
 } from "chopme-frontend-common";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -83,14 +84,21 @@ const WebSocket = () => {
           break;
       }
     } else if (
-      newNotification.type === EnumNotificationType.ORDER_REFUND_STATUS_CHANGED
+      newNotification.type === EnumNotificationType.REFUND_STATUS_CHANGED
     ) {
-      const notification = newNotification as INotification<IOrderEntity>;
-      switch (notification.data.refundStatus) {
+      const notification = newNotification as INotification<IRefundEntity>;
+      switch (notification.data.status) {
         case EnumRefundStatus.SUCCESSFUL:
           showSuccessToast(t("notification.refundSuccessful"), {
             onClick: () => {
-              navigate(`/orders/${notification.data.id}`);
+              navigate(`/orders/${notification.data.orderId}`);
+            },
+          });
+          break;
+        case EnumRefundStatus.FAILED:
+          showErrorToast(t("notification.refundFailed"), {
+            onClick: () => {
+              navigate(`/orders/${notification.data.orderId}`);
             },
           });
           break;

@@ -176,7 +176,7 @@ const MyOrders = () => {
     if (
       !notification ||
       (notification.type !== EnumNotificationType.ORDER_STATUS_CHANGED &&
-        notification.type !== EnumNotificationType.ORDER_REFUND_STATUS_CHANGED)
+        notification.type !== EnumNotificationType.REFUND_STATUS_CHANGED)
     )
       return;
 

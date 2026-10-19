@@ -18,6 +18,7 @@ import {
   type IOrderEntity,
   type IMenuEntity,
   type IRestaurantEntity,
+  type IRefundEntity,
   type IOrchestrationResult,
   EnumNotificationType,
   type INotification,
@@ -50,6 +51,7 @@ const OrderDetails = () => {
   );
 
   const [order, setOrder] = useState<IOrderEntity | null>(null);
+  const [refund, setRefund] = useState<IRefundEntity | null>(null);
   const [restaurant, setRestaurant] = useState<IRestaurantEntity | null>(null);
   const [menus, setMenus] = useState<Record<string, IMenuEntity>>({});
   const [loading, setLoading] = useState(true);
@@ -77,6 +79,27 @@ const OrderDetails = () => {
       ) {
         const orderData = orderRes.data.data;
         setOrder(orderData);
+
+        if (
+          orderData.status === EnumOrderStatus.CANCELLED_BY_RESTAURANT &&
+          orderData.refundId
+        ) {
+          try {
+            const refundRes = await OrderService.findRefund(orderData.refundId);
+            if (
+              refundRes.data.code === EnumStatusResponse.SUCCESS &&
+              refundRes.data.statusCode ===
+                EnumStatusCode.RECOVERED_SUCCESSFULLY &&
+              refundRes.data.data
+            ) {
+              setRefund(refundRes.data.data);
+            }
+          } catch {
+            // Ignore refund fetch failures
+          }
+        } else {
+          setRefund(null);
+        }
 
         try {
           const restaurantRes = await OrderService.getRestaurantOfOrder(
@@ -277,20 +300,20 @@ const OrderDetails = () => {
   }, [fetchOrder]);
 
   useEffect(() => {
-    const notification = newNotification as INotification<IOrderEntity>;
+    if (!newNotification) return;
 
-    if (
-      !notification ||
-      (notification.type !== EnumNotificationType.ORDER_STATUS_CHANGED &&
-        notification.type !==
-          EnumNotificationType.ORDER_REFUND_STATUS_CHANGED) ||
-      notification.data.id !== order?.id
-    )
+    if (newNotification.type === EnumNotificationType.ORDER_STATUS_CHANGED) {
+      const notification = newNotification as INotification<IOrderEntity>;
+      if (notification.data.id !== order?.id) return;
+      setOrder(notification.data);
       return;
+    }
 
-    setOrder(notification.data);
-
-    // dispatch(setNewNotification(null));
+    if (newNotification.type === EnumNotificationType.REFUND_STATUS_CHANGED) {
+      const notification = newNotification as INotification<IRefundEntity>;
+      if (notification.data.orderId !== order?.id) return;
+      setRefund(notification.data);
+    }
   }, [newNotification]);
 
   if (loading) {
@@ -365,9 +388,7 @@ const OrderDetails = () => {
               <p className="text-sm font-semibold text-red-700">
                 {t("order.orderCancelledByRestaurant")}
               </p>
-              {order.refundStatus && (
-                <RefundStatusBadge status={order.refundStatus} />
-              )}
+              {refund && <RefundStatusBadge status={refund.status} />}
             </div>
             {order.cancelledAt && (
               <p className="text-xs text-red-600/80 mt-0.5">

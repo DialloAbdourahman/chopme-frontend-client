@@ -40,7 +40,8 @@
     "restaurantPreparingOrder": "Le restaurant prépare votre commande.",
     "orderOutForDelivery": "Votre commande est en cours de livraison.",
     "orderDelivered": "Votre commande a été livrée.",
-    "refundSuccessful": "Votre commande a été remboursée avec succès."
+    "refundSuccessful": "Votre commande a été remboursée avec succès.",
+    "refundFailed": "Le remboursement de votre commande a échoué. Veuillez contacter le support."
   },
 
   "order": {

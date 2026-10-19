@@ -2,6 +2,7 @@ import type {
   CreateOrderDto,
   IOrchestrationResult,
   IOrderEntity,
+  IRefundEntity,
   IRestaurantEntity,
   Pagination,
 } from "chopme-frontend-common";
@@ -35,6 +36,12 @@ export const OrderService = {
   findOne: (orderId: string) => {
     return axiosBaseClient.get<IOrchestrationResult<IOrderEntity>>(
       `/orders/${orderId}`,
+    );
+  },
+
+  findRefund: (refundId: string) => {
+    return axiosBaseClient.get<IOrchestrationResult<IRefundEntity>>(
+      `/orders/refunds/${refundId}`,
     );
   },
 
