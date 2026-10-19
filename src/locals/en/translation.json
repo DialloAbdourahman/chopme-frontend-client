@@ -40,7 +40,8 @@
     "restaurantPreparingOrder": "The restaurant is preparing your order.",
     "orderOutForDelivery": "Your order is out for delivery.",
     "orderDelivered": "Your order has been delivered.",
-    "refundSuccessful": "Your order has been refunded successfully."
+    "refundSuccessful": "Your order has been refunded successfully.",
+    "refundFailed": "Your order refund has failed. Please contact support."
   },
 
   "order": {
