@@ -1,12 +1,4 @@
-import {
-  ChefHat,
-  Loader2,
-  LogOut,
-  MapPin,
-  Menu,
-  ShoppingCart,
-  X,
-} from "lucide-react";
+import { Loader2, LogOut, MapPin, Menu, ShoppingCart, X } from "lucide-react";
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import type { RootState } from "../store";
@@ -101,15 +93,14 @@ const Navbar = () => {
   return (
     <>
       <nav className="bg-card shadow-sm sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto py-4 flex items-center justify-between px-4 lg:px-0">
+        <div className="max-w-5xl mx-auto py-2 flex items-center justify-between px-4 lg:px-0">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="bg-primary rounded-xl p-2">
-              <ChefHat size={22} className="text-white" />
-            </div>
-            <span className="text-xl font-bold text-text tracking-tight">
-              ChopMe
-            </span>
+          <Link to="/" className="flex items-center ">
+            <img
+              src="/images/logos/half.png"
+              alt="TchopVite"
+              className="h-12 w-auto "
+            />
           </Link>
 
           {location ? (

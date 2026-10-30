@@ -290,11 +290,6 @@ const OrderDetails = () => {
     }
   };
 
-  const handleRefresh = async () => {
-    if (!orderId) return;
-    await fetchOrder();
-  };
-
   useEffect(() => {
     fetchOrder();
   }, [fetchOrder]);
@@ -370,14 +365,6 @@ const OrderDetails = () => {
             {t("order.orderDetails")}
           </h1>
           <div className="flex items-center gap-2">
-            <button
-              onClick={handleRefresh}
-              disabled={loading || isPaying || isCancelling}
-              className="p-2 rounded-full hover:bg-gray-100 text-gray-500 disabled:opacity-50 transition-colors"
-              aria-label={t("order.refreshOrder")}
-            >
-              <RefreshCw size={18} />
-            </button>
             <OrderStatusBadge status={order.status} />
           </div>
         </div>
