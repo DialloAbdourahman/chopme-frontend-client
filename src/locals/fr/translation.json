@@ -290,7 +290,7 @@
     "enjoyDeliveryDesc": "Nous apportons votre repas chaud et frais à votre porte.",
     "forRestaurantOwners": "Pour les restaurateurs",
     "registerTitle": "Inscrivez votre restaurant",
-    "registerDesc": "Rejoignez ChopMe et atteignez des milliers de clients affamés dans votre ville. Nous gérons la livraison pour que vous puissiez vous concentrer sur la nourriture.",
+    "registerDesc": "Rejoignez TchopVite et atteignez des milliers de clients affamés dans votre ville. Nous gérons la livraison pour que vous puissiez vous concentrer sur la nourriture.",
     "getStarted": "Commencer",
     "callUs": "Appelez-nous",
     "growBusinessTitle": "Développez votre activité",
@@ -436,7 +436,7 @@
 
   "auth": {
     "signinTitle": "Connectez-vous à votre compte",
-    "signupTitle": "Inscrivez-vous sur Chopme",
+    "signupTitle": "Inscrivez-vous sur TchopVite",
     "email": "E-mail",
     "fullName": "Nom complet",
     "password": "Mot de passe",
@@ -465,6 +465,6 @@
   },
 
   "footer": {
-    "allRightsReserved": "ChopMe. Tous droits réservés."
+    "allRightsReserved": "TchopVite. Tous droits réservés."
   }
 }
